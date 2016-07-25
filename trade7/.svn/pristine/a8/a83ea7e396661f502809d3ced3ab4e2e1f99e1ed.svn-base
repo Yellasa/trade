@@ -1,0 +1,110 @@
+package com.liantuo.deposit.common.constants;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class CreditAccountTradeHistoryConstants {
+
+	/**
+	 * @字段名 DATA_FLAG_OLD : 老版
+	 */
+	public static final String DATA_FLAG_OLD = "1";
+
+	/**
+	 * @字段名 DATA_FLAG_NEW : 新版
+	 */
+	public static final String DATA_FLAG_NEW = "2";
+
+	/**
+	 * @字段名 DATA_FLAG_NEWEST : 最新改造版
+	 */
+	public static final String DATA_FLAG_NEWEST = "3";
+
+	/**
+	 * @字段名 CREATOR_NO : 创建人编号(交易系统写死)
+	 */
+	public static final String CREATOR_NO = "TradeSystem";
+
+	/**
+	 * @字段名 TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE : 交易请求类型和账务交易类型对应码
+	 */
+	public static final Map<String, Integer> TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE = new HashMap<String, Integer>();
+
+	static {
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("XXXX_XXX_000", 9999);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0000_001_000", 9999);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0001_001_001", 1001);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0001_001_002", 1002);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0001_001_003", 1003);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0001_001_004", 1004);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0001_002_001", 1005);
+
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0002_001_001", 2001);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0002_001_002", 2002);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0002_001_003", 2003);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0002_001_004", 2004);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0002_001_005", 2005);
+
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0003_001_001", 3001);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0003_001_002", 3002);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0003_001_003", 3003);
+
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0007_001_001", 7001);
+
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0005_001_001", 5001);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0005_001_002", 5002);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0005_001_005", 5003);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0005_001_006", 5004);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0005_002_001", 5005);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0006_001_001", 6001);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0006_001_002", 6002);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0006_001_003", 6008);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0006_001_005", 6009);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0006_002_001", 6003);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0006_002_002", 6004);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0006_002_003", 6005);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0006_002_004", 6006);
+		CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE
+				.put("0006_002_005", 6007);
+
+	}
+
+	/**
+	 * @字段名 SUB_ACCOUNT_TYPE_AVL : 账户余额变动时
+	 */
+	public static final int SUB_ACCOUNT_TYPE_AVL = 1;
+	/**
+	 * @字段名 SUB_ACCOUNT_TYPE_FROZEEN : 冻结金额变动时
+	 */
+	public static final int SUB_ACCOUNT_TYPE_FROZEEN = 2;
+
+}

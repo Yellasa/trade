@@ -1,0 +1,72 @@
+package com.liantuo.trade.bus.service.impl;
+
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.liantuo.trade.common.constants.TradeConstants;
+import com.liantuo.trade.orm.mapper.TradeSinglePaymentLogMapper;
+import com.liantuo.trade.orm.mapper.TradeSinglePaymentMapper;
+import com.liantuo.trade.orm.pojo.TradeSinglePayment;
+import com.liantuo.trade.orm.pojo.TradeSinglePaymentExample;
+import com.liantuo.trade.orm.pojo.TradeSinglePaymentLog;
+@Service("singlePaymentBasicServiceImpl")
+public class SinglePaymentBasicServiceImpl extends SinglePaymentServiceImpl{
+	private final Log LOG4J = LogFactory.getLog("trade");
+	@Autowired
+	private TradeSinglePaymentMapper paymentMapper;
+	@Autowired
+	private TradeSinglePaymentLogMapper paymentLogMapper;
+	
+	@Override
+	public TradeSinglePayment createTradeForPayOfSuccess(TradeSinglePayment tradePayment)
+			throws Exception {
+		tradePayment.setCloseStatus(TradeConstants.TRADE_CLOSE_STATUS_END);
+		tradePayment.setStatus(TradeConstants.TRADE_PAYMENT_SUCCESS);
+		tradePayment.setVersion(0);
+		Date date = new Date();
+		tradePayment.setGmtCreated(date);
+		tradePayment.setGmtSuccessPay(date);
+		tradePayment.setGmtModifiedLatest(date);
+		LOG4J.info(Thread.currentThread().getName() +"     "+ tradePayment.getTradeNo());
+		paymentMapper.insertSelective(tradePayment);
+		TradeSinglePayment _tradePayment = insertTradeLog(tradePayment);
+		return _tradePayment;
+	}
+
+	private TradeSinglePayment insertTradeLog(TradeSinglePayment tradePayment) {
+		TradeSinglePaymentExample example = new TradeSinglePaymentExample();
+		example.createCriteria().andTradeNoEqualTo(tradePayment.getTradeNo());
+		List<TradeSinglePayment> list = paymentMapper.selectByExample(example);
+		TradeSinglePayment _tradePayment = new TradeSinglePayment();
+		if(list != null){
+			_tradePayment = list.get(0);
+		}
+		TradeSinglePaymentLog paymentLog = new TradeSinglePaymentLog();
+		BeanUtils.copyProperties(_tradePayment, paymentLog);
+		paymentLog.setId(null);
+		paymentLogMapper.insertSelective(paymentLog);
+		return _tradePayment;
+	}
+
+
+	@Override
+	public TradeSinglePayment createTradeFailureRecode(
+			TradeSinglePayment tradePayment) throws Exception {
+		tradePayment.setCloseStatus(TradeConstants.TRADE_CLOSE_STATUS_END);
+		tradePayment.setStatus(TradeConstants.TRADE_PAYMENT_PAY_FAIL);
+		tradePayment.setVersion(0);
+		Date date = new Date();
+		tradePayment.setGmtCreated(date);
+		tradePayment.setGmtFailPay(date);
+		tradePayment.setGmtModifiedLatest(date);
+		paymentMapper.insertSelective(tradePayment);
+		TradeSinglePayment _tradePayment = insertTradeLog(tradePayment);
+		return _tradePayment;
+	}
+}

@@ -1,0 +1,26 @@
+package com.liantuo.trade.bus.process.impl.single_payment.asyn_service.impl;
+
+import javax.annotation.Resource;
+
+import org.dozer.DozerBeanMapper;
+
+import com.liantuo.payment.client.pay.PaymentNotify;
+import com.liantuo.payment.client.pay.alipay.vo1.rsp.AlipayTradePrecreateNotifyResponse;
+import com.liantuo.trade.bus.process.impl.single_payment.asyn_service.AsynNotifyService;
+import com.liantuo.trade.client.trade.packet.body.TradeNotifyRequestBody;
+import com.liantuo.trade.client.trade.packet.body.zf.AlipayTradePrecreatePacket;
+
+public class AlipayAsynTradePrecreateService implements AsynNotifyService{
+	@Resource(name = "beanMapper")
+	private DozerBeanMapper mapper;
+	@Override
+	public TradeNotifyRequestBody parsePaymentNotify(PaymentNotify notify) throws Exception {
+		TradeNotifyRequestBody requestBody = new TradeNotifyRequestBody();
+		AlipayTradePrecreateNotifyResponse response = (AlipayTradePrecreateNotifyResponse) notify;
+		requestBody.setZf_head(response.getZf_head());
+		AlipayTradePrecreatePacket body = mapper.map(notify, AlipayTradePrecreatePacket.class);
+		requestBody.setBody(body);
+		return null;
+	}
+
+}

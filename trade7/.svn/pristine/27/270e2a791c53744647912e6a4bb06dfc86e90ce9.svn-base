@@ -1,0 +1,102 @@
+package com.liantuo.deposit.accountForbidTrade.mapper;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import java.util.List;
+import javax.annotation.Resource;
+import org.junit.Test;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import com.liantuo.deposit.advanceaccount.orm.mapper.AccountForbidTradeMapper;
+import com.liantuo.deposit.advanceaccount.orm.pojo.AccountForbidTrade;
+
+
+@ContextConfiguration(locations = { "classpath:config/spring/applicationContext-myBatis.xml","classpath:config/spring/applicationContext-common.xml",
+		"classpath:config/spring/applicationContext-template.xml",
+		"classpath:config/spring/applicationContext-mq-producter.xml"})
+public class AccountForbidMapperTest extends AbstractTransactionalJUnit4SpringContextTests{
+	
+	@Resource
+	private AccountForbidTradeMapper accountForbidTradeMapper;
+	
+	@Test
+	public void selectByPrimaryKey(){
+		AccountForbidTrade vo = accountForbidTradeMapper.selectByPrimaryKey(5);
+		System.out.println(vo.getAccountNo()+"-----------");
+		assertNotNull(vo);
+	}
+	
+	@Test
+	public void selectWhetherForbidAllByCA(){
+		AccountForbidTrade vo = accountForbidTradeMapper.selectWhetherForbidAllByCA("CA21000000016955");
+		System.out.println(vo.getForbidCode()+"******************");
+		assertEquals("ALL",vo.getForbidCode());
+		
+	}
+	
+	@Test
+	public void selectWhetherForbidThisTrade(){
+		AccountForbidTrade vo = new AccountForbidTrade();
+		vo.setAccountNo("CA21000000016956");
+		vo = accountForbidTradeMapper.selectWhetherForbidThisTrade(vo);
+		assertNull(vo);
+	}
+	@Test
+	public void selectWhetherForbidThisTrade2(){
+		AccountForbidTrade vo = new AccountForbidTrade();
+		vo.setAccountNo("CA21000000016956");
+		vo.setForbidCode("0003_001_001");
+		vo = accountForbidTradeMapper.selectWhetherForbidThisTrade(vo);
+		assertNull(vo);
+	}
+	@Test
+	public void selectWhetherForbidThisTrade3(){
+		AccountForbidTrade vo = new AccountForbidTrade();
+		vo.setAccountNo("CA21000000016956");
+		vo.setForbidCode("0003_001_001");
+		vo.setType("02");
+		vo = accountForbidTradeMapper.selectWhetherForbidThisTrade(vo);
+		assertNotNull(vo);
+	}
+	@Test
+	public void selectByAccouNo(){
+		List<AccountForbidTrade> list = accountForbidTradeMapper.selectByAccouNo("CA21000000016752");
+		System.out.println(list.size()+"***********");
+		assertNotNull(list);
+	}
+	@Test
+	public void selectByCAAndForbidCode(){
+		AccountForbidTrade record = new AccountForbidTrade();
+		record.setAccountNo("CA21000000016752");
+		List<AccountForbidTrade>  list = accountForbidTradeMapper.selectByCAAndForbidCode(record);
+		assertNull(list);
+	}
+	
+	@Test
+	public void selectByCAAndForbidCode2(){
+		AccountForbidTrade record = new AccountForbidTrade();
+		record.setAccountNo("CA21000000016752");
+		record.setForbidCode("0007_001");
+		List<AccountForbidTrade>  list = accountForbidTradeMapper.selectByCAAndForbidCode(record);
+		assertNotNull(list);
+	}
+	
+	@Test
+	public void insert(){
+		int count=1;
+		AccountForbidTrade record = new AccountForbidTrade();
+		record.setId(count);
+		record.setAccountNo("CA21000000016752");
+		record.setForbidCode("0007_001");
+		record.setType("01");
+		AccountForbidMapperMock.mockInsert(accountForbidTradeMapper, count);
+		accountForbidTradeMapper.insert(record);
+		
+	}
+	@Test
+	public void deleteByPrimaryKey(){
+		AccountForbidMapperMock.mockDeleteByPrimaryKey(accountForbidTradeMapper, 0);
+		accountForbidTradeMapper.deleteByPrimaryKey(7);
+	}
+}

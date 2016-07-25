@@ -1,0 +1,1059 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liantuo.trade.orm.mapper.TradeWithdrawMapper">
+  <resultMap id="BaseResultMap" type="com.liantuo.trade.orm.pojo.TradeWithdraw">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="trade_no" jdbcType="VARCHAR" property="tradeNo" />
+    <result column="partner_id" jdbcType="VARCHAR" property="partnerId" />
+    <result column="core_merchant_no" jdbcType="VARCHAR" property="coreMerchantNo" />
+    <result column="fund_pool_no" jdbcType="VARCHAR" property="fundPoolNo" />
+    <result column="merchant_extend_field_1" jdbcType="VARCHAR" property="merchantExtendField1" />
+    <result column="merchant_extend_field_2" jdbcType="VARCHAR" property="merchantExtendField2" />
+    <result column="merchant_extend_field_3" jdbcType="VARCHAR" property="merchantExtendField3" />
+    <result column="merchant_extend_field_4" jdbcType="VARCHAR" property="merchantExtendField4" />
+    <result column="merchant_extend_field_5" jdbcType="VARCHAR" property="merchantExtendField5" />
+    <result column="out_trade_no_ext" jdbcType="VARCHAR" property="outTradeNoExt" />
+    <result column="out_trade_no" jdbcType="VARCHAR" property="outTradeNo" />
+    <result column="gmt_created" jdbcType="TIMESTAMP" property="gmtCreated" />
+    <result column="gmt_latest_modified" jdbcType="TIMESTAMP" property="gmtLatestModified" />
+    <result column="latest_trade_req_type" jdbcType="VARCHAR" property="latestTradeReqType" />
+    <result column="latest_req_no" jdbcType="VARCHAR" property="latestReqNo" />
+    <result column="close_status" jdbcType="CHAR" property="closeStatus" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="withdraw_account_no" jdbcType="VARCHAR" property="withdrawAccountNo" />
+    <result column="withdraw_merchant_no" jdbcType="VARCHAR" property="withdrawMerchantNo" />
+    <result column="withdraw_amount" jdbcType="BIGINT" property="withdrawAmount" />
+    <result column="gmt_deduct_success" jdbcType="TIMESTAMP" property="gmtDeductSuccess" />
+    <result column="gmt_created_fail" jdbcType="TIMESTAMP" property="gmtCreatedFail" />
+    <result column="gmt_first_pay" jdbcType="TIMESTAMP" property="gmtFirstPay" />
+    <result column="gmt_pay_success" jdbcType="TIMESTAMP" property="gmtPaySuccess" />
+    <result column="gmt_refund_success" jdbcType="TIMESTAMP" property="gmtRefundSuccess" />
+    <result column="gmt_last_pay_fail" jdbcType="TIMESTAMP" property="gmtLastPayFail" />
+    <result column="gmt_exception_end" jdbcType="TIMESTAMP" property="gmtExceptionEnd" />
+    <result column="pay_clear_channel" jdbcType="VARCHAR" property="payClearChannel" />
+    <result column="pay_transaction_id" jdbcType="VARCHAR" property="payTransactionId" />
+    <result column="business_type" jdbcType="VARCHAR" property="businessType" />
+    <result column="withdraw_batch_no" jdbcType="VARCHAR" property="withdrawBatchNo" />
+    <result column="withdraw_serial_number" jdbcType="VARCHAR" property="withdrawSerialNumber" />
+    <result column="payer_account" jdbcType="VARCHAR" property="payerAccount" />
+    <result column="payer_name" jdbcType="VARCHAR" property="payerName" />
+    <result column="withdraw_third_account" jdbcType="VARCHAR" property="withdrawThirdAccount" />
+    <result column="withdraw_third_account_name" jdbcType="VARCHAR" property="withdrawThirdAccountName" />
+    <result column="withdraw_third_userid" jdbcType="VARCHAR" property="withdrawThirdUserid" />
+    <result column="withdraw_third_account_paymemo" jdbcType="VARCHAR" property="withdrawThirdAccountPaymemo" />
+    <result column="withdraw_account_type" jdbcType="VARCHAR" property="withdrawAccountType" />
+    <result column="withdraw_bank_account" jdbcType="VARCHAR" property="withdrawBankAccount" />
+    <result column="withdraw_bank_number" jdbcType="VARCHAR" property="withdrawBankNumber" />
+    <result column="withdraw_bank_account_name" jdbcType="VARCHAR" property="withdrawBankAccountName" />
+    <result column="withdraw_bank_province" jdbcType="VARCHAR" property="withdrawBankProvince" />
+    <result column="withdraw_bank_city" jdbcType="VARCHAR" property="withdrawBankCity" />
+    <result column="withdraw_bank_branch_name" jdbcType="VARCHAR" property="withdrawBankBranchName" />
+    <result column="withdraw_bank_branch_no" jdbcType="VARCHAR" property="withdrawBankBranchNo" />
+    <result column="withdraw_bank_paymemo" jdbcType="VARCHAR" property="withdrawBankPaymemo" />
+    <result column="withdraw_charge_fee" jdbcType="BIGINT" property="withdrawChargeFee" />
+    <result column="withdraw_charge_fee_type" jdbcType="VARCHAR" property="withdrawChargeFeeType" />
+    <result column="withdraw_charge_fee_account" jdbcType="VARCHAR" property="withdrawChargeFeeAccount" />
+    <result column="pay_third_trade_no" jdbcType="VARCHAR" property="payThirdTradeNo" />
+    <result column="notify_url" jdbcType="VARCHAR" property="notifyUrl" />
+    <result column="ledger_no" jdbcType="VARCHAR" property="ledgerNo" />
+    <result column="version" jdbcType="INTEGER" property="version" />
+    <result column="request_group" jdbcType="VARCHAR" property="requestGroup" />
+    <result column="fail_error_code" jdbcType="VARCHAR" property="failErrorCode" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, trade_no, partner_id, core_merchant_no, fund_pool_no, merchant_extend_field_1, 
+    merchant_extend_field_2, merchant_extend_field_3, merchant_extend_field_4, merchant_extend_field_5, 
+    out_trade_no_ext, out_trade_no, gmt_created, gmt_latest_modified, latest_trade_req_type, 
+    latest_req_no, close_status, status, withdraw_account_no, withdraw_merchant_no, withdraw_amount, 
+    gmt_deduct_success, gmt_created_fail, gmt_first_pay, gmt_pay_success, gmt_refund_success, 
+    gmt_last_pay_fail, gmt_exception_end, pay_clear_channel, pay_transaction_id, business_type, 
+    withdraw_batch_no, withdraw_serial_number, payer_account, payer_name, withdraw_third_account, 
+    withdraw_third_account_name, withdraw_third_userid, withdraw_third_account_paymemo, 
+    withdraw_account_type, withdraw_bank_account, withdraw_bank_number, withdraw_bank_account_name, 
+    withdraw_bank_province, withdraw_bank_city, withdraw_bank_branch_name, withdraw_bank_branch_no, 
+    withdraw_bank_paymemo, withdraw_charge_fee, withdraw_charge_fee_type, withdraw_charge_fee_account, 
+    pay_third_trade_no, notify_url, ledger_no, version, request_group, fail_error_code
+  </sql>
+  <select id="selectByExample" parameterType="com.liantuo.trade.orm.pojo.TradeWithdrawExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from trade_withdraw
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectCountByExample" parameterType="com.liantuo.trade.orm.pojo.TradeWithdrawExample"  resultType="java.lang.Long">
+    select  count(*)  from trade_withdraw
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+   <select id="selectPageByExample" parameterType="com.liantuo.trade.orm.pojo.TradeWithdrawExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from trade_withdraw
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    limit ${start},${linage}
+  </select>
+
+  <select id="queryPageByExample" parameterType="com.liantuo.trade.orm.pojo.TradeWithdrawExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from trade_withdraw
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from trade_withdraw
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <!--  <insert id="insert" parameterType="com.liantuo.trade.orm.pojo.TradeWithdraw">
+    insert into trade_withdraw (id, trade_no, partner_id, 
+      core_merchant_no, fund_pool_no, merchant_extend_field_1, 
+      merchant_extend_field_2, merchant_extend_field_3, 
+      merchant_extend_field_4, merchant_extend_field_5, 
+      out_trade_no_ext, out_trade_no, gmt_created, 
+      gmt_latest_modified, latest_trade_req_type, 
+      latest_req_no, close_status, status, 
+      withdraw_account_no, withdraw_merchant_no, 
+      withdraw_amount, gmt_deduct_success, gmt_created_fail, 
+      gmt_first_pay, gmt_pay_success, gmt_refund_success, 
+      gmt_last_pay_fail, gmt_exception_end, pay_clear_channel, 
+      pay_transaction_id, business_type, withdraw_batch_no, 
+      withdraw_serial_number, payer_account, payer_name, 
+      withdraw_third_account, withdraw_third_account_name, 
+      withdraw_third_userid, withdraw_third_account_paymemo, 
+      withdraw_account_type, withdraw_bank_account, 
+      withdraw_bank_number, withdraw_bank_account_name, 
+      withdraw_bank_province, withdraw_bank_city, 
+      withdraw_bank_branch_name, withdraw_bank_branch_no, 
+      withdraw_bank_paymemo, withdraw_charge_fee, 
+      withdraw_charge_fee_type, withdraw_charge_fee_account, 
+      pay_third_trade_no, notify_url, ledger_no, 
+      version, request_group, fail_error_code
+      )
+    values (#{id,jdbcType=BIGINT}, #{tradeNo,jdbcType=VARCHAR}, #{partnerId,jdbcType=VARCHAR}, 
+      #{coreMerchantNo,jdbcType=VARCHAR}, #{fundPoolNo,jdbcType=VARCHAR}, #{merchantExtendField1,jdbcType=VARCHAR}, 
+      #{merchantExtendField2,jdbcType=VARCHAR}, #{merchantExtendField3,jdbcType=VARCHAR}, 
+      #{merchantExtendField4,jdbcType=VARCHAR}, #{merchantExtendField5,jdbcType=VARCHAR}, 
+      #{outTradeNoExt,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, #{gmtCreated,jdbcType=TIMESTAMP}, 
+      #{gmtLatestModified,jdbcType=TIMESTAMP}, #{latestTradeReqType,jdbcType=VARCHAR}, 
+      #{latestReqNo,jdbcType=VARCHAR}, #{closeStatus,jdbcType=CHAR}, #{status,jdbcType=VARCHAR}, 
+      #{withdrawAccountNo,jdbcType=VARCHAR}, #{withdrawMerchantNo,jdbcType=VARCHAR}, 
+      #{withdrawAmount,jdbcType=BIGINT}, #{gmtDeductSuccess,jdbcType=TIMESTAMP}, #{gmtCreatedFail,jdbcType=TIMESTAMP}, 
+      #{gmtFirstPay,jdbcType=TIMESTAMP}, #{gmtPaySuccess,jdbcType=TIMESTAMP}, #{gmtRefundSuccess,jdbcType=TIMESTAMP}, 
+      #{gmtLastPayFail,jdbcType=TIMESTAMP}, #{gmtExceptionEnd,jdbcType=TIMESTAMP}, #{payClearChannel,jdbcType=VARCHAR}, 
+      #{payTransactionId,jdbcType=VARCHAR}, #{businessType,jdbcType=VARCHAR}, #{withdrawBatchNo,jdbcType=VARCHAR}, 
+      #{withdrawSerialNumber,jdbcType=VARCHAR}, #{payerAccount,jdbcType=VARCHAR}, #{payerName,jdbcType=VARCHAR}, 
+      #{withdrawThirdAccount,jdbcType=VARCHAR}, #{withdrawThirdAccountName,jdbcType=VARCHAR}, 
+      #{withdrawThirdUserid,jdbcType=VARCHAR}, #{withdrawThirdAccountPaymemo,jdbcType=VARCHAR}, 
+      #{withdrawAccountType,jdbcType=VARCHAR}, #{withdrawBankAccount,jdbcType=VARCHAR}, 
+      #{withdrawBankNumber,jdbcType=VARCHAR}, #{withdrawBankAccountName,jdbcType=VARCHAR}, 
+      #{withdrawBankProvince,jdbcType=VARCHAR}, #{withdrawBankCity,jdbcType=VARCHAR}, 
+      #{withdrawBankBranchName,jdbcType=VARCHAR}, #{withdrawBankBranchNo,jdbcType=VARCHAR}, 
+      #{withdrawBankPaymemo,jdbcType=VARCHAR}, #{withdrawChargeFee,jdbcType=BIGINT}, 
+      #{withdrawChargeFeeType,jdbcType=VARCHAR}, #{withdrawChargeFeeAccount,jdbcType=VARCHAR}, 
+      #{payThirdTradeNo,jdbcType=VARCHAR}, #{notifyUrl,jdbcType=VARCHAR}, #{ledgerNo,jdbcType=VARCHAR}, 
+      #{version,jdbcType=INTEGER}, #{requestGroup,jdbcType=VARCHAR}, #{failErrorCode,jdbcType=VARCHAR}
+      )
+  </insert>-->
+  <insert id="insertSelective" parameterType="com.liantuo.trade.orm.pojo.TradeWithdraw">
+    <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+		SELECT LAST_INSERT_ID() AS id
+	</selectKey>
+    insert into trade_withdraw
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="tradeNo != null">
+        trade_no,
+      </if>
+      <if test="partnerId != null">
+        partner_id,
+      </if>
+      <if test="coreMerchantNo != null">
+        core_merchant_no,
+      </if>
+      <if test="fundPoolNo != null">
+        fund_pool_no,
+      </if>
+      <if test="merchantExtendField1 != null">
+        merchant_extend_field_1,
+      </if>
+      <if test="merchantExtendField2 != null">
+        merchant_extend_field_2,
+      </if>
+      <if test="merchantExtendField3 != null">
+        merchant_extend_field_3,
+      </if>
+      <if test="merchantExtendField4 != null">
+        merchant_extend_field_4,
+      </if>
+      <if test="merchantExtendField5 != null">
+        merchant_extend_field_5,
+      </if>
+      <if test="outTradeNoExt != null">
+        out_trade_no_ext,
+      </if>
+      <if test="outTradeNo != null">
+        out_trade_no,
+      </if>
+        gmt_created,
+        gmt_latest_modified,
+      <if test="latestTradeReqType != null">
+        latest_trade_req_type,
+      </if>
+      <if test="latestReqNo != null">
+        latest_req_no,
+      </if>
+      <if test="closeStatus != null">
+        close_status,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="withdrawAccountNo != null">
+        withdraw_account_no,
+      </if>
+      <if test="withdrawMerchantNo != null">
+        withdraw_merchant_no,
+      </if>
+      <if test="withdrawAmount != null">
+        withdraw_amount,
+      </if>
+      <if test="gmtDeductSuccess != null">
+        gmt_deduct_success,
+      </if>
+      <if test="gmtCreatedFail != null">
+        gmt_created_fail,
+      </if>
+      <if test="gmtFirstPay != null">
+        gmt_first_pay,
+      </if>
+      <if test="gmtPaySuccess != null">
+        gmt_pay_success,
+      </if>
+      <if test="gmtRefundSuccess != null">
+        gmt_refund_success,
+      </if>
+      <if test="gmtLastPayFail != null">
+        gmt_last_pay_fail,
+      </if>
+      <if test="gmtExceptionEnd != null">
+        gmt_exception_end,
+      </if>
+      <if test="payClearChannel != null">
+        pay_clear_channel,
+      </if>
+      <if test="payTransactionId != null">
+        pay_transaction_id,
+      </if>
+      <if test="businessType != null">
+        business_type,
+      </if>
+      <if test="withdrawBatchNo != null">
+        withdraw_batch_no,
+      </if>
+      <if test="withdrawSerialNumber != null">
+        withdraw_serial_number,
+      </if>
+      <if test="payerAccount != null">
+        payer_account,
+      </if>
+      <if test="payerName != null">
+        payer_name,
+      </if>
+      <if test="withdrawThirdAccount != null">
+        withdraw_third_account,
+      </if>
+      <if test="withdrawThirdAccountName != null">
+        withdraw_third_account_name,
+      </if>
+      <if test="withdrawThirdUserid != null">
+        withdraw_third_userid,
+      </if>
+      <if test="withdrawThirdAccountPaymemo != null">
+        withdraw_third_account_paymemo,
+      </if>
+      <if test="withdrawAccountType != null">
+        withdraw_account_type,
+      </if>
+      <if test="withdrawBankAccount != null">
+        withdraw_bank_account,
+      </if>
+      <if test="withdrawBankNumber != null">
+        withdraw_bank_number,
+      </if>
+      <if test="withdrawBankAccountName != null">
+        withdraw_bank_account_name,
+      </if>
+      <if test="withdrawBankProvince != null">
+        withdraw_bank_province,
+      </if>
+      <if test="withdrawBankCity != null">
+        withdraw_bank_city,
+      </if>
+      <if test="withdrawBankBranchName != null">
+        withdraw_bank_branch_name,
+      </if>
+      <if test="withdrawBankBranchNo != null">
+        withdraw_bank_branch_no,
+      </if>
+      <if test="withdrawBankPaymemo != null">
+        withdraw_bank_paymemo,
+      </if>
+      <if test="withdrawChargeFee != null">
+        withdraw_charge_fee,
+      </if>
+      <if test="withdrawChargeFeeType != null">
+        withdraw_charge_fee_type,
+      </if>
+      <if test="withdrawChargeFeeAccount != null">
+        withdraw_charge_fee_account,
+      </if>
+      <if test="payThirdTradeNo != null">
+        pay_third_trade_no,
+      </if>
+      <if test="notifyUrl != null">
+        notify_url,
+      </if>
+      <if test="ledgerNo != null">
+        ledger_no,
+      </if>
+      <if test="version != null">
+        version,
+      </if>
+      <if test="requestGroup != null">
+        request_group,
+      </if>
+      <if test="failErrorCode != null">
+        fail_error_code,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="tradeNo != null">
+        #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="partnerId != null">
+        #{partnerId,jdbcType=VARCHAR},
+      </if>
+      <if test="coreMerchantNo != null">
+        #{coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fundPoolNo != null">
+        #{fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField1 != null">
+        #{merchantExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField2 != null">
+        #{merchantExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField3 != null">
+        #{merchantExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField4 != null">
+        #{merchantExtendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField5 != null">
+        #{merchantExtendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNoExt != null">
+        #{outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null">
+        #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      NOW(),
+      NOW(),
+      <if test="latestTradeReqType != null">
+        #{latestTradeReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="latestReqNo != null">
+        #{latestReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="closeStatus != null">
+        #{closeStatus,jdbcType=CHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawAccountNo != null">
+        #{withdrawAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawMerchantNo != null">
+        #{withdrawMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawAmount != null">
+        #{withdrawAmount,jdbcType=BIGINT},
+      </if>
+      <if test="gmtDeductSuccess != null">
+        #{gmtDeductSuccess,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtCreatedFail != null">
+        #{gmtCreatedFail,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtFirstPay != null">
+        #{gmtFirstPay,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtPaySuccess != null">
+        #{gmtPaySuccess,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtRefundSuccess != null">
+        #{gmtRefundSuccess,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtLastPayFail != null">
+        #{gmtLastPayFail,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtExceptionEnd != null">
+        #{gmtExceptionEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payClearChannel != null">
+        #{payClearChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="payTransactionId != null">
+        #{payTransactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="businessType != null">
+        #{businessType,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawBatchNo != null">
+        #{withdrawBatchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawSerialNumber != null">
+        #{withdrawSerialNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="payerAccount != null">
+        #{payerAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="payerName != null">
+        #{payerName,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawThirdAccount != null">
+        #{withdrawThirdAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawThirdAccountName != null">
+        #{withdrawThirdAccountName,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawThirdUserid != null">
+        #{withdrawThirdUserid,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawThirdAccountPaymemo != null">
+        #{withdrawThirdAccountPaymemo,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawAccountType != null">
+        #{withdrawAccountType,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawBankAccount != null">
+        #{withdrawBankAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawBankNumber != null">
+        #{withdrawBankNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawBankAccountName != null">
+        #{withdrawBankAccountName,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawBankProvince != null">
+        #{withdrawBankProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawBankCity != null">
+        #{withdrawBankCity,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawBankBranchName != null">
+        #{withdrawBankBranchName,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawBankBranchNo != null">
+        #{withdrawBankBranchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawBankPaymemo != null">
+        #{withdrawBankPaymemo,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawChargeFee != null">
+        #{withdrawChargeFee,jdbcType=BIGINT},
+      </if>
+      <if test="withdrawChargeFeeType != null">
+        #{withdrawChargeFeeType,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawChargeFeeAccount != null">
+        #{withdrawChargeFeeAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="payThirdTradeNo != null">
+        #{payThirdTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="notifyUrl != null">
+        #{notifyUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="ledgerNo != null">
+        #{ledgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null">
+        #{version,jdbcType=INTEGER},
+      </if>
+      <if test="requestGroup != null">
+        #{requestGroup,jdbcType=VARCHAR},
+      </if>
+      <if test="failErrorCode != null">
+        #{failErrorCode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <!--  <update id="updateByExampleSelective" parameterType="map">
+    update trade_withdraw
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.tradeNo != null">
+        trade_no = #{record.tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.partnerId != null">
+        partner_id = #{record.partnerId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.coreMerchantNo != null">
+        core_merchant_no = #{record.coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fundPoolNo != null">
+        fund_pool_no = #{record.fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField1 != null">
+        merchant_extend_field_1 = #{record.merchantExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField2 != null">
+        merchant_extend_field_2 = #{record.merchantExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField3 != null">
+        merchant_extend_field_3 = #{record.merchantExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField4 != null">
+        merchant_extend_field_4 = #{record.merchantExtendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField5 != null">
+        merchant_extend_field_5 = #{record.merchantExtendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="record.outTradeNoExt != null">
+        out_trade_no_ext = #{record.outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+      <if test="record.outTradeNo != null">
+        out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gmtCreated != null">
+        gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.gmtLatestModified != null">
+        gmt_latest_modified = #{record.gmtLatestModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.latestTradeReqType != null">
+        latest_trade_req_type = #{record.latestTradeReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.latestReqNo != null">
+        latest_req_no = #{record.latestReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.closeStatus != null">
+        close_status = #{record.closeStatus,jdbcType=CHAR},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=VARCHAR},
+      </if>
+      <if test="record.withdrawAccountNo != null">
+        withdraw_account_no = #{record.withdrawAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.withdrawMerchantNo != null">
+        withdraw_merchant_no = #{record.withdrawMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.withdrawAmount != null">
+        withdraw_amount = #{record.withdrawAmount,jdbcType=BIGINT},
+      </if>
+      <if test="record.gmtDeductSuccess != null">
+        gmt_deduct_success = #{record.gmtDeductSuccess,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.gmtCreatedFail != null">
+        gmt_created_fail = #{record.gmtCreatedFail,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.gmtFirstPay != null">
+        gmt_first_pay = #{record.gmtFirstPay,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.gmtPaySuccess != null">
+        gmt_pay_success = #{record.gmtPaySuccess,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.gmtRefundSuccess != null">
+        gmt_refund_success = #{record.gmtRefundSuccess,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.gmtLastPayFail != null">
+        gmt_last_pay_fail = #{record.gmtLastPayFail,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.gmtExceptionEnd != null">
+        gmt_exception_end = #{record.gmtExceptionEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.payClearChannel != null">
+        pay_clear_channel = #{record.payClearChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.payTransactionId != null">
+        pay_transaction_id = #{record.payTransactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.businessType != null">
+        business_type = #{record.businessType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.withdrawBatchNo != null">
+        withdraw_batch_no = #{record.withdrawBatchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.withdrawSerialNumber != null">
+        withdraw_serial_number = #{record.withdrawSerialNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.payerAccount != null">
+        payer_account = #{record.payerAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="record.payerName != null">
+        payer_name = #{record.payerName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.withdrawThirdAccount != null">
+        withdraw_third_account = #{record.withdrawThirdAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="record.withdrawThirdAccountName != null">
+        withdraw_third_account_name = #{record.withdrawThirdAccountName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.withdrawThirdUserid != null">
+        withdraw_third_userid = #{record.withdrawThirdUserid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.withdrawThirdAccountPaymemo != null">
+        withdraw_third_account_paymemo = #{record.withdrawThirdAccountPaymemo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.withdrawAccountType != null">
+        withdraw_account_type = #{record.withdrawAccountType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.withdrawBankAccount != null">
+        withdraw_bank_account = #{record.withdrawBankAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="record.withdrawBankNumber != null">
+        withdraw_bank_number = #{record.withdrawBankNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.withdrawBankAccountName != null">
+        withdraw_bank_account_name = #{record.withdrawBankAccountName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.withdrawBankProvince != null">
+        withdraw_bank_province = #{record.withdrawBankProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="record.withdrawBankCity != null">
+        withdraw_bank_city = #{record.withdrawBankCity,jdbcType=VARCHAR},
+      </if>
+      <if test="record.withdrawBankBranchName != null">
+        withdraw_bank_branch_name = #{record.withdrawBankBranchName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.withdrawBankBranchNo != null">
+        withdraw_bank_branch_no = #{record.withdrawBankBranchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.withdrawBankPaymemo != null">
+        withdraw_bank_paymemo = #{record.withdrawBankPaymemo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.withdrawChargeFee != null">
+        withdraw_charge_fee = #{record.withdrawChargeFee,jdbcType=BIGINT},
+      </if>
+      <if test="record.withdrawChargeFeeType != null">
+        withdraw_charge_fee_type = #{record.withdrawChargeFeeType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.withdrawChargeFeeAccount != null">
+        withdraw_charge_fee_account = #{record.withdrawChargeFeeAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="record.payThirdTradeNo != null">
+        pay_third_trade_no = #{record.payThirdTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.notifyUrl != null">
+        notify_url = #{record.notifyUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ledgerNo != null">
+        ledger_no = #{record.ledgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.version != null">
+        version = #{record.version,jdbcType=INTEGER},
+      </if>
+      <if test="record.requestGroup != null">
+        request_group = #{record.requestGroup,jdbcType=VARCHAR},
+      </if>
+      <if test="record.failErrorCode != null">
+        fail_error_code = #{record.failErrorCode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>-->
+  <!--  <update id="updateByExample" parameterType="map">
+    update trade_withdraw
+    set id = #{record.id,jdbcType=BIGINT},
+      trade_no = #{record.tradeNo,jdbcType=VARCHAR},
+      partner_id = #{record.partnerId,jdbcType=VARCHAR},
+      core_merchant_no = #{record.coreMerchantNo,jdbcType=VARCHAR},
+      fund_pool_no = #{record.fundPoolNo,jdbcType=VARCHAR},
+      merchant_extend_field_1 = #{record.merchantExtendField1,jdbcType=VARCHAR},
+      merchant_extend_field_2 = #{record.merchantExtendField2,jdbcType=VARCHAR},
+      merchant_extend_field_3 = #{record.merchantExtendField3,jdbcType=VARCHAR},
+      merchant_extend_field_4 = #{record.merchantExtendField4,jdbcType=VARCHAR},
+      merchant_extend_field_5 = #{record.merchantExtendField5,jdbcType=VARCHAR},
+      out_trade_no_ext = #{record.outTradeNoExt,jdbcType=VARCHAR},
+      out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
+      gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP},
+      gmt_latest_modified = #{record.gmtLatestModified,jdbcType=TIMESTAMP},
+      latest_trade_req_type = #{record.latestTradeReqType,jdbcType=VARCHAR},
+      latest_req_no = #{record.latestReqNo,jdbcType=VARCHAR},
+      close_status = #{record.closeStatus,jdbcType=CHAR},
+      status = #{record.status,jdbcType=VARCHAR},
+      withdraw_account_no = #{record.withdrawAccountNo,jdbcType=VARCHAR},
+      withdraw_merchant_no = #{record.withdrawMerchantNo,jdbcType=VARCHAR},
+      withdraw_amount = #{record.withdrawAmount,jdbcType=BIGINT},
+      gmt_deduct_success = #{record.gmtDeductSuccess,jdbcType=TIMESTAMP},
+      gmt_created_fail = #{record.gmtCreatedFail,jdbcType=TIMESTAMP},
+      gmt_first_pay = #{record.gmtFirstPay,jdbcType=TIMESTAMP},
+      gmt_pay_success = #{record.gmtPaySuccess,jdbcType=TIMESTAMP},
+      gmt_refund_success = #{record.gmtRefundSuccess,jdbcType=TIMESTAMP},
+      gmt_last_pay_fail = #{record.gmtLastPayFail,jdbcType=TIMESTAMP},
+      gmt_exception_end = #{record.gmtExceptionEnd,jdbcType=TIMESTAMP},
+      pay_clear_channel = #{record.payClearChannel,jdbcType=VARCHAR},
+      pay_transaction_id = #{record.payTransactionId,jdbcType=VARCHAR},
+      business_type = #{record.businessType,jdbcType=VARCHAR},
+      withdraw_batch_no = #{record.withdrawBatchNo,jdbcType=VARCHAR},
+      withdraw_serial_number = #{record.withdrawSerialNumber,jdbcType=VARCHAR},
+      payer_account = #{record.payerAccount,jdbcType=VARCHAR},
+      payer_name = #{record.payerName,jdbcType=VARCHAR},
+      withdraw_third_account = #{record.withdrawThirdAccount,jdbcType=VARCHAR},
+      withdraw_third_account_name = #{record.withdrawThirdAccountName,jdbcType=VARCHAR},
+      withdraw_third_userid = #{record.withdrawThirdUserid,jdbcType=VARCHAR},
+      withdraw_third_account_paymemo = #{record.withdrawThirdAccountPaymemo,jdbcType=VARCHAR},
+      withdraw_account_type = #{record.withdrawAccountType,jdbcType=VARCHAR},
+      withdraw_bank_account = #{record.withdrawBankAccount,jdbcType=VARCHAR},
+      withdraw_bank_number = #{record.withdrawBankNumber,jdbcType=VARCHAR},
+      withdraw_bank_account_name = #{record.withdrawBankAccountName,jdbcType=VARCHAR},
+      withdraw_bank_province = #{record.withdrawBankProvince,jdbcType=VARCHAR},
+      withdraw_bank_city = #{record.withdrawBankCity,jdbcType=VARCHAR},
+      withdraw_bank_branch_name = #{record.withdrawBankBranchName,jdbcType=VARCHAR},
+      withdraw_bank_branch_no = #{record.withdrawBankBranchNo,jdbcType=VARCHAR},
+      withdraw_bank_paymemo = #{record.withdrawBankPaymemo,jdbcType=VARCHAR},
+      withdraw_charge_fee = #{record.withdrawChargeFee,jdbcType=BIGINT},
+      withdraw_charge_fee_type = #{record.withdrawChargeFeeType,jdbcType=VARCHAR},
+      withdraw_charge_fee_account = #{record.withdrawChargeFeeAccount,jdbcType=VARCHAR},
+      pay_third_trade_no = #{record.payThirdTradeNo,jdbcType=VARCHAR},
+      notify_url = #{record.notifyUrl,jdbcType=VARCHAR},
+      ledger_no = #{record.ledgerNo,jdbcType=VARCHAR},
+      version = #{record.version,jdbcType=INTEGER},
+      request_group = #{record.requestGroup,jdbcType=VARCHAR},
+      fail_error_code = #{record.failErrorCode,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>-->
+  <update id="updateByPrimaryKeySelective" parameterType="com.liantuo.trade.orm.pojo.TradeWithdraw">
+    update trade_withdraw
+    <set>
+      <if test="tradeNo != null">
+        trade_no = #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="partnerId != null">
+        partner_id = #{partnerId,jdbcType=VARCHAR},
+      </if>
+      <if test="coreMerchantNo != null">
+        core_merchant_no = #{coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fundPoolNo != null">
+        fund_pool_no = #{fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField1 != null">
+        merchant_extend_field_1 = #{merchantExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField2 != null">
+        merchant_extend_field_2 = #{merchantExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField3 != null">
+        merchant_extend_field_3 = #{merchantExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField4 != null">
+        merchant_extend_field_4 = #{merchantExtendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField5 != null">
+        merchant_extend_field_5 = #{merchantExtendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNoExt != null">
+        out_trade_no_ext = #{outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null">
+        out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreated != null">
+        gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      gmt_latest_modified = NOW(),
+      <if test="latestTradeReqType != null">
+        latest_trade_req_type = #{latestTradeReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="latestReqNo != null">
+        latest_req_no = #{latestReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="closeStatus != null">
+        close_status = #{closeStatus,jdbcType=CHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawAccountNo != null">
+        withdraw_account_no = #{withdrawAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawMerchantNo != null">
+        withdraw_merchant_no = #{withdrawMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawAmount != null">
+        withdraw_amount = #{withdrawAmount,jdbcType=BIGINT},
+      </if>
+      <if test="gmtDeductSuccess != null">
+        gmt_deduct_success = #{gmtDeductSuccess,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtCreatedFail != null">
+        gmt_created_fail = #{gmtCreatedFail,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtFirstPay != null">
+        gmt_first_pay = #{gmtFirstPay,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtPaySuccess != null">
+        gmt_pay_success = #{gmtPaySuccess,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtRefundSuccess != null">
+        gmt_refund_success = #{gmtRefundSuccess,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtLastPayFail != null">
+        gmt_last_pay_fail = #{gmtLastPayFail,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtExceptionEnd != null">
+        gmt_exception_end = #{gmtExceptionEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payClearChannel != null">
+        pay_clear_channel = #{payClearChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="payTransactionId != null">
+        pay_transaction_id = #{payTransactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="businessType != null">
+        business_type = #{businessType,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawBatchNo != null">
+        withdraw_batch_no = #{withdrawBatchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawSerialNumber != null">
+        withdraw_serial_number = #{withdrawSerialNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="payerAccount != null">
+        payer_account = #{payerAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="payerName != null">
+        payer_name = #{payerName,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawThirdAccount != null">
+        withdraw_third_account = #{withdrawThirdAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawThirdAccountName != null">
+        withdraw_third_account_name = #{withdrawThirdAccountName,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawThirdUserid != null">
+        withdraw_third_userid = #{withdrawThirdUserid,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawThirdAccountPaymemo != null">
+        withdraw_third_account_paymemo = #{withdrawThirdAccountPaymemo,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawAccountType != null">
+        withdraw_account_type = #{withdrawAccountType,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawBankAccount != null">
+        withdraw_bank_account = #{withdrawBankAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawBankNumber != null">
+        withdraw_bank_number = #{withdrawBankNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawBankAccountName != null">
+        withdraw_bank_account_name = #{withdrawBankAccountName,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawBankProvince != null">
+        withdraw_bank_province = #{withdrawBankProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawBankCity != null">
+        withdraw_bank_city = #{withdrawBankCity,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawBankBranchName != null">
+        withdraw_bank_branch_name = #{withdrawBankBranchName,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawBankBranchNo != null">
+        withdraw_bank_branch_no = #{withdrawBankBranchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawBankPaymemo != null">
+        withdraw_bank_paymemo = #{withdrawBankPaymemo,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawChargeFee != null">
+        withdraw_charge_fee = #{withdrawChargeFee,jdbcType=BIGINT},
+      </if>
+      <if test="withdrawChargeFeeType != null">
+        withdraw_charge_fee_type = #{withdrawChargeFeeType,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawChargeFeeAccount != null">
+        withdraw_charge_fee_account = #{withdrawChargeFeeAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="payThirdTradeNo != null">
+        pay_third_trade_no = #{payThirdTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="notifyUrl != null">
+        notify_url = #{notifyUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="ledgerNo != null">
+        ledger_no = #{ledgerNo,jdbcType=VARCHAR},
+      </if>
+      version = version+1,
+      <if test="requestGroup != null">
+        request_group = #{requestGroup,jdbcType=VARCHAR},
+      </if>
+      <if test="failErrorCode != null">
+        fail_error_code = #{failErrorCode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT} and version = #{version}
+  </update>
+      
+  <!--  <update id="updateByPrimaryKey" parameterType="com.liantuo.trade.orm.pojo.TradeWithdraw">
+    update trade_withdraw
+    set trade_no = #{tradeNo,jdbcType=VARCHAR},
+      partner_id = #{partnerId,jdbcType=VARCHAR},
+      core_merchant_no = #{coreMerchantNo,jdbcType=VARCHAR},
+      fund_pool_no = #{fundPoolNo,jdbcType=VARCHAR},
+      merchant_extend_field_1 = #{merchantExtendField1,jdbcType=VARCHAR},
+      merchant_extend_field_2 = #{merchantExtendField2,jdbcType=VARCHAR},
+      merchant_extend_field_3 = #{merchantExtendField3,jdbcType=VARCHAR},
+      merchant_extend_field_4 = #{merchantExtendField4,jdbcType=VARCHAR},
+      merchant_extend_field_5 = #{merchantExtendField5,jdbcType=VARCHAR},
+      out_trade_no_ext = #{outTradeNoExt,jdbcType=VARCHAR},
+      out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      gmt_latest_modified = #{gmtLatestModified,jdbcType=TIMESTAMP},
+      latest_trade_req_type = #{latestTradeReqType,jdbcType=VARCHAR},
+      latest_req_no = #{latestReqNo,jdbcType=VARCHAR},
+      close_status = #{closeStatus,jdbcType=CHAR},
+      status = #{status,jdbcType=VARCHAR},
+      withdraw_account_no = #{withdrawAccountNo,jdbcType=VARCHAR},
+      withdraw_merchant_no = #{withdrawMerchantNo,jdbcType=VARCHAR},
+      withdraw_amount = #{withdrawAmount,jdbcType=BIGINT},
+      gmt_deduct_success = #{gmtDeductSuccess,jdbcType=TIMESTAMP},
+      gmt_created_fail = #{gmtCreatedFail,jdbcType=TIMESTAMP},
+      gmt_first_pay = #{gmtFirstPay,jdbcType=TIMESTAMP},
+      gmt_pay_success = #{gmtPaySuccess,jdbcType=TIMESTAMP},
+      gmt_refund_success = #{gmtRefundSuccess,jdbcType=TIMESTAMP},
+      gmt_last_pay_fail = #{gmtLastPayFail,jdbcType=TIMESTAMP},
+      gmt_exception_end = #{gmtExceptionEnd,jdbcType=TIMESTAMP},
+      pay_clear_channel = #{payClearChannel,jdbcType=VARCHAR},
+      pay_transaction_id = #{payTransactionId,jdbcType=VARCHAR},
+      business_type = #{businessType,jdbcType=VARCHAR},
+      withdraw_batch_no = #{withdrawBatchNo,jdbcType=VARCHAR},
+      withdraw_serial_number = #{withdrawSerialNumber,jdbcType=VARCHAR},
+      payer_account = #{payerAccount,jdbcType=VARCHAR},
+      payer_name = #{payerName,jdbcType=VARCHAR},
+      withdraw_third_account = #{withdrawThirdAccount,jdbcType=VARCHAR},
+      withdraw_third_account_name = #{withdrawThirdAccountName,jdbcType=VARCHAR},
+      withdraw_third_userid = #{withdrawThirdUserid,jdbcType=VARCHAR},
+      withdraw_third_account_paymemo = #{withdrawThirdAccountPaymemo,jdbcType=VARCHAR},
+      withdraw_account_type = #{withdrawAccountType,jdbcType=VARCHAR},
+      withdraw_bank_account = #{withdrawBankAccount,jdbcType=VARCHAR},
+      withdraw_bank_number = #{withdrawBankNumber,jdbcType=VARCHAR},
+      withdraw_bank_account_name = #{withdrawBankAccountName,jdbcType=VARCHAR},
+      withdraw_bank_province = #{withdrawBankProvince,jdbcType=VARCHAR},
+      withdraw_bank_city = #{withdrawBankCity,jdbcType=VARCHAR},
+      withdraw_bank_branch_name = #{withdrawBankBranchName,jdbcType=VARCHAR},
+      withdraw_bank_branch_no = #{withdrawBankBranchNo,jdbcType=VARCHAR},
+      withdraw_bank_paymemo = #{withdrawBankPaymemo,jdbcType=VARCHAR},
+      withdraw_charge_fee = #{withdrawChargeFee,jdbcType=BIGINT},
+      withdraw_charge_fee_type = #{withdrawChargeFeeType,jdbcType=VARCHAR},
+      withdraw_charge_fee_account = #{withdrawChargeFeeAccount,jdbcType=VARCHAR},
+      pay_third_trade_no = #{payThirdTradeNo,jdbcType=VARCHAR},
+      notify_url = #{notifyUrl,jdbcType=VARCHAR},
+      ledger_no = #{ledgerNo,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER},
+      request_group = #{requestGroup,jdbcType=VARCHAR},
+      fail_error_code = #{failErrorCode,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>-->
+</mapper>

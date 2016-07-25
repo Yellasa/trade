@@ -1,0 +1,39 @@
+package com.liantuo.deposit.test;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+
+import com.liantuo.deposit.advanceaccount.bus.service.CreditAccountServiceMockTest;
+import com.liantuo.deposit.advanceaccount.orm.mapper.CreditAccountMapperTest;
+import com.liantuo.deposit.advanceaccount.orm.mapper.PoolMapperTest;
+import com.liantuo.deposit.advanceaccount.web.controller.CreditAccountQueryControllerMockTest;
+import com.liantuo.deposit.advanceaccount.web.controller.OpenAdvanceAccountControllerMockTest;
+import com.liantuo.deposit.advanceaccount.web.controller.PoolQueryControllerMockTest;
+import com.liantuo.deposit.advanceaccount.web.inner.controller.CreditAccountQueryInnerControllerMockTest;
+import com.liantuo.deposit.advanceaccount.web.inner.controller.PoolQueryInnerControllerMockTest;
+
+
+/**
+ * 
+* @ClassName: TestSuiteFor001 
+* @Description: 
+* @author JiangKun
+* @date 2016年7月4日 下午4:39:16 
+*
+ */
+@RunWith(Suite.class)
+@Suite.SuiteClasses( {
+	PoolMapperTest.class
+	,CreditAccountMapperTest.class
+	,CreditAccountServiceMockTest.class
+	,CreditAccountQueryControllerMockTest.class
+	,PoolQueryControllerMockTest.class
+	,OpenAdvanceAccountControllerMockTest.class
+	,CreditAccountQueryInnerControllerMockTest.class
+	,PoolQueryInnerControllerMockTest.class})
+public class TestSuiteFor001 {
+
+}

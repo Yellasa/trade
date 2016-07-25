@@ -1,0 +1,102 @@
+package com.liantuo.trade.bus.process.impl.single_payment.asyn_service.impl;
+
+import java.util.Date;
+
+import javax.annotation.Resource;
+
+import org.dozer.DozerBeanMapper;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
+import com.liantuo.payment.client.pay.PaymentNotify;
+import com.liantuo.payment.client.pay.alipay.vo1.rsp.AlipayTradePrecreateNotifyResponse;
+import com.liantuo.payment.client.pay.head.PaymentHead;
+import com.liantuo.trade.bus.process.TradeState;
+import com.liantuo.trade.bus.process.impl.single_payment.asyn_service.AsynNotifyService;
+import com.liantuo.trade.client.trade.packet.body.TradeNotifyRequestBody;
+import com.liantuo.trade.client.trade.packet.body.TradeRequestBody;
+import com.liantuo.trade.client.trade.packet.body.single_payment.AlipayTradePrecreateNotifyPacket;
+import com.liantuo.trade.common.util.amount.AmountUtils;
+import com.liantuo.trade.common.util.date.DateUtil;
+import com.liantuo.trade.orm.pojo.TradeLedger;
+
+@Component(value = "alipayAsynTradePrecreateService")
+public class AlipayAsynTradePrecreateService implements AsynNotifyService {
+	@Resource(name = "beanMapper")
+	private DozerBeanMapper mapper;
+
+	@Override
+	public TradeNotifyRequestBody parsePaymentNotify(PaymentNotify notify) throws Exception {
+		TradeNotifyRequestBody requestBody = new TradeNotifyRequestBody();
+		AlipayTradePrecreateNotifyResponse response = (AlipayTradePrecreateNotifyResponse) notify;
+		AlipayTradePrecreateNotifyPacket body = mapper.map(response, AlipayTradePrecreateNotifyPacket.class);
+		requestBody.setBody(body);
+		return requestBody;
+	}
+
+	@Override
+	public String getThirdOutTradeNo(TradeRequestBody body) throws Exception {
+		// 1.校验【商户订单号】是否与台账【提交第三方批次流水号】一致
+		AlipayTradePrecreateNotifyPacket alipayBody = (AlipayTradePrecreateNotifyPacket) body;
+		String merchOrderNo = alipayBody.getOut_trade_no();
+		if(merchOrderNo == null ){
+			throw new Exception("支付宝返回的【商户订单号】为空");
+		}
+		return merchOrderNo;
+
+	}
+
+	@Override
+	public long getThirdReceiveAmount(TradeRequestBody body) throws Exception {
+		// 2.校验【实收金额】是否与台账【收款金额】一致，
+		// 支付宝返回的参数为元，需要乘以100000
+		AlipayTradePrecreateNotifyPacket alipayBody = (AlipayTradePrecreateNotifyPacket) body;
+		long receiptAmount = AmountUtils.str2long(alipayBody.getReceipt_amount());
+		return receiptAmount;
+	}
+
+	@Override
+	public TradeState getTradePaymentStatus(TradeNotifyRequestBody tradeRquest) throws Exception {
+		//该交易只有成功异步通知，支付中心已校验,如果以后有其他状态需要有其他的判断
+		return TradeState.SUCCESS;
+	}
+
+	@Override
+	public void prepareEffectLedger(TradeRequestBody body,TradeLedger ledger) {
+		AlipayTradePrecreateNotifyPacket alipayBody = (AlipayTradePrecreateNotifyPacket) body;
+		//收付款备注2【付款方账户】	来自支付宝异步返回【买家在支付宝用户号】
+		ledger.setExtendField2(alipayBody.getBuyer_id());
+		//收付款备注3【付款方账户名称】	来自支付宝异步返回【买家支付宝账号】
+		ledger.setExtendField3(alipayBody.getBuyer_logon_id());
+		//收付款备注6【收款账户】	来自支付宝异步返回【卖家支付宝用户号】
+		ledger.setExtendField6(alipayBody.getSeller_id());
+		//收付款备注7【收款账户名称】	来自支付宝异步返回【卖家支付宝账号】
+		ledger.setExtendField7(alipayBody.getSeller_email());
+		//外部渠道收付款成功日期时间	来自支付宝异步返回【交易付款时间】
+		Date gmtSuccessClearChannel =  DateUtil.formatDateTime(alipayBody.getGmt_payment());
+		ledger.setGmtSuccessClearChannel(gmtSuccessClearChannel);
+		//收付款渠道订单号	来自支付宝异步返回【支付宝交易号】
+		ledger.setThirdTradeNo(alipayBody.getTrade_no());
+	}
+
+	@Override
+	public void prepareFailureLedger(TradeRequestBody body, TradeLedger ledger) {
+		//TODO 预留，组装失效的台账数据
+		/*AlipayTradePrecreatePacket alipayBody = (AlipayTradePrecreatePacket) body;
+		//收付款备注2【付款方账户】	来自支付宝异步返回【买家在支付宝用户号】
+		ledger.setExtendField2(alipayBody.getBuyer_id());
+		//收付款备注3【付款方账户名称】	来自支付宝异步返回【买家支付宝账号】
+		ledger.setExtendField3(alipayBody.getBuyer_logon_id());
+		//收付款备注6【收款账户】	来自支付宝异步返回【卖家支付宝用户号】
+		ledger.setExtendField6(alipayBody.getSeller_id());
+		//收付款备注7【收款账户名称】	来自支付宝异步返回【卖家支付宝账号】
+		ledger.setExtendField7(alipayBody.getSeller_email());
+		//外部渠道收付款成功日期时间	来自支付宝异步返回【交易付款时间】
+		Date gmtSuccessClearChannel =  DateUtil.formatDateTime(alipayBody.getGmt_payment());
+		ledger.setGmtSuccessClearChannel(gmtSuccessClearChannel);
+		//收付款渠道订单号	来自支付宝异步返回【支付宝交易号】
+		ledger.setThirdTradeNo(alipayBody.getThird_trade_no());*/
+		
+	}
+
+}

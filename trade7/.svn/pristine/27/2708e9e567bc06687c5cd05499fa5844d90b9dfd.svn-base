@@ -1,0 +1,47 @@
+package com.liantuo.trade.bus.factory;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.stereotype.Component;
+
+import com.liantuo.trade.bus.template.AbstractTradeTemplate;
+import com.liantuo.trade.client.trade.packet.TradeRequest;
+import com.liantuo.trade.client.trade.packet.head.TradePacketHead;
+import com.liantuo.trade.exception.BizException;
+import com.liantuo.trade.spring.SpringUtils;
+/**
+ * JobFlow工厂，用于JobFlow注册和发现
+ * @author dengchao
+ *
+ */
+@Component
+public class JobFlowFactory {
+
+	private final Log logger = LogFactory.getLog(JobFlowFactory.class);
+
+
+	public Object discover(String requestCode, String version) throws NoSuchBeanDefinitionException{
+		if(StringUtils.isBlank(version)){
+			version = "1.0";
+		}
+		
+		return SpringUtils.getBean(requestCode+":"+version);
+
+	}
+	public Object discover(TradeRequest<?> request) throws NoSuchBeanDefinitionException{
+		return discover(request.getHead());
+	}
+	public Object discover(TradePacketHead head) throws NoSuchBeanDefinitionException{
+		return discover(head.getRequest_code(),head.getVersion());
+	}
+	public Object discover(String requestCode) throws NoSuchBeanDefinitionException{
+		return discover(requestCode, "1.0");
+	}
+
+
+}

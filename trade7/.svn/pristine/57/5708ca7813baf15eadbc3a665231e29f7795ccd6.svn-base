@@ -1,0 +1,125 @@
+package com.liantuo.trade.bus.process.impl;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
+import javax.annotation.Resource;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+
+import com.liantuo.spring.WebContextTestExecutionListener;
+import com.liantuo.trade.bus.process.impl.freeze_pay_refuce.v1_1.GenRefundOfflineSettleProcess;
+import com.liantuo.trade.bus.template.impl.v1_1.ATradeNoPaymentCreateTemp;
+import com.liantuo.trade.client.trade.packet.TradeRequest;
+import com.liantuo.trade.client.trade.packet.TradeResponse;
+import com.liantuo.trade.client.trade.packet.body.TradePacketReqBodyRefundOfflineSettle;
+import com.liantuo.trade.client.trade.packet.head.TradePacketHead;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {
+        "classpath:config/spring/applicationContext-*.xml"
+})
+@TestExecutionListeners({ 
+    WebContextTestExecutionListener.class, 
+    DependencyInjectionTestExecutionListener.class,
+    DirtiesContextTestExecutionListener.class })
+public class GenRefundOfflineSettleTest {
+    
+    @Resource(name = "0001_002_001:1.1")
+    GenRefundOfflineSettleProcess process;
+    @Autowired
+	private ATradeNoPaymentCreateTemp temp;
+    TradeRequest<TradePacketReqBodyRefundOfflineSettle> request;
+    
+    @Before
+    public void before() throws Exception {
+        Assert.assertNotNull(process);
+        
+        request = new TradeRequest<TradePacketReqBodyRefundOfflineSettle>();
+        
+        TradePacketHead head = new TradePacketHead();
+        head.setPartner_id("10000002048131212");
+        head.setRequest_code("0001_002_001");
+        head.setCore_merchant_no("CC_C8785258588");
+        
+        head.setFund_pool_no("PN01000000000010876");
+        head.setVersion("1.0");
+        head.setRequest_time(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS").format(Calendar.getInstance().getTime()));
+        head.setSign("f644f5387aaeadae26bf45bf6d4759b9");
+        request.setHead(head);
+        
+        TradePacketReqBodyRefundOfflineSettle body = new TradePacketReqBodyRefundOfflineSettle();
+        body.setOut_trade_no("8888999900"); // 已在数据库
+        body.setOut_trade_no_ext("test000000000000001"); // 已在数据库
+        body.setOriginal_trade_no("000000000000000700201512171928481");
+        body.setGmt_refund_clear_channel("2015-10-10 10:10:10");
+        body.setClear_refund_amount("1.2");
+        body.setThird_trade_no("thirdTradeNo");
+        
+        body.setClear_channel_attr_1("att1");
+        body.setClear_channel_attr_2("att2");
+        body.setClear_channel_attr_3("att3");
+        body.setClear_channel_attr_4("att4");
+        body.setClear_channel_attr_5("att5");
+        body.setClear_channel_attr_6("att6");
+        
+        request.setBody(body);
+        
+        temp.setIp("127.0.0.2");
+        temp.setProcess(process);
+        temp.buildRequest(request.marshal());
+    }
+    
+    @Test
+    public void testFormart() throws Exception {
+        request.getBody().setOriginal_trade_no("2016--");
+        TradeResponse rsp = temp.execute(request);
+        System.out.println(rsp.getBody().getErr_code() + "：" + rsp.getBody().getErr_code_des());
+        Assert.assertEquals("JY00010020011100100", rsp.getBody().getErr_code());
+    }
+
+    @Test
+    public void testDuplicate() throws Exception {
+        request.getBody().setOut_trade_no_ext("test000000000000001");
+        TradeResponse rsp = temp.execute(request);
+        System.out.println(rsp.getBody().getErr_code() + "：" + rsp.getBody().getErr_code_des());
+        Assert.assertEquals("JY00010020011100300", rsp.getBody().getErr_code());
+    }
+    
+    @Test
+    public void testOriginalTrade() throws Exception {
+        request.getBody().setOut_trade_no_ext(""+System.currentTimeMillis());
+        request.getBody().setOriginal_trade_no("11--00000000000700201512171928481");
+        TradeResponse rsp = temp.execute(request);
+        System.out.println(rsp.getBody().getErr_code() + "：" + rsp.getBody().getErr_code_des());
+        Assert.assertEquals("JY00010020011100400", rsp.getBody().getErr_code());
+    }
+    
+    @Test
+    public void testOriginalTradeStatus() throws Exception {
+        request.getBody().setOut_trade_no_ext(""+System.currentTimeMillis());
+        request.getBody().setOriginal_trade_no("20151223134506825000000000002300");
+        TradeResponse rsp = temp.execute(request);
+        System.out.println(rsp.getBody().getErr_code() + "：" + rsp.getBody().getErr_code_des());
+        Assert.assertEquals("JY00010020011100500", rsp.getBody().getErr_code());
+    }
+    
+    @Test
+    public void testTrade() throws Exception {
+        request.getBody().setOut_trade_no_ext(""+System.currentTimeMillis());
+        request.getBody().setOriginal_trade_no("20151223131448136000000000002100");
+        TradeResponse rsp = temp.execute(request);
+        System.out.println(rsp.getBody().getErr_code() + "：" + rsp.getBody().getErr_code_des());
+        Assert.assertEquals("S", rsp.getBody().getIs_success());
+    }
+    
+}

@@ -1,0 +1,30 @@
+package com.liantuo.deposit.advanceaccount.orm.mapper;
+
+import java.util.List;
+
+import com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccountTradeHistory;
+import com.liantuo.deposit.advanceaccount.web.vo.req.SingleAccountHisPageQueryReqVo;
+import com.liantuo.deposit.advanceaccount.web.vo.req.SingleAccountHisQueryReqVo;
+import com.liantuo.deposit.advanceaccount.web.vo.rsp.SingleAccountAccountRecord;
+import com.liantuo.deposit.advanceaccount.web.vo.rsp.SingleAccountAccountingRecord;
+
+public interface CreditAccountTradeHistoryMapper {
+
+    int insert(CreditAccountTradeHistory record);
+
+    CreditAccountTradeHistory selectByPrimaryKey(Integer id);
+    
+    List<SingleAccountAccountingRecord> selectSingleAccountHisPageQuery(SingleAccountHisPageQueryReqVo reqVo);
+    
+    Integer selectCountSingleAccountHis(SingleAccountHisPageQueryReqVo requVo);
+    
+    List<com.liantuo.deposit.advanceaccount.web.inner.vo.rsp.SingleAccountAccountingRecord> selectSingleInnerCAHisPageQuery(com.liantuo.deposit.advanceaccount.web.inner.vo.req.SingleAccountHisPageQueryReqVo reqVo);
+    
+    Integer selectCountSingleInnerCAHis(com.liantuo.deposit.advanceaccount.web.inner.vo.req.SingleAccountHisPageQueryReqVo requVo);
+
+	List<SingleAccountAccountRecord> singleAccountHisPageQuery(
+			SingleAccountHisQueryReqVo req);
+
+	Integer countSingleAccountHisQuery(SingleAccountHisQueryReqVo req);
+
+}

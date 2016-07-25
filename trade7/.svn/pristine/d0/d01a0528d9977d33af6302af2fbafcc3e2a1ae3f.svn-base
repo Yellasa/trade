@@ -1,0 +1,110 @@
+package com.liantuo.trade.common.validate;
+
+import com.liantuo.trade.client.trade.packet.TradeRequest;
+import com.liantuo.trade.client.trade.packet.body.TradeNotifyRequestBody;
+
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+
+public class TradeValidationUtil {
+    /**
+     * 验证请求报文格式
+     *
+     * @param tradeRequest
+     * @return 验证错误信息
+     */
+    public static String validateRequest(TradeRequest<?> tradeRequest) {
+        String headValidRetMsg = ValidationUtil.validateObject(tradeRequest.getHead(), Required.class, Format.class);
+        String bodyValidRetMsg = ValidationUtil.validateObject(tradeRequest.getBody(), Required.class, Format.class);
+        if (!StringUtils.isEmpty(headValidRetMsg) || !StringUtils.isEmpty(bodyValidRetMsg)) {
+            String validateErrorMsg = !StringUtils.isEmpty(headValidRetMsg) ? headValidRetMsg : bodyValidRetMsg;
+            return validateErrorMsg;
+        } else {
+            return null;
+        }
+
+    }
+    
+    /**
+     * 验证请求报文格式
+     *
+     * @param tradeRequest
+     * @return 验证错误信息
+     */
+    public static String validateRequestWeak(TradeRequest<?> tradeRequest) {
+        String headValidRetMsg = ValidationUtil.validateRequiredWeaks(tradeRequest.getHead());
+        String bodyValidRetMsg = ValidationUtil.validateRequiredWeaks(tradeRequest.getBody());
+        if (!StringUtils.isEmpty(headValidRetMsg) || !StringUtils.isEmpty(bodyValidRetMsg)) {
+            String validateErrorMsg = !StringUtils.isEmpty(headValidRetMsg) ? headValidRetMsg : bodyValidRetMsg;
+            return validateErrorMsg;
+        } else {
+            return null;
+        }
+
+    }
+    
+    /**
+     * 验证请求报文格式
+     *
+     * @param tradeRequest
+     * @return 验证错误信息
+     */
+    public static String validateRequestWeak(TradeNotifyRequestBody tradeRquest) {
+        String headValidRetMsg = ValidationUtil.validateRequiredWeaks(tradeRquest.getZf_head());
+        String bodyValidRetMsg = ValidationUtil.validateRequiredWeaks(tradeRquest.getBody());
+        if (!StringUtils.isEmpty(headValidRetMsg) || !StringUtils.isEmpty(bodyValidRetMsg)) {
+            String validateErrorMsg = !StringUtils.isEmpty(headValidRetMsg) ? headValidRetMsg : bodyValidRetMsg;
+            return validateErrorMsg;
+        } else {
+            return null;
+        }
+
+    }
+    /**
+     * 校验特殊可空情况 
+     * 如果传递的集合属性
+     * @param tradeRequest
+     * @param clazz 被校验的类
+     * @param validates	被校验的属性
+     * @return
+     * @throws Exception 
+     */
+    public static String validateRequestSpecial(TradeRequest<?> tradeRequest,Class clazz,List<String> validates) throws Exception {
+    	String headValidRetMsg = ValidationUtil.validateObject(tradeRequest.getHead(), Required.class, Format.class);
+        String bodyValidRetMsg = ValidationUtil.validateObjectSpecial(clazz,validates,tradeRequest.getBody(), Required.class, Format.class);
+        if (!StringUtils.isEmpty(headValidRetMsg) || !StringUtils.isEmpty(bodyValidRetMsg)) {
+            String validateErrorMsg = !StringUtils.isEmpty(headValidRetMsg) ? headValidRetMsg : bodyValidRetMsg;
+            return validateErrorMsg;
+        } else {
+            return null;
+        }
+    }
+
+    public static String validateRequest(TradeRequest<?> tradeRequest, String headPropertyNames, String bodyPropertyNames) {
+        String headValidRetMsg = ValidationUtil.validateObject(tradeRequest.getHead(), headPropertyNames, Required.class, Format.class);
+        String bodyValidRetMsg = ValidationUtil.validateObject(tradeRequest.getBody(), bodyPropertyNames, Required.class, Format.class);
+        if (!StringUtils.isEmpty(headValidRetMsg) || !StringUtils.isEmpty(bodyValidRetMsg)) {
+            String validateErrorMsg = !StringUtils.isEmpty(headValidRetMsg) ? headValidRetMsg : bodyValidRetMsg;
+            return validateErrorMsg;
+        } else {
+            return null;
+        }
+    }
+
+    public static String validateRequest(
+            TradeRequest<?> tradeRequest,
+            String headRequiredPropertyNames,
+            String headFormatPropertyNames,
+            String bodyPropertyNames) {
+
+        String errMsg;
+        errMsg = ValidationUtil.validateObject(tradeRequest.getHead(), headRequiredPropertyNames, Required.class);
+        if (StringUtils.isNotBlank(errMsg)) return errMsg;
+        errMsg = ValidationUtil.validateObject(tradeRequest.getHead(), headFormatPropertyNames, Format.class);
+        if (StringUtils.isNotBlank(errMsg)) return errMsg;
+        errMsg = ValidationUtil.validateObject(tradeRequest.getBody(), bodyPropertyNames, Required.class, Format.class);
+        if (StringUtils.isNotBlank(errMsg)) return errMsg;
+        return errMsg;
+    }
+}

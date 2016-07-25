@@ -1,0 +1,28 @@
+package com.liantuo.trade.mq.rabbitmq.notice;
+
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.liantuo.trade.client.trade.packet.NotifyPacketResultInfo;
+
+/**
+ * This is a producter of rabbitMQ: send message from trade to front;
+ */
+@Service
+public class NotifyService {
+	@Autowired
+	private RabbitTemplate amqpTemplate;
+	
+	public void sendNotice(String notifyUrl,String partner_id,String core_merchant_no,String fund_pool_no, String result,String errorCode,String errorMessage,String tradeData,String tradeCode){
+		NotifyPacketResultInfo notice = new NotifyPacketResultInfo(notifyUrl, partner_id, 
+		        core_merchant_no, fund_pool_no, result,
+		        errorCode, errorMessage, tradeData, tradeCode);
+		amqpTemplate.convertAndSend("com.liantuo.trade.front."+tradeCode, notice);
+		
+	}
+	public void sendNotice(NotifyPacketResultInfo notice){
+
+		amqpTemplate.convertAndSend("com.liantuo.trade.front."+notice.getTrade_code(), notice);
+	}
+}

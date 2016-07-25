@@ -1,0 +1,660 @@
+package com.liantuo.trade.bus.process.impl.single_payment;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.dozer.DozerBeanMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.liantuo.deposit.advanceaccount.bus.vo.RealTimeAccountingRsp;
+import com.liantuo.deposit.advanceaccount.bus.vo.RealTimeAccountingVo;
+import com.liantuo.payment.client.pay.PaymentNotify;
+import com.liantuo.trade.bus.process.TradeOnlineAsynPaymentNotifyInterface;
+import com.liantuo.trade.bus.process.TradeState;
+import com.liantuo.trade.bus.process.impl.single_payment.asyn_service.AsynNotifyService;
+import com.liantuo.trade.bus.service.BizAccountService;
+import com.liantuo.trade.bus.service.ExceptionService;
+import com.liantuo.trade.bus.service.LegderService;
+import com.liantuo.trade.bus.service.ProfitLossLedgerService;
+import com.liantuo.trade.bus.service.SinglePaymentService;
+import com.liantuo.trade.bus.template.impl.v1_1.ATradeOnlineAsynPaymentNotifyTemp;
+import com.liantuo.trade.bus.vo.RealTimeAccountVO;
+import com.liantuo.trade.bus.vo.ZFPaymentAsynNotifyDetail;
+import com.liantuo.trade.client.trade.packet.NotifyPacketResultInfo;
+import com.liantuo.trade.client.trade.packet.body.TradeNotifyRequestBody;
+import com.liantuo.trade.client.trade.packet.body.TradeNotifyRequestPacket;
+import com.liantuo.trade.client.trade.packet.body.single_payment_refund.OtherPofitLossLedgerForRefund;
+import com.liantuo.trade.common.constants.TradeConstants;
+import com.liantuo.trade.common.constants.TradeServiceConstants;
+import com.liantuo.trade.common.util.amount.AmountUtils;
+import com.liantuo.trade.common.util.json.ObjectJsonUtil;
+import com.liantuo.trade.common.util.trade.TradeUtilCommon;
+import com.liantuo.trade.common.util.xml.ObjectXmlUtil;
+import com.liantuo.trade.common.validate.TradeValidationUtil;
+import com.liantuo.trade.exception.BusinessException;
+import com.liantuo.trade.mq.rabbitmq.notice.NotifyService;
+import com.liantuo.trade.orm.pojo.TradeLedger;
+import com.liantuo.trade.orm.pojo.TradeProfitLossLedger;
+import com.liantuo.trade.orm.pojo.TradeSinglePayment;
+import com.liantuo.trade.orm.service.TradeLedgerService;
+import com.liantuo.trade.spring.SpringUtils;
+import com.liantuo.trade.spring.annotation.JobFlow;
+
+/**
+ * @ClassName: SingleExternalAsynPaymentOnlineNotifyProcess.java
+ * @Description: 接收扫码支付的异步通知，
+ * @Company: 联拓金融信息服务有限公司
+ * @author zoran.huang
+ * @version V1.0
+ * @date 2016年7月8日 上午11:40:21
+ */
+@JobFlow(value = "0006_001_008", version = "1.0", template = ATradeOnlineAsynPaymentNotifyTemp.class)
+public class SingleExternalAsynPaymentOnlineNotifyProcess implements TradeOnlineAsynPaymentNotifyInterface<TradeNotifyRequestBody> {
+	private final Logger logger = LoggerFactory.getLogger(SingleExternalAsynPaymentOnlineNotifyProcess.class);
+	@Autowired
+	private ExceptionService exceptionService;
+	@Resource(name = "singlePaymentServiceImpl")
+	private SinglePaymentService singlePaymentService;
+	@Resource(name = "legderServiceImpl")
+	private LegderService legderService;
+	@Autowired
+	private NotifyService notifyService;
+	@Resource(name = "tradeLedgerService")
+	private TradeLedgerService tradeLedgerService;
+	@Resource(name = "profitLossLedgerServiceImpl")
+	private ProfitLossLedgerService profitLossLedgerService;
+	
+	@SuppressWarnings("rawtypes")
+	@Resource(name = "bizAccountServiceImpl")
+	private BizAccountService bizAccountService;
+
+//	private TradeNotifyRequestBody requestBody;
+	@Resource(name = "beanMapper")
+	private DozerBeanMapper mapper;
+	private TradeLedger tradeLedger;
+	private String reqNo;
+
+	private AsynNotifyService asynNotifyService;
+	private TradeSinglePayment tradeSinglePayment;
+
+	@Override
+	public TradeNotifyRequestBody setRequestDetail(PaymentNotify notify, String ip) {
+		// 保存支付中心请求交易数据
+		try {
+			TradeNotifyRequestBody notifyRequestBody = new TradeNotifyRequestBody();
+			TradeNotifyRequestPacket request = mapper.map(notify, TradeNotifyRequestPacket.class);
+			request.setIp(ip);
+			request.setRequestXML(ObjectXmlUtil.marshal(notify));
+			notifyRequestBody.setNotifyRequestHead(request);
+			return notifyRequestBody;
+		} catch (Exception e) {
+			logger.error("-->保存支付中心数据转化异常", e);
+		}
+		return null;
+	}
+
+	@Override
+	public void validateClearChannel(PaymentNotify notify) throws Exception {
+		String payChannel = notify.getZf_head().getPay_channel();
+		if (!TradeConstants.ALI_ASYN_PAY_CHANNEL.equals(payChannel) && !TradeConstants.WX_ASYN_PAY_CHANNEL.equals(payChannel)) {
+			throw exceptionService.buildBusinessException("JY00060010081000500");
+		}
+		String tradeNo = notify.getZf_head().getTrade_no();
+		String ledgerNo = notify.getZf_head().getLedger_no();
+		tradeLedger = tradeLedgerService.queryByLedgerNoAndTradeNo(ledgerNo, tradeNo);
+		if (tradeLedger == null) {
+			throw exceptionService.buildBusinessException("JY00060010081000300");
+		}
+		if (!payChannel.equals(tradeLedger.getClearChannel())) {
+			throw exceptionService.buildBusinessException("JY00060010081000400");
+		}
+	}
+
+	@Override
+	public void parsePaymentNotify(PaymentNotify notify,TradeNotifyRequestBody  requestBody) throws Exception {
+		// 解析相应的数据
+		try {
+			String serviveName = TradeServiceConstants.getServiceMap().get(notify.getZf_head().getPay_channel() + TradeServiceConstants.VERSION_CODE);
+			asynNotifyService = SpringUtils.getBean(serviveName);
+			TradeNotifyRequestBody  parseRequestBody = asynNotifyService.parsePaymentNotify(notify);
+			requestBody.setBody(parseRequestBody.getBody());;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("-->异步通知数据解析失败:" + e.getMessage(), e);
+			throw exceptionService.buildBusinessException("JY00060010081000600");
+		}
+		
+	}
+
+	/*@Override
+	public TradeNotifyRequestBody getTradeRequest() {
+		return requestBody;
+	}*/
+
+	@Override
+	public void validateThirdData(TradeNotifyRequestBody tradeRquest) throws Exception {
+		String msg = TradeValidationUtil.validateRequestWeak(tradeRquest);
+		if (msg != null) {
+			logger.info("-->输入参数校验不通过：" + msg);
+			throw exceptionService.buildBusinessException("JY00060010081000700", msg);
+		}
+		// 需要区分支付宝和微信
+		String thirdOutTradeNo = asynNotifyService.getThirdOutTradeNo(tradeRquest.getBody());
+		if (!thirdOutTradeNo.equals(tradeLedger.getExtendField5())) {
+			// 一致性校验不通过
+			logger.info("-->校验【商户订单号】与台账【提交第三方请求流水号】不一致");
+			throw exceptionService.buildBusinessException("JY00060010081000800");
+		}
+		long thirdReceiptAmount = asynNotifyService.getThirdReceiveAmount(tradeRquest.getBody());
+		if (thirdReceiptAmount != tradeLedger.getReceiveAmount()) {
+			logger.info("-->校验【第三方收款金额】与台账【收款金额】不一致");
+			throw exceptionService.buildBusinessException("JY00060010081000800");
+		}
+	}
+
+	@Override
+	public TradeState getTradePaymentStatus(TradeNotifyRequestBody tradeRquest) {
+		try {
+			TradeState tradeState = asynNotifyService.getTradePaymentStatus(tradeRquest);
+			return tradeState;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.info("-->获取状态信信息失败");
+		}
+		return TradeState.UNKNOWN;
+	}
+
+	@Override
+	public void validateTradeDate(TradeNotifyRequestBody tradeRquest) throws Exception {
+		tradeSinglePayment = singlePaymentService.queryByTradeNo(tradeRquest.getNotifyRequestHead().getTrade_no());
+		// 校验交易状态是否为【等待支付】，若校验失败
+		if (tradeSinglePayment != null && TradeConstants.TRADE_PAYMENT_WAIT_PAY.equals(tradeSinglePayment.getStatus())) {
+			return;
+		} else {
+			logger.info("-->交易状态不正确");
+			throw exceptionService.buildBusinessException("JY00060010081000100");
+		}
+	}
+
+	@Override
+	public void transactionReceipt(TradeNotifyRequestBody tradeRquest) throws Exception {
+		// 1.生效付款方外部收款台账
+		updateEffectiveLegder();
+		// 2.修改等待入账交易记录
+		updateTradeRecordWaitForPosting();
+	}
+
+	/**
+	 * @Title:updateTradeRecordWaitForPosting
+	 * @Description: 修改原交易为等待入账状态
+	 * @return:void
+	 * @author:zoran.huang
+	 * @date:2016年7月12日 下午12:46:33
+	 */
+	private void updateTradeRecordWaitForPosting() {
+		try {
+			TradeSinglePayment updateVo = new TradeSinglePayment();
+			updateVo.setId(tradeSinglePayment.getId());
+			updateVo.setVersion(tradeSinglePayment.getVersion());
+			updateVo.setTradeNo(tradeSinglePayment.getTradeNo());
+			// 最后变更交易请求类型 本次请求类型
+			updateVo.setLatestTradeReqType(TradeConstants.TRADE_OUTER_SINGLE_PAYMENT_ASYN_NOTIFY);
+			// 最后变更交易请求编号 来自交易请求记录
+			updateVo.setLatestReqNo(this.reqNo);
+			// 交易结束状态 【未结束】
+			updateVo.setCloseStatus(TradeConstants.TRADE_CLOSE_STATUS_INIT);
+			// 交易状态 【等待入账】
+			updateVo.setStatus(TradeConstants.TRADE_PAYMENT_WAIT_ENTER);
+			// 交易版本 原版本号+1
+			// /等待入账日期时间 系统时间
+			updateVo.setGmtWaitInAccountting(new Date());
+			this.tradeSinglePayment = singlePaymentService.updateTrade(updateVo);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("-->等待入账交易记录修改失败：" + e.getMessage(), e);
+			throw exceptionService.buildBusinessException("JY00060010081000900");
+		}
+	}
+
+	/**
+	 * @Title:updateEffectiveLegder
+	 * @Description: 生效付款方外部收款台账
+	 * @return:void
+	 * @author:zoran.huang
+	 * @date:2016年7月12日 上午11:48:27
+	 */
+	private void updateEffectiveLegder() {
+		try {
+			legderService.updateBlankLegderEffective(tradeLedger);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("-->付款方外部收款台账失败：" + e.getMessage(), e);
+			throw exceptionService.buildBusinessException("TZ000100401");
+		}
+	}
+
+	@Override
+	public void transactionEntry(TradeNotifyRequestBody tradeRquest) throws Exception {
+		// 账务处理
+		handlerRealAcount();
+		// 生效收款损益台账
+		receiveProfitLossLegderEffect();
+		// 生效其他损益台账
+		extendProfitLossLegderEffect();
+		// 修改支付成功交易记录
+		modifyTradeRecordSuccess();
+	}
+
+	private void modifyTradeRecordSuccess() throws Exception {
+		try {
+			TradeSinglePayment updateVo = new TradeSinglePayment();
+			updateVo.setId(tradeSinglePayment.getId());
+			updateVo.setVersion(tradeSinglePayment.getVersion());
+			updateVo.setTradeNo(tradeSinglePayment.getTradeNo());
+			updateVo.setGmtSuccessPay(new Date());
+			// 收到方冻结余额 【收款方账户入账金额】（冻结入账时）-【收款方手续费账户出账金额】（冻结出账时）
+			BigDecimal receiveFreezeBal = BigDecimal.ZERO;
+			if (TradeConstants.TRADE_ACCOUNT_FREEZE_TYPE.equals(tradeSinglePayment.getReceiveAccountInAccountingType())) {
+				receiveFreezeBal = receiveFreezeBal.add(new BigDecimal(tradeSinglePayment.getReceiveAccountInAccountingAmt()));
+			}
+			if (TradeConstants.TRADE_ACCOUNT_FREEZE_TYPE.equals(tradeSinglePayment.getReceiveFeeAccountOutAccountingType())) {
+				receiveFreezeBal = receiveFreezeBal.subtract(new BigDecimal(tradeSinglePayment.getReceiveFeeAccountOutAccountingAmt()));
+			}
+			updateVo.setReceiveFreezeBal(receiveFreezeBal.longValue());
+			this.tradeSinglePayment = singlePaymentService.updateTradeSuccess(updateVo);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("-->支付成功交易记录修改失败：" + e.getMessage(), e);
+			throw exceptionService.buildBusinessException("JY00060010081000200");
+		}
+	}
+
+	/**
+	 * 生效其他损益台
+	 *
+	 * @param tradeRequest
+	 */
+	private void extendProfitLossLegderEffect() {
+		try {
+			String extendProfitLoss = tradeSinglePayment.getExtendProfitLoss();
+			List<OtherPofitLossLedgerForRefund> otherPofitLossLedgerList = (List<OtherPofitLossLedgerForRefund>) ObjectJsonUtil.json2ArrayList(extendProfitLoss, OtherPofitLossLedgerForRefund.class);
+			for (OtherPofitLossLedgerForRefund queryledger : otherPofitLossLedgerList) {
+				TradeProfitLossLedger ledger = profitLossLedgerService.queryByLedgerNoAndTradeNo(queryledger.getLedger_no(), tradeSinglePayment.getTradeNo());
+				ledger.setEffectiveReqType(TradeConstants.TRADE_OUTER_SINGLE_PAYMENT_ASYN_NOTIFY);
+				ledger.setEffectiveReqNo(this.reqNo);
+				profitLossLedgerService.updateBlankLegderEffective(ledger);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("-->生效其他损益台账失败：" + e.getMessage(), e);
+			throw exceptionService.buildBusinessException("TZ000200301");
+		}
+	}
+
+	/**
+	 * 生效收款损益台账
+	 *
+	 * @param tradeRequest
+	 */
+	private void receiveProfitLossLegderEffect() {
+		if (TradeConstants.RECEIVE_BY_THIRD_PROFIT_LOSS.equals(tradeSinglePayment.getReceiveType())) {
+			try {
+				TradeProfitLossLedger ledger = profitLossLedgerService.queryByLedgerNoAndTradeNo(tradeSinglePayment.getReceiveProfitLossLedgerNo(), tradeSinglePayment.getTradeNo());
+				ledger.setLedgerNo(tradeSinglePayment.getReceiveProfitLossLedgerNo());
+				ledger.setEffectiveReqType(TradeConstants.TRADE_OUTER_SINGLE_PAYMENT_ASYN_NOTIFY);
+				ledger.setEffectiveReqNo(this.reqNo);
+				profitLossLedgerService.updateBlankLegderEffective(ledger);
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error("-->生效收款损益台账失败：" + e.getMessage(), e);
+				throw exceptionService.buildBusinessException("TZ000200301");
+			}
+		}
+	}
+
+	/**
+	 * 账务操作
+	 *
+	 * @param tradeRequest
+	 */
+	private void handlerRealAcount() {
+		List<RealTimeAccountingVo> request_list = new ArrayList<RealTimeAccountingVo>();
+		// 1 【付款方付出方式】为【第三方充付】时执行--充付入账账务处理
+		if (TradeConstants.PAY_BY_THIRD_ACCOUNT.equals(tradeSinglePayment.getPayType())) {
+			RealTimeAccountingVo realAcountSetp1 = realAcountSetp1();
+			request_list.add(realAcountSetp1);
+		}
+		// 2 【付款方付出方式】为【第三方充付】时执行--充付出账账务处理
+		if (TradeConstants.PAY_BY_THIRD_ACCOUNT.equals(tradeSinglePayment.getPayType())) {
+			RealTimeAccountingVo realAcountSetp2 = realAcountSetp2();
+			request_list.add(realAcountSetp2);
+		}
+		// 3 【付款方手续费账户出账金额】不为空时处理--付款方手续费账户账务处理
+		if (AmountUtils.ifNullOrElse(tradeSinglePayment.getPayFeeAccountOutAccountingAmt()) > 0) {
+			RealTimeAccountingVo realAcountSetp3 = realAcountSetp3();
+			request_list.add(realAcountSetp3);
+		}
+		// 4 【收款方收到方式】为【账户】时执行--收款方账户账务处理
+		if (TradeConstants.PAY_BY_ACCOUNT.equals(tradeSinglePayment.getReceiveType())) {
+			RealTimeAccountingVo realAcountSetp4 = realAcountStep4();
+			request_list.add(realAcountSetp4);
+		}
+		// 5 【收款方手续费账户出账金额】不为空时处理--收款方手续费账户账务处理
+		if (AmountUtils.ifNullOrElse(tradeSinglePayment.getReceiveFeeAccountOutAccountingAmt()) > 0) {
+			RealTimeAccountingVo realAcountSetp5 = realAcountStep5();
+			request_list.add(realAcountSetp5);
+		}
+		try {
+			@SuppressWarnings("unchecked")
+			List<RealTimeAccountingRsp> list = this.bizAccountService.senderRequestToAccount(request_list);
+			RealTimeAccountingRsp rsp;
+			for (RealTimeAccountingRsp aList : list) {
+				rsp = aList;
+				if ("F".equals(rsp.getSuccess())) {
+					throw new BusinessException(rsp.getRetCode(), rsp.getErrMessage());
+				}
+			}
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			throw new BusinessException(e.getErrorCode(), e.getErrorMessage());
+		} catch (Exception e) {
+			throw exceptionService.buildBusinessException("JY000000000000401");
+		}
+
+	}
+
+	/**
+	 * 1 充付入账账务处理
+	 */
+	private RealTimeAccountingVo realAcountSetp1() {
+		RealTimeAccountVO accountvo = new RealTimeAccountVO();
+		accountvo.setAccountNo(this.tradeSinglePayment.getPayAccountNo());// 付款方账户账户编号
+		accountvo.setCoreMerchantNo(this.tradeSinglePayment.getCoreMerchantNo()); // 核心商户编号
+		accountvo.setPoolNo(this.tradeSinglePayment.getFundPoolNo()); // 资金池编号
+		accountvo.setReservedFields1(this.tradeSinglePayment.getPayAccountInAccountingHis1());// 付款方账户入账账务历史1
+		accountvo.setReservedFields2(this.tradeSinglePayment.getPayAccountInAccountingHis2());// 付款方账户入账账务历史2
+		accountvo.setReservedFields3(this.tradeSinglePayment.getPayAccountInAccountingHis3());// 付款方账户入账账务历史3
+		accountvo.setTradeCode(TradeUtilCommon.getTradeType(this.tradeSinglePayment.getLatestTradeReqType())); // 交易类型0006_001
+		accountvo.setTradeNo(tradeSinglePayment.getTradeNo()); // 本交易编号
+		accountvo.setTradeGmtCreated(this.tradeSinglePayment.getGmtCreated()); // 本交易创建时间
+		accountvo.setTradeReqCode(TradeConstants.TRADE_OUTER_SINGLE_PAYMENT_ASYN_NOTIFY); // 交易请求类型0006_001_008
+		accountvo.setTradeStepNo(this.reqNo);// 交易请求编号
+		accountvo.setSequenceNo(this.tradeSinglePayment.getOutTradeNo()); // 本交易业务系统订单号
+		accountvo.setAmount(this.tradeSinglePayment.getExternalPayReceivedAmt());
+		return bizAccountService.avlBalIncrWrapper(accountvo);
+	}
+
+	/**
+	 * 2 充付出账账务处理
+	 */
+	private RealTimeAccountingVo realAcountSetp2() {
+		RealTimeAccountVO accountvo = new RealTimeAccountVO();
+		accountvo.setAccountNo(this.tradeSinglePayment.getPayAccountNo());// 付款方账户账户编号
+		accountvo.setCoreMerchantNo(this.tradeSinglePayment.getCoreMerchantNo()); // 核心商户编号
+		accountvo.setPoolNo(this.tradeSinglePayment.getFundPoolNo()); // 资金池编号
+		accountvo.setReservedFields1(this.tradeSinglePayment.getPayAccountOutAccountingHis1());// 付款方账户出账账务历史1
+		accountvo.setReservedFields2(this.tradeSinglePayment.getPayAccountOutAccountingHis2());// 付款方账户出账账务历史2
+		accountvo.setReservedFields3(this.tradeSinglePayment.getPayAccountOutAccountingHis3());// 付款方账户出账账务历史3
+		accountvo.setTradeCode(TradeUtilCommon.getTradeType(this.tradeSinglePayment.getLatestTradeReqType())); // 交易类型0006_001
+		accountvo.setTradeNo(tradeSinglePayment.getTradeNo()); // 本交易编号
+		accountvo.setTradeGmtCreated(this.tradeSinglePayment.getGmtCreated()); // 本交易创建时间
+		accountvo.setTradeReqCode(TradeConstants.TRADE_OUTER_SINGLE_PAYMENT_ASYN_NOTIFY); // 交易请求类型0006_001_008
+		accountvo.setTradeStepNo(this.reqNo);// 交易请求编号
+		accountvo.setSequenceNo(this.tradeSinglePayment.getOutTradeNo()); // 本交易业务系统订单号
+		accountvo.setAmount(tradeSinglePayment.getPayAccountOutAccountingAmt());
+		return bizAccountService.avlBalDecrWrapper(accountvo);
+	}
+
+	/**
+	 * 3 付款方手续费账户账务处理
+	 */
+	private RealTimeAccountingVo realAcountSetp3() {
+		RealTimeAccountVO accountvo = new RealTimeAccountVO();
+		accountvo.setAccountNo(this.tradeSinglePayment.getPayFeeAccountNo());// 付款方手续费账户账户编号
+		accountvo.setCoreMerchantNo(this.tradeSinglePayment.getCoreMerchantNo()); // 核心商户编号
+		accountvo.setPoolNo(this.tradeSinglePayment.getFundPoolNo()); // 资金池编号
+		accountvo.setReservedFields1(this.tradeSinglePayment.getPayFeeAccountOutAccountingHis1());// 付款方手续费账户出账账务历史1
+		accountvo.setReservedFields2(this.tradeSinglePayment.getPayFeeAccountOutAccountingHis2());// 付款方手续费账户出账账务历史2
+		accountvo.setReservedFields3(this.tradeSinglePayment.getPayFeeAccountOutAccountingHis3());// 付款方手续费账户出账账务历史3
+		accountvo.setTradeCode(TradeUtilCommon.getTradeType(this.tradeSinglePayment.getLatestTradeReqType())); // 交易类型0006_001
+		accountvo.setTradeNo(tradeSinglePayment.getTradeNo()); // 本交易编号
+		accountvo.setTradeGmtCreated(this.tradeSinglePayment.getGmtCreated()); // 本交易创建时间
+		accountvo.setTradeReqCode(TradeConstants.TRADE_OUTER_SINGLE_PAYMENT_ASYN_NOTIFY); // 交易请求类型0006_001_008
+		accountvo.setTradeStepNo(this.reqNo);// 交易请求编号
+		accountvo.setSequenceNo(this.tradeSinglePayment.getOutTradeNo()); // 本交易业务系统订单号
+		accountvo.setAmount(tradeSinglePayment.getPayFeeAccountOutAccountingAmt());
+		return bizAccountService.avlBalDecrWrapper(accountvo);
+	}
+
+	/**
+	 * 4 收款方账户账务处理
+	 */
+	private RealTimeAccountingVo realAcountStep4() {
+		RealTimeAccountVO accountvo = new RealTimeAccountVO();
+		accountvo.setAccountNo(this.tradeSinglePayment.getReceiveAccountNo());// 收款方账户账户编号
+		accountvo.setCoreMerchantNo(this.tradeSinglePayment.getCoreMerchantNo()); // 核心商户编号
+		accountvo.setPoolNo(this.tradeSinglePayment.getFundPoolNo()); // 资金池编号
+		accountvo.setReservedFields1(this.tradeSinglePayment.getReceiveAccountInAccountingHis1());// 收款方账户入账账务历史1
+		accountvo.setReservedFields2(this.tradeSinglePayment.getReceiveAccountInAccountingHis2());// 收款方账户入账账务历史2
+		accountvo.setReservedFields3(this.tradeSinglePayment.getReceiveAccountInAccountingHis3());// 收款方账户入账账务历史3
+		accountvo.setTradeCode(TradeUtilCommon.getTradeType(this.tradeSinglePayment.getLatestTradeReqType())); // 交易类型0006_001
+		accountvo.setTradeNo(tradeSinglePayment.getTradeNo()); // 本交易编号
+		accountvo.setTradeGmtCreated(this.tradeSinglePayment.getGmtCreated()); // 本交易创建时间
+		accountvo.setTradeReqCode(TradeConstants.TRADE_OUTER_SINGLE_PAYMENT_ASYN_NOTIFY); // 交易请求类型0006_001_008
+		accountvo.setTradeStepNo(this.reqNo);// 交易请求编号
+		accountvo.setSequenceNo(this.tradeSinglePayment.getOutTradeNo()); // 本交易业务系统订单号
+		if (TradeConstants.TRADE_ACCOUNT_FREEZE_TYPE.equals(this.tradeSinglePayment.getReceiveAccountInAccountingType())) {
+			accountvo.setFrozenTradeCode(TradeUtilCommon.getTradeType(this.tradeSinglePayment.getLatestTradeReqType()));
+			accountvo.setFrozenTradeNo(tradeSinglePayment.getTradeNo()); // 本交易编号
+			accountvo.setAmount(this.tradeSinglePayment.getReceiveAccountInAccountingAmt());
+			return bizAccountService.FrozenBalIncrAmtWrapper(accountvo);
+		} else {
+			accountvo.setAmount(this.tradeSinglePayment.getReceiveAccountInAccountingAmt());
+			return bizAccountService.avlBalIncrWrapper(accountvo);
+		}
+	}
+
+	/**
+	 * 5 收款方手续费账户账务处理
+	 */
+	private RealTimeAccountingVo realAcountStep5() {
+		RealTimeAccountVO accountvo = new RealTimeAccountVO();
+		accountvo.setAccountNo(this.tradeSinglePayment.getReceiveFeeAccountNo());// 收款方手续费账户账户编号
+		accountvo.setCoreMerchantNo(this.tradeSinglePayment.getCoreMerchantNo()); // 核心商户编号
+		accountvo.setPoolNo(this.tradeSinglePayment.getFundPoolNo()); // 资金池编号
+		accountvo.setReservedFields1(this.tradeSinglePayment.getReceiveFeeAccountOutAccountingHis1());// 收款方手续费账户出账账务历史1
+		accountvo.setReservedFields2(this.tradeSinglePayment.getReceiveFeeAccountOutAccountingHis2());// 收款方手续费账户出账账务历史2
+		accountvo.setReservedFields3(this.tradeSinglePayment.getReceiveFeeAccountOutAccountingHis3());// 收款方手续费账户出账账务历史3
+		accountvo.setTradeCode(TradeUtilCommon.getTradeType(this.tradeSinglePayment.getLatestTradeReqType()));
+		accountvo.setTradeNo(tradeSinglePayment.getTradeNo()); // 本交易编号
+		accountvo.setTradeGmtCreated(this.tradeSinglePayment.getGmtCreated()); // 本交易创建时间
+		accountvo.setTradeReqCode(TradeConstants.TRADE_OUTER_SINGLE_PAYMENT_ASYN_NOTIFY); // 交易请求类型0006_001_008
+		accountvo.setTradeStepNo(this.reqNo);// 交易请求编号
+		accountvo.setSequenceNo(this.tradeSinglePayment.getOutTradeNo()); // 本交易业务系统订单号
+		if (TradeConstants.TRADE_ACCOUNT_FREEZE_TYPE.equals(this.tradeSinglePayment.getReceiveFeeAccountOutAccountingType())) {
+			accountvo.setFrozenTradeCode(TradeUtilCommon.getTradeType(this.tradeSinglePayment.getLatestTradeReqType()));
+			accountvo.setFrozenTradeNo(tradeSinglePayment.getTradeNo()); // 本交易编号
+			accountvo.setAmount(tradeSinglePayment.getReceiveFeeAccountOutAccountingAmt());
+			return bizAccountService.FrozenBalDecrAmtWrapper(accountvo);
+		} else {
+			accountvo.setAmount(tradeSinglePayment.getReceiveFeeAccountOutAccountingAmt());
+			return bizAccountService.avlBalDecrWrapper(accountvo);
+		}
+	}
+
+	@Override
+	public void setReqNo(String reqNo) {
+		this.reqNo = reqNo;
+
+	}
+
+	@Override
+	public void transactionFailure(TradeNotifyRequestBody tradeRquest) throws Exception {
+		// 1.失效外部台账
+		updateFailureLedger();
+		// 2.失效其它损益台账
+		extendProfitLossLegderFailure();
+		// 3.失效收款损益台账
+		receiveProfitLossLegderFailure();
+		// 4.修改支付失败交易记录
+		modifyTradeRecordFailure();
+	}
+
+	private void modifyTradeRecordFailure() throws Exception {
+		try {
+			Date currentTime = new Date();
+			TradeSinglePayment updateVo = new TradeSinglePayment();
+			updateVo.setId(tradeSinglePayment.getId());
+			updateVo.setVersion(tradeSinglePayment.getVersion());
+			updateVo.setTradeNo(tradeSinglePayment.getTradeNo());
+			updateVo.setGmtFailPay(currentTime);
+			updateVo.setGmtModifiedLatest(currentTime);// 最后变更日期时间
+			updateVo.setLatestTradeReqType(getServiceName());// 最后变更交易请求类型
+			updateVo.setLatestReqNo(this.reqNo);// 最后变更交易请求编号
+			updateVo.setCloseStatus(TradeConstants.TRADE_CLOSE_STATUS_END);// 交易结束状态
+			updateVo.setStatus(TradeConstants.TRADE_PAYMENT_PAY_FAIL);// 交易状态
+			updateVo.setContinueTradeStatus(TradeConstants.CONTINUE_TRADE_STATUS_END);// 后续交易开关-关
+			this.tradeSinglePayment = singlePaymentService.updateTrade(updateVo);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("-->支付成功交易记录修改失败：" + e.getMessage(), e);
+			throw exceptionService.buildBusinessException("JY00060010081000200");
+		}
+	}
+
+	/**
+	 * 生效收款损益台账
+	 *
+	 * @param tradeRequest
+	 */
+	private void receiveProfitLossLegderFailure() {
+		if (TradeConstants.RECEIVE_BY_THIRD_PROFIT_LOSS.equals(tradeSinglePayment.getReceiveType())) {
+			try {
+				TradeProfitLossLedger ledger = profitLossLedgerService.queryByLedgerNoAndTradeNo(tradeSinglePayment.getReceiveProfitLossLedgerNo(), tradeSinglePayment.getTradeNo());
+				ledger.setFailReqNo(this.reqNo);
+				ledger.setFailReqType(TradeConstants.TRADE_OUTER_SINGLE_PAYMENT_ASYN_NOTIFY);
+				ledger.setGmtFailed(new Date());
+				profitLossLedgerService.updateBlankLegderFail(ledger);
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error("-->失效收款损益台账失败：" + e.getMessage(), e);
+				throw exceptionService.buildBusinessException("TZ000200401");
+			}
+		}
+	}
+
+	/**
+	 * 生效其他损益台
+	 *
+	 * @param tradeRequest
+	 */
+	private void extendProfitLossLegderFailure() {
+		try {
+			String extendProfitLoss = tradeSinglePayment.getExtendProfitLoss();
+			@SuppressWarnings("unchecked")
+			List<OtherPofitLossLedgerForRefund> otherPofitLossLedgerList = (List<OtherPofitLossLedgerForRefund>) ObjectJsonUtil.string2Object(extendProfitLoss, List.class);
+			for (OtherPofitLossLedgerForRefund queryledger : otherPofitLossLedgerList) {
+				TradeProfitLossLedger ledger = profitLossLedgerService.queryByLedgerNoAndTradeNo(queryledger.getLedger_no(), tradeSinglePayment.getTradeNo());
+				ledger.setFailReqNo(this.reqNo);
+				ledger.setFailReqType(TradeConstants.TRADE_OUTER_SINGLE_PAYMENT_ASYN_NOTIFY);
+				ledger.setGmtFailed(new Date());
+				profitLossLedgerService.updateBlankLegderFail(ledger);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("-->失效其他损益台账失败：" + e.getMessage(), e);
+			throw exceptionService.buildBusinessException("TZ000200401");
+		}
+	}
+
+	/**
+	 * @Title:updateFailureLedger
+	 * @Description: 失效外部台账
+	 * @return:void
+	 * @author:zoran.huang
+	 * @date:2016年7月12日 上午11:48:27
+	 */
+	private void updateFailureLedger() {
+		try {
+			legderService.updateBlankLegderFail(tradeLedger);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("-->失效付款方外部收款台账失败：" + e.getMessage(), e);
+			throw exceptionService.buildBusinessException("TZ000100501");
+		}
+	}
+
+	@Override
+	public ZFPaymentAsynNotifyDetail getFailureMessage() {
+		// 当有未知状态时，确定位置状态的错误码，暂时用空来代替
+		ZFPaymentAsynNotifyDetail faDetail = new ZFPaymentAsynNotifyDetail();
+		faDetail.setReason("");
+		faDetail.setReason_commont("");
+		return faDetail;
+	}
+
+	@Override
+	public NotifyPacketResultInfo getNotifyFrontDetailsInfo(TradeNotifyRequestBody tradeRquest,String result, String errorCode, String errorMessage) throws Exception {
+		// 组织成功报文用于后续向前置发送通知
+		String tradeData = ObjectJsonUtil.object2String(tradeSinglePayment);
+		String thirdDate = ObjectJsonUtil.object2String(tradeRquest.getBody());
+		NotifyPacketResultInfo _notice = new NotifyPacketResultInfo(tradeSinglePayment.getNotifyUrl(), tradeSinglePayment.getPartnerId(), tradeSinglePayment.getCoreMerchantNo(), tradeSinglePayment.getFundPoolNo(), result, errorCode, errorMessage, tradeData, getServiceName(), thirdDate);
+		return _notice;
+	}
+
+	@Override
+	public String getServiceName() {
+		return TradeConstants.TRADE_OUTER_SINGLE_PAYMENT_ASYN_NOTIFY;
+	}
+
+	@Override
+	public String getUnknownErrorCode() {
+		// 当有未知状态时，确定位置状态的错误码，暂时用P代替
+		return TradeConstants.TRADE_RESPONSE_STATUS_UNKNOWN;
+	}
+
+	@Override
+	public void notifyFront(NotifyPacketResultInfo info) throws Exception {
+		notifyService.sendNotice(info);
+	}
+
+	@Override
+	public String getFrontServiceName() throws Exception {
+		// TODO 需要跟前置确定 暂定为6008
+		return TradeConstants.TRADE_SINGLE_PAYMENT_RESULT_CALL_BACK;
+	}
+
+	@Override
+	public void prepareFailureLedger(TradeNotifyRequestBody tradeRquest) throws Exception {
+		// 预留，用于准备失效的外部付款台账数据,将来需要添加失效台账的其他属性，
+		asynNotifyService.prepareFailureLedger(tradeRquest.getBody(), tradeLedger);
+		// 失效交易请求类型 本交易请求类型
+		tradeLedger.setFailReqType(TradeConstants.TRADE_OUTER_SINGLE_PAYMENT_ASYN_NOTIFY);
+		// 失效交易请求编号 本交易请求编号
+		tradeLedger.setFailReqNo(this.reqNo);
+		// 业务台账失效日期时间 系统当前日期时间
+		tradeLedger.setGmtFailed(new Date());
+	}
+
+	@Override
+	public void prepareEffectLedger(TradeNotifyRequestBody tradeRquest) throws Exception {
+		asynNotifyService.prepareEffectLedger(tradeRquest.getBody(), tradeLedger);
+		// 支付中心记录号 来自支付中心【支付中心请求编号】
+		tradeLedger.setPaymentTradeNo(tradeRquest.getNotifyRequestHead().getPayment_req_no());
+		// 生效交易请求类型 本交易请求类型
+		tradeLedger.setEffectiveReqType(TradeConstants.TRADE_OUTER_SINGLE_PAYMENT_ASYN_NOTIFY);
+		// 生效交易请求编号 本交易请求编号
+		tradeLedger.setEffectiveReqNo(this.reqNo);// 生效交易请求编号
+		// 业务台账生效日期时间 系统当前日期时间
+		tradeLedger.setGmtEffective(new Date());
+	}
+
+	
+
+}

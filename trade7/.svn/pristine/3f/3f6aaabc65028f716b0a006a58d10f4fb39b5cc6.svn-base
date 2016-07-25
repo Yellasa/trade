@@ -1,0 +1,22 @@
+package com.liantuo.trade.client.trade.packet.body.zf;
+
+import javax.validation.constraints.Pattern;
+
+import com.liantuo.trade.common.validate.Format;
+
+public class Extend_params {
+
+	@Pattern(message = "sys_service_provider_id format error", regexp = "({0})||(.{1,64})", groups = { Format.class })
+	private String sys_service_provider_id;
+
+	public String getSys_service_provider_id() {
+		return sys_service_provider_id;
+	}
+
+	public void setSys_service_provider_id(String sysServiceProviderId) {
+		sys_service_provider_id = sysServiceProviderId;
+	}
+	
+	
+	
+}

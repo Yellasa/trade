@@ -1,0 +1,74 @@
+package com.liantuo.trade.orm.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.druid.util.StringUtils;
+import com.liantuo.trade.exception.BizRuntimeException;
+import com.liantuo.trade.orm.mapper.TradeAdjustAccountMapper;
+import com.liantuo.trade.orm.mapper.TradeProfitLossLedgerMapper;
+import com.liantuo.trade.orm.pojo.TradeLedgerExample;
+import com.liantuo.trade.orm.pojo.TradeProfitLossLedger;
+import com.liantuo.trade.orm.pojo.TradeProfitLossLedgerExample;
+import com.liantuo.trade.orm.service.TradeProfitLossLedgerService;
+@Service(value="tradeProfitLossLedgerService")
+public class TradeProfitLossLedgerServiceImpl implements TradeProfitLossLedgerService {
+	 private final Log LOG4J = LogFactory.getLog("trade");
+	 @Resource
+	 private TradeProfitLossLedgerMapper tradeProfitLossLedgerMapper;
+	@Override
+	public void insertTradeProfitLossLedger(TradeProfitLossLedger record) {
+		Long id = tradeProfitLossLedgerMapper.insertSelective(record);
+		record.setId(id);
+	}
+
+	@Override
+	public void updateTradeProfitLossLedger(TradeProfitLossLedger record) {
+		int count =   tradeProfitLossLedgerMapper.updateByKeyVersionSelective(record);
+		if (count != 1) {
+            LOG4J.error(String.format("乐观锁更新失败 id=%d, version=%d", record.getId(), record.getVersion()));
+            throw new BizRuntimeException("trade.status.update.error");
+        }
+	}
+
+	@Override
+	public List<TradeProfitLossLedger> queryTradeProfitLossLedgerBy(
+			String ledgerNo) {
+		TradeProfitLossLedgerExample query = new TradeProfitLossLedgerExample();
+        query.createCriteria().andLedgerNoEqualTo(ledgerNo);
+		return tradeProfitLossLedgerMapper.selectByExample(query);
+	}
+
+	@Override
+	public TradeProfitLossLedger queryByLedgerNoAndTradeNo(String ledgerNo,
+			String tradeNo) {
+		if((!StringUtils.isEmpty(ledgerNo)) && !StringUtils.isEmpty(tradeNo)){
+			TradeProfitLossLedgerExample example = new TradeProfitLossLedgerExample();
+			example.createCriteria().andLedgerNoEqualTo(ledgerNo).andTradeNoEqualTo(tradeNo);
+			List<TradeProfitLossLedger> list  = tradeProfitLossLedgerMapper.selectByExample(example);
+			if(list != null && list.size() > 0 ){
+				return list.get(0);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public List<TradeProfitLossLedger> queryProfitLossLedgerByTradeNo(String tradeNo) {
+		if(!StringUtils.isEmpty(tradeNo)){
+			TradeProfitLossLedgerExample example = new TradeProfitLossLedgerExample();
+			example.createCriteria().andTradeNoEqualTo(tradeNo);
+			List<TradeProfitLossLedger> list  = tradeProfitLossLedgerMapper.selectByExample(example);
+			if(list != null && list.size() > 0 ){
+				return list;
+			}
+		}
+		return null;
+	}
+
+}

@@ -1,0 +1,1766 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liantuo.trade.orm.mapper.TradeSinglePaymentMapper">
+	<resultMap id="BaseResultMap" type="com.liantuo.trade.orm.pojo.TradeSinglePayment">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="partner_id" property="partnerId" jdbcType="VARCHAR" />
+		<result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+		<result column="core_merchant_no" property="coreMerchantNo"
+			jdbcType="VARCHAR" />
+		<result column="fund_pool_no" property="fundPoolNo" jdbcType="VARCHAR" />
+		<result column="original_trade_no" property="originalTradeNo"
+			jdbcType="VARCHAR" />
+		<result column="out_trade_no_ext" property="outTradeNoExt"
+			jdbcType="VARCHAR" />
+		<result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR" />
+		<result column="gmt_created" property="gmtCreated" jdbcType="TIMESTAMP" />
+		<result column="gmt_modified_latest" property="gmtModifiedLatest"
+			jdbcType="TIMESTAMP" />
+		<result column="latest_trade_req_type" property="latestTradeReqType"
+			jdbcType="VARCHAR" />
+		<result column="latest_req_no" property="latestReqNo" jdbcType="VARCHAR" />
+		<result column="close_status" property="closeStatus" jdbcType="CHAR" />
+		<result column="status" property="status" jdbcType="CHAR" />
+		<result column="trade_catagory" property="tradeCatagory"
+			jdbcType="CHAR" />
+		<result column="version" property="version" jdbcType="INTEGER" />
+		<result column="notify_url" property="notifyUrl" jdbcType="VARCHAR" />
+		<result column="merchant_extend_field_1" property="merchantExtendField1"
+			jdbcType="VARCHAR" />
+		<result column="merchant_extend_field_2" property="merchantExtendField2"
+			jdbcType="VARCHAR" />
+		<result column="merchant_extend_field_3" property="merchantExtendField3"
+			jdbcType="VARCHAR" />
+		<result column="merchant_extend_field_4" property="merchantExtendField4"
+			jdbcType="VARCHAR" />
+		<result column="merchant_extend_field_5" property="merchantExtendField5"
+			jdbcType="VARCHAR" />
+		<result column="merchant_extend_field_6" property="merchantExtendField6"
+			jdbcType="VARCHAR" />
+		<result column="merchant_extend_field_7" property="merchantExtendField7"
+			jdbcType="VARCHAR" />
+		<result column="merchant_extend_field_8" property="merchantExtendField8"
+			jdbcType="VARCHAR" />
+		<result column="merchant_extend_field_9" property="merchantExtendField9"
+			jdbcType="VARCHAR" />
+		<result column="merchant_extend_field_10" property="merchantExtendField10"
+			jdbcType="VARCHAR" />
+		<result column="gmt_fail_pay" property="gmtFailPay" jdbcType="TIMESTAMP" />
+		<result column="gmt_wait_pay" property="gmtWaitPay" jdbcType="TIMESTAMP" />
+		<result column="gmt_wait_in_accountting" property="gmtWaitInAccountting"
+			jdbcType="TIMESTAMP" />
+		<result column="gmt_wait_refund" property="gmtWaitRefund"
+			jdbcType="TIMESTAMP" />
+		<result column="gmt_refund_pay" property="gmtRefundPay"
+			jdbcType="TIMESTAMP" />
+		<result column="gmt_success_pay" property="gmtSuccessPay"
+			jdbcType="TIMESTAMP" />
+		<result column="gmt_abort_unexcepted" property="gmtAbortUnexcepted"
+			jdbcType="TIMESTAMP" />
+		<result column="pay_amt" property="payAmt" jdbcType="BIGINT" />
+		<result column="pay_type" property="payType" jdbcType="CHAR" />
+		<result column="pay_url" property="payUrl" jdbcType="LONGVARCHAR" />
+		<result column="external_pay_ledger_no" property="externalPayLedgerNo"
+			jdbcType="VARCHAR" />
+		<result column="external_pay_channel" property="externalPayChannel"
+			jdbcType="VARCHAR" />
+		<result column="external_pay_channel_fee_amt" property="externalPayChannelFeeAmt"
+			jdbcType="BIGINT" />
+		<result column="external_pay_channel_refund_fee_amt" property="externalPayChannelRefundFeeAmt"
+			jdbcType="BIGINT" />
+		<result column="external_pay_channel_batch_no" property="externalPayChannelBatchNo"
+			jdbcType="VARCHAR" />
+		<result column="external_pay_channel_serial_no" property="externalPayChannelSerialNo"
+			jdbcType="VARCHAR" />
+		<result column="external_pay_received_amt" property="externalPayReceivedAmt"
+			jdbcType="BIGINT" />
+		<result column="gmt_success_external_pay_channel" property="gmtSuccessExternalPayChannel"
+			jdbcType="TIMESTAMP" />
+		<result column="external_pay_channel_trade_no" property="externalPayChannelTradeNo"
+			jdbcType="VARCHAR" />
+		<result column="pay_profit_loss_ledger_no" property="payProfitLossLedgerNo"
+			jdbcType="VARCHAR" />
+		<result column="pay_profit_loss_income_decr" property="payProfitLossIncomeDecr"
+			jdbcType="BIGINT" />
+		<result column="pay_profit_loss_cost_incr" property="payProfitLossCostIncr"
+			jdbcType="BIGINT" />
+		<result column="pay_account_no" property="payAccountNo"
+			jdbcType="VARCHAR" />
+		<result column="pay_account_merchant_no" property="payAccountMerchantNo"
+			jdbcType="VARCHAR" />
+		<result column="pay_account_out_accounting_amt" property="payAccountOutAccountingAmt"
+			jdbcType="BIGINT" />
+		<result column="pay_account_out_accounting_type" property="payAccountOutAccountingType"
+			jdbcType="CHAR" />
+		<result column="pay_account_out_accounting_his1" property="payAccountOutAccountingHis1"
+			jdbcType="VARCHAR" />
+		<result column="pay_account_out_accounting_his2" property="payAccountOutAccountingHis2"
+			jdbcType="VARCHAR" />
+		<result column="pay_account_out_accounting_his3" property="payAccountOutAccountingHis3"
+			jdbcType="VARCHAR" />
+		<result column="pay_account_in_accounting_type" property="payAccountInAccountingType"
+			jdbcType="CHAR" />
+		<result column="pay_account_in_accounting_his1" property="payAccountInAccountingHis1"
+			jdbcType="VARCHAR" />
+		<result column="pay_account_in_accounting_his2" property="payAccountInAccountingHis2"
+			jdbcType="VARCHAR" />
+		<result column="pay_account_in_accounting_his3" property="payAccountInAccountingHis3"
+			jdbcType="VARCHAR" />
+		<result column="pay_fee_account_no" property="payFeeAccountNo"
+			jdbcType="VARCHAR" />
+		<result column="pay_fee_account_merchant_no" property="payFeeAccountMerchantNo"
+			jdbcType="VARCHAR" />
+		<result column="pay_fee_account_out_accounting_amt" property="payFeeAccountOutAccountingAmt"
+			jdbcType="BIGINT" />
+		<result column="pay_fee_account_out_accounting_type" property="payFeeAccountOutAccountingType"
+			jdbcType="CHAR" />
+		<result column="pay_fee_account_out_accounting_his1" property="payFeeAccountOutAccountingHis1"
+			jdbcType="VARCHAR" />
+		<result column="pay_fee_account_out_accounting_his2" property="payFeeAccountOutAccountingHis2"
+			jdbcType="VARCHAR" />
+		<result column="pay_fee_account_out_accounting_his3" property="payFeeAccountOutAccountingHis3"
+			jdbcType="VARCHAR" />
+		<result column="receive_amt" property="receiveAmt" jdbcType="BIGINT" />
+		<result column="receive_type" property="receiveType" jdbcType="CHAR" />
+		<result column="receive_profit_loss_ledger_no" property="receiveProfitLossLedgerNo"
+			jdbcType="VARCHAR" />
+		<result column="receive_profit_loss_income_incr" property="receiveProfitLossIncomeIncr"
+			jdbcType="BIGINT" />
+		<result column="receive_profit_loss_cost_decr" property="receiveProfitLossCostDecr"
+			jdbcType="BIGINT" />
+		<result column="receive_account_no" property="receiveAccountNo"
+			jdbcType="VARCHAR" />
+		<result column="receive_account_merchant_no" property="receiveAccountMerchantNo"
+			jdbcType="VARCHAR" />
+		<result column="receive_account_in_accounting_amt" property="receiveAccountInAccountingAmt"
+			jdbcType="BIGINT" />
+		<result column="receive_account_in_accounting_type" property="receiveAccountInAccountingType"
+			jdbcType="CHAR" />
+		<result column="receive_account_in_accounting_his1" property="receiveAccountInAccountingHis1"
+			jdbcType="VARCHAR" />
+		<result column="receive_account_in_accounting_his2" property="receiveAccountInAccountingHis2"
+			jdbcType="VARCHAR" />
+		<result column="receive_account_in_accounting_his3" property="receiveAccountInAccountingHis3"
+			jdbcType="VARCHAR" />
+		<result column="receive_fee_account_no" property="receiveFeeAccountNo"
+			jdbcType="VARCHAR" />
+		<result column="receive_fee_account_merchant_no" property="receiveFeeAccountMerchantNo"
+			jdbcType="VARCHAR" />
+		<result column="receive_fee_account_out_accounting_amt"
+			property="receiveFeeAccountOutAccountingAmt" jdbcType="BIGINT" />
+		<result column="receive_fee_account_out_accounting_type"
+			property="receiveFeeAccountOutAccountingType" jdbcType="CHAR" />
+		<result column="receive_fee_account_out_accounting_his1"
+			property="receiveFeeAccountOutAccountingHis1" jdbcType="VARCHAR" />
+		<result column="receive_fee_account_out_accounting_his2"
+			property="receiveFeeAccountOutAccountingHis2" jdbcType="VARCHAR" />
+		<result column="receive_fee_account_out_accounting_his3"
+			property="receiveFeeAccountOutAccountingHis3" jdbcType="VARCHAR" />
+		<result column="refund_pay_type" property="refundPayType"
+			jdbcType="CHAR" />
+		<result column="external_refund_ledger_no" property="externalRefundLedgerNo"
+			jdbcType="VARCHAR" />
+		<result column="external_refund_channel" property="externalRefundChannel"
+			jdbcType="VARCHAR" />
+		<result column="external_refund_channel_pay_amt" property="externalRefundChannelPayAmt"
+			jdbcType="BIGINT" />
+		<result column="external_refund_channel_refund_fee_amt"
+			property="externalRefundChannelRefundFeeAmt" jdbcType="BIGINT" />
+		<result column="external_refund_amt" property="externalRefundAmt"
+			jdbcType="BIGINT" />
+		<result column="gmt_success_refund_external_pay_channel"
+			property="gmtSuccessRefundExternalPayChannel" jdbcType="TIMESTAMP" />
+		<result column="external_refund_channel_trade_no" property="externalRefundChannelTradeNo"
+			jdbcType="VARCHAR" />
+		<result column="external_refund_channel_batch_no" property="externalRefundChannelBatchNo"
+			jdbcType="VARCHAR" />
+		<result column="external_refund_channel_serial_no" property="externalRefundChannelSerialNo"
+			jdbcType="VARCHAR" />
+		<result column="refund_pay_profit_loss_ledger_no" property="refundPayProfitLossLedgerNo"
+			jdbcType="VARCHAR" />
+		<result column="refund_pay_profit_loss_income_incr" property="refundPayProfitLossIncomeIncr"
+			jdbcType="BIGINT" />
+		<result column="refund_pay_profit_loss_cost_decr" property="refundPayProfitLossCostDecr"
+			jdbcType="BIGINT" />
+		<result column="refund_pay_account_no" property="refundPayAccountNo"
+			jdbcType="VARCHAR" />
+		<result column="refund_pay_merchant_no" property="refundPayMerchantNo"
+			jdbcType="VARCHAR" />
+		<result column="refund_pay_in_accounting_amt" property="refundPayInAccountingAmt"
+			jdbcType="BIGINT" />
+		<result column="refund_pay_out_accounting_type" property="refundPayOutAccountingType"
+			jdbcType="CHAR" />
+		<result column="refund_pay_out_accounting_his1" property="refundPayOutAccountingHis1"
+			jdbcType="VARCHAR" />
+		<result column="refund_pay_out_accounting_his2" property="refundPayOutAccountingHis2"
+			jdbcType="VARCHAR" />
+		<result column="refund_pay_out_accounting_his3" property="refundPayOutAccountingHis3"
+			jdbcType="VARCHAR" />
+		<result column="refund_pay_in_accounting_type" property="refundPayInAccountingType"
+			jdbcType="CHAR" />
+		<result column="refund_pay_in_accounting_his1" property="refundPayInAccountingHis1"
+			jdbcType="VARCHAR" />
+		<result column="refund_pay_in_accounting_his2" property="refundPayInAccountingHis2"
+			jdbcType="VARCHAR" />
+		<result column="refund_pay_in_accounting_his3" property="refundPayInAccountingHis3"
+			jdbcType="VARCHAR" />
+		<result column="pay_freeze_bal" property="payFreezeBal"
+			jdbcType="BIGINT" />
+		<result column="receive_freeze_bal" property="receiveFreezeBal"
+			jdbcType="BIGINT" />
+		<result column="sum_refunded_receive_account_amt" property="sumRefundedReceiveAccountAmt"
+			jdbcType="BIGINT" />
+		<result column="sum_refunded_pay_fee_account_amt" property="sumRefundedPayFeeAccountAmt"
+			jdbcType="BIGINT" />
+		<result column="sum_refunded_receive_fee_account_amt" property="sumRefundedReceiveFeeAccountAmt"
+			jdbcType="BIGINT" />
+		<result column="sum_refunded_pay_account_out_accounting_amt"
+			property="sumRefundedPayAccountOutAccountingAmt" jdbcType="BIGINT" />
+		<result column="sum_refunded_pay_ledger_amt" property="sumRefundedPayLedgerAmt"
+			jdbcType="BIGINT" />
+		<result column="sum_supplied_amt" property="sumSuppliedAmt"
+			jdbcType="BIGINT" />
+		<result column="sum_refunded_supply_refund_amt" property="sumRefundedSupplyRefundAmt"
+			jdbcType="BIGINT" />
+		<result column="sum_distributed_royalty_amt" property="sumDistributedRoyaltyAmt"
+			jdbcType="BIGINT" />
+		<result column="sum_refunded_distributed_royalty_amt" property="sumRefundedDistributedRoyaltyAmt"
+			jdbcType="BIGINT" />
+		<result column="continue_trade_status" property="continueTradeStatus"
+			jdbcType="CHAR" />
+		<result column="trade_extend_field_1" property="tradeExtendField1"
+			jdbcType="VARCHAR" />
+		<result column="trade_extend_field_2" property="tradeExtendField2"
+			jdbcType="VARCHAR" />
+		<result column="trade_extend_field_3" property="tradeExtendField3"
+			jdbcType="VARCHAR" />
+		<result column="trade_extend_field_4" property="tradeExtendField4"
+			jdbcType="VARCHAR" />
+		<result column="trade_extend_field_5" property="tradeExtendField5"
+			jdbcType="VARCHAR" />
+		<result column="trade_extend_field_6" property="tradeExtendField6"
+			jdbcType="VARCHAR" />
+		<result column="trade_extend_field_7" property="tradeExtendField7"
+			jdbcType="VARCHAR" />
+		<result column="trade_extend_field_8" property="tradeExtendField8"
+			jdbcType="VARCHAR" />
+		<result column="trade_extend_field_9" property="tradeExtendField9"
+			jdbcType="VARCHAR" />
+		<result column="trade_extend_field_10" property="tradeExtendField10"
+			jdbcType="VARCHAR" />
+		<result column="extend_profit_loss" property="extendProfitLoss"
+			jdbcType="LONGVARCHAR" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria" separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value}
+									and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value}
+									and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		id, partner_id, trade_no, core_merchant_no, fund_pool_no,
+		original_trade_no, out_trade_no_ext,
+		out_trade_no, gmt_created,
+		gmt_modified_latest, latest_trade_req_type,
+		latest_req_no,
+		close_status, status, trade_catagory, version, notify_url,
+		merchant_extend_field_1,
+		merchant_extend_field_2,
+		merchant_extend_field_3,
+		merchant_extend_field_4,
+		merchant_extend_field_5,
+		merchant_extend_field_6,
+		merchant_extend_field_7,
+		merchant_extend_field_8,
+		merchant_extend_field_9,
+		merchant_extend_field_10, gmt_fail_pay,
+		gmt_wait_pay,
+		gmt_wait_in_accountting, gmt_wait_refund,
+		gmt_refund_pay,
+		gmt_success_pay, gmt_abort_unexcepted, pay_amt, pay_type, pay_url,
+		external_pay_ledger_no, external_pay_channel,
+		external_pay_channel_fee_amt, external_pay_channel_refund_fee_amt,
+		external_pay_channel_batch_no, external_pay_channel_serial_no,
+		external_pay_received_amt,
+		gmt_success_external_pay_channel,
+		external_pay_channel_trade_no, pay_profit_loss_ledger_no,
+		pay_profit_loss_income_decr, pay_profit_loss_cost_incr,
+		pay_account_no, pay_account_merchant_no,
+		pay_account_out_accounting_amt, pay_account_out_accounting_type,
+		pay_account_out_accounting_his1,
+		pay_account_out_accounting_his2,
+		pay_account_out_accounting_his3, pay_account_in_accounting_type,
+		pay_account_in_accounting_his1, pay_account_in_accounting_his2,
+		pay_account_in_accounting_his3,
+		pay_fee_account_no,
+		pay_fee_account_merchant_no, pay_fee_account_out_accounting_amt,
+		pay_fee_account_out_accounting_type,
+		pay_fee_account_out_accounting_his1,
+		pay_fee_account_out_accounting_his2,
+		pay_fee_account_out_accounting_his3, receive_amt, receive_type,
+		receive_profit_loss_ledger_no,
+		receive_profit_loss_income_incr,
+		receive_profit_loss_cost_decr, receive_account_no,
+		receive_account_merchant_no, receive_account_in_accounting_amt,
+		receive_account_in_accounting_type,
+		receive_account_in_accounting_his1,
+		receive_account_in_accounting_his2,
+		receive_account_in_accounting_his3,
+		receive_fee_account_no,
+		receive_fee_account_merchant_no,
+		receive_fee_account_out_accounting_amt,
+		receive_fee_account_out_accounting_type,
+		receive_fee_account_out_accounting_his1,
+		receive_fee_account_out_accounting_his2,
+		receive_fee_account_out_accounting_his3,
+		refund_pay_type,
+		external_refund_ledger_no, external_refund_channel,
+		external_refund_channel_pay_amt,
+		external_refund_channel_refund_fee_amt, external_refund_amt,
+		gmt_success_refund_external_pay_channel,
+		external_refund_channel_trade_no, external_refund_channel_batch_no,
+		external_refund_channel_serial_no,
+		refund_pay_profit_loss_ledger_no,
+		refund_pay_profit_loss_income_incr, refund_pay_profit_loss_cost_decr,
+		refund_pay_account_no, refund_pay_merchant_no,
+		refund_pay_in_accounting_amt, refund_pay_out_accounting_type,
+		refund_pay_out_accounting_his1, refund_pay_out_accounting_his2,
+		refund_pay_out_accounting_his3,
+		refund_pay_in_accounting_type,
+		refund_pay_in_accounting_his1, refund_pay_in_accounting_his2,
+		refund_pay_in_accounting_his3, pay_freeze_bal, receive_freeze_bal,
+		sum_refunded_receive_account_amt,
+		sum_refunded_pay_fee_account_amt,
+		sum_refunded_receive_fee_account_amt,
+		sum_refunded_pay_account_out_accounting_amt,
+		sum_refunded_pay_ledger_amt, sum_supplied_amt,
+		sum_refunded_supply_refund_amt, sum_distributed_royalty_amt,
+		sum_refunded_distributed_royalty_amt, continue_trade_status,
+		trade_extend_field_1,
+		trade_extend_field_2, trade_extend_field_3,
+		trade_extend_field_4, trade_extend_field_5,
+		trade_extend_field_6,
+		trade_extend_field_7, trade_extend_field_8,
+		trade_extend_field_9,
+		trade_extend_field_10, extend_profit_loss
+	</sql>
+	<select id="selectByExample" resultMap="BaseResultMap"
+		parameterType="com.liantuo.trade.orm.pojo.TradeSinglePaymentExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from trade_single_payment
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from trade_single_payment
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<insert id="insertSelective" parameterType="com.liantuo.trade.orm.pojo.TradeSinglePayment">
+		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID() AS id
+		</selectKey>
+		insert into trade_single_payment
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="partnerId != null">
+				partner_id,
+			</if>
+			<if test="tradeNo != null">
+				trade_no,
+			</if>
+			<if test="coreMerchantNo != null">
+				core_merchant_no,
+			</if>
+			<if test="fundPoolNo != null">
+				fund_pool_no,
+			</if>
+			<if test="originalTradeNo != null">
+				original_trade_no,
+			</if>
+			<if test="outTradeNoExt != null">
+				out_trade_no_ext,
+			</if>
+			<if test="outTradeNo != null">
+				out_trade_no,
+			</if>
+			<if test="gmtCreated != null">
+				gmt_created,
+			</if>
+			<if test="gmtModifiedLatest != null">
+				gmt_modified_latest,
+			</if>
+			<if test="latestTradeReqType != null">
+				latest_trade_req_type,
+			</if>
+			<if test="latestReqNo != null">
+				latest_req_no,
+			</if>
+			<if test="closeStatus != null">
+				close_status,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="tradeCatagory != null">
+				trade_catagory,
+			</if>
+			<if test="version != null">
+				version,
+			</if>
+			<if test="notifyUrl != null">
+				notify_url,
+			</if>
+			<if test="merchantExtendField1 != null">
+				merchant_extend_field_1,
+			</if>
+			<if test="merchantExtendField2 != null">
+				merchant_extend_field_2,
+			</if>
+			<if test="merchantExtendField3 != null">
+				merchant_extend_field_3,
+			</if>
+			<if test="merchantExtendField4 != null">
+				merchant_extend_field_4,
+			</if>
+			<if test="merchantExtendField5 != null">
+				merchant_extend_field_5,
+			</if>
+			<if test="merchantExtendField6 != null">
+				merchant_extend_field_6,
+			</if>
+			<if test="merchantExtendField7 != null">
+				merchant_extend_field_7,
+			</if>
+			<if test="merchantExtendField8 != null">
+				merchant_extend_field_8,
+			</if>
+			<if test="merchantExtendField9 != null">
+				merchant_extend_field_9,
+			</if>
+			<if test="merchantExtendField10 != null">
+				merchant_extend_field_10,
+			</if>
+			<if test="gmtFailPay != null">
+				gmt_fail_pay,
+			</if>
+			<if test="gmtWaitPay != null">
+				gmt_wait_pay,
+			</if>
+			<if test="gmtWaitInAccountting != null">
+				gmt_wait_in_accountting,
+			</if>
+			<if test="gmtWaitRefund != null">
+				gmt_wait_refund,
+			</if>
+			<if test="gmtRefundPay != null">
+				gmt_refund_pay,
+			</if>
+			<if test="gmtSuccessPay != null">
+				gmt_success_pay,
+			</if>
+			<if test="gmtAbortUnexcepted != null">
+				gmt_abort_unexcepted,
+			</if>
+			<if test="payAmt != null">
+				pay_amt,
+			</if>
+			<if test="payType != null">
+				pay_type,
+			</if>
+			<if test="payUrl != null">
+				pay_url,
+			</if>
+			<if test="externalPayLedgerNo != null">
+				external_pay_ledger_no,
+			</if>
+			<if test="externalPayChannel != null">
+				external_pay_channel,
+			</if>
+			<if test="externalPayChannelFeeAmt != null">
+				external_pay_channel_fee_amt,
+			</if>
+			<if test="externalPayChannelRefundFeeAmt != null">
+				external_pay_channel_refund_fee_amt,
+			</if>
+			<if test="externalPayChannelBatchNo != null">
+				external_pay_channel_batch_no,
+			</if>
+			<if test="externalPayChannelSerialNo != null">
+				external_pay_channel_serial_no,
+			</if>
+			<if test="externalPayReceivedAmt != null">
+				external_pay_received_amt,
+			</if>
+			<if test="gmtSuccessExternalPayChannel != null">
+				gmt_success_external_pay_channel,
+			</if>
+			<if test="externalPayChannelTradeNo != null">
+				external_pay_channel_trade_no,
+			</if>
+			<if test="payProfitLossLedgerNo != null">
+				pay_profit_loss_ledger_no,
+			</if>
+			<if test="payProfitLossIncomeDecr != null">
+				pay_profit_loss_income_decr,
+			</if>
+			<if test="payProfitLossCostIncr != null">
+				pay_profit_loss_cost_incr,
+			</if>
+			<if test="payAccountNo != null">
+				pay_account_no,
+			</if>
+			<if test="payAccountMerchantNo != null">
+				pay_account_merchant_no,
+			</if>
+			<if test="payAccountOutAccountingAmt != null">
+				pay_account_out_accounting_amt,
+			</if>
+			<if test="payAccountOutAccountingType != null">
+				pay_account_out_accounting_type,
+			</if>
+			<if test="payAccountOutAccountingHis1 != null">
+				pay_account_out_accounting_his1,
+			</if>
+			<if test="payAccountOutAccountingHis2 != null">
+				pay_account_out_accounting_his2,
+			</if>
+			<if test="payAccountOutAccountingHis3 != null">
+				pay_account_out_accounting_his3,
+			</if>
+			<if test="payAccountInAccountingType != null">
+				pay_account_in_accounting_type,
+			</if>
+			<if test="payAccountInAccountingHis1 != null">
+				pay_account_in_accounting_his1,
+			</if>
+			<if test="payAccountInAccountingHis2 != null">
+				pay_account_in_accounting_his2,
+			</if>
+			<if test="payAccountInAccountingHis3 != null">
+				pay_account_in_accounting_his3,
+			</if>
+			<if test="payFeeAccountNo != null">
+				pay_fee_account_no,
+			</if>
+			<if test="payFeeAccountMerchantNo != null">
+				pay_fee_account_merchant_no,
+			</if>
+			<if test="payFeeAccountOutAccountingAmt != null">
+				pay_fee_account_out_accounting_amt,
+			</if>
+			<if test="payFeeAccountOutAccountingType != null">
+				pay_fee_account_out_accounting_type,
+			</if>
+			<if test="payFeeAccountOutAccountingHis1 != null">
+				pay_fee_account_out_accounting_his1,
+			</if>
+			<if test="payFeeAccountOutAccountingHis2 != null">
+				pay_fee_account_out_accounting_his2,
+			</if>
+			<if test="payFeeAccountOutAccountingHis3 != null">
+				pay_fee_account_out_accounting_his3,
+			</if>
+			<if test="receiveAmt != null">
+				receive_amt,
+			</if>
+			<if test="receiveType != null">
+				receive_type,
+			</if>
+			<if test="receiveProfitLossLedgerNo != null">
+				receive_profit_loss_ledger_no,
+			</if>
+			<if test="receiveProfitLossIncomeIncr != null">
+				receive_profit_loss_income_incr,
+			</if>
+			<if test="receiveProfitLossCostDecr != null">
+				receive_profit_loss_cost_decr,
+			</if>
+			<if test="receiveAccountNo != null">
+				receive_account_no,
+			</if>
+			<if test="receiveAccountMerchantNo != null">
+				receive_account_merchant_no,
+			</if>
+			<if test="receiveAccountInAccountingAmt != null">
+				receive_account_in_accounting_amt,
+			</if>
+			<if test="receiveAccountInAccountingType != null">
+				receive_account_in_accounting_type,
+			</if>
+			<if test="receiveAccountInAccountingHis1 != null">
+				receive_account_in_accounting_his1,
+			</if>
+			<if test="receiveAccountInAccountingHis2 != null">
+				receive_account_in_accounting_his2,
+			</if>
+			<if test="receiveAccountInAccountingHis3 != null">
+				receive_account_in_accounting_his3,
+			</if>
+			<if test="receiveFeeAccountNo != null">
+				receive_fee_account_no,
+			</if>
+			<if test="receiveFeeAccountMerchantNo != null">
+				receive_fee_account_merchant_no,
+			</if>
+			<if test="receiveFeeAccountOutAccountingAmt != null">
+				receive_fee_account_out_accounting_amt,
+			</if>
+			<if test="receiveFeeAccountOutAccountingType != null">
+				receive_fee_account_out_accounting_type,
+			</if>
+			<if test="receiveFeeAccountOutAccountingHis1 != null">
+				receive_fee_account_out_accounting_his1,
+			</if>
+			<if test="receiveFeeAccountOutAccountingHis2 != null">
+				receive_fee_account_out_accounting_his2,
+			</if>
+			<if test="receiveFeeAccountOutAccountingHis3 != null">
+				receive_fee_account_out_accounting_his3,
+			</if>
+			<if test="refundPayType != null">
+				refund_pay_type,
+			</if>
+			<if test="externalRefundLedgerNo != null">
+				external_refund_ledger_no,
+			</if>
+			<if test="externalRefundChannel != null">
+				external_refund_channel,
+			</if>
+			<if test="externalRefundChannelPayAmt != null">
+				external_refund_channel_pay_amt,
+			</if>
+			<if test="externalRefundChannelRefundFeeAmt != null">
+				external_refund_channel_refund_fee_amt,
+			</if>
+			<if test="externalRefundAmt != null">
+				external_refund_amt,
+			</if>
+			<if test="gmtSuccessRefundExternalPayChannel != null">
+				gmt_success_refund_external_pay_channel,
+			</if>
+			<if test="externalRefundChannelTradeNo != null">
+				external_refund_channel_trade_no,
+			</if>
+			<if test="externalRefundChannelBatchNo != null">
+				external_refund_channel_batch_no,
+			</if>
+			<if test="externalRefundChannelSerialNo != null">
+				external_refund_channel_serial_no,
+			</if>
+			<if test="refundPayProfitLossLedgerNo != null">
+				refund_pay_profit_loss_ledger_no,
+			</if>
+			<if test="refundPayProfitLossIncomeIncr != null">
+				refund_pay_profit_loss_income_incr,
+			</if>
+			<if test="refundPayProfitLossCostDecr != null">
+				refund_pay_profit_loss_cost_decr,
+			</if>
+			<if test="refundPayAccountNo != null">
+				refund_pay_account_no,
+			</if>
+			<if test="refundPayMerchantNo != null">
+				refund_pay_merchant_no,
+			</if>
+			<if test="refundPayInAccountingAmt != null">
+				refund_pay_in_accounting_amt,
+			</if>
+			<if test="refundPayOutAccountingType != null">
+				refund_pay_out_accounting_type,
+			</if>
+			<if test="refundPayOutAccountingHis1 != null">
+				refund_pay_out_accounting_his1,
+			</if>
+			<if test="refundPayOutAccountingHis2 != null">
+				refund_pay_out_accounting_his2,
+			</if>
+			<if test="refundPayOutAccountingHis3 != null">
+				refund_pay_out_accounting_his3,
+			</if>
+			<if test="refundPayInAccountingType != null">
+				refund_pay_in_accounting_type,
+			</if>
+			<if test="refundPayInAccountingHis1 != null">
+				refund_pay_in_accounting_his1,
+			</if>
+			<if test="refundPayInAccountingHis2 != null">
+				refund_pay_in_accounting_his2,
+			</if>
+			<if test="refundPayInAccountingHis3 != null">
+				refund_pay_in_accounting_his3,
+			</if>
+			<if test="payFreezeBal != null">
+				pay_freeze_bal,
+			</if>
+			<if test="receiveFreezeBal != null">
+				receive_freeze_bal,
+			</if>
+			<if test="sumRefundedReceiveAccountAmt != null">
+				sum_refunded_receive_account_amt,
+			</if>
+			<if test="sumRefundedPayFeeAccountAmt != null">
+				sum_refunded_pay_fee_account_amt,
+			</if>
+			<if test="sumRefundedReceiveFeeAccountAmt != null">
+				sum_refunded_receive_fee_account_amt,
+			</if>
+			<if test="sumRefundedPayAccountOutAccountingAmt != null">
+				sum_refunded_pay_account_out_accounting_amt,
+			</if>
+			<if test="sumRefundedPayLedgerAmt != null">
+				sum_refunded_pay_ledger_amt,
+			</if>
+			<if test="sumSuppliedAmt != null">
+				sum_supplied_amt,
+			</if>
+			<if test="sumRefundedSupplyRefundAmt != null">
+				sum_refunded_supply_refund_amt,
+			</if>
+			<if test="sumDistributedRoyaltyAmt != null">
+				sum_distributed_royalty_amt,
+			</if>
+			<if test="sumRefundedDistributedRoyaltyAmt != null">
+				sum_refunded_distributed_royalty_amt,
+			</if>
+			<if test="continueTradeStatus != null">
+				continue_trade_status,
+			</if>
+			<if test="tradeExtendField1 != null">
+				trade_extend_field_1,
+			</if>
+			<if test="tradeExtendField2 != null">
+				trade_extend_field_2,
+			</if>
+			<if test="tradeExtendField3 != null">
+				trade_extend_field_3,
+			</if>
+			<if test="tradeExtendField4 != null">
+				trade_extend_field_4,
+			</if>
+			<if test="tradeExtendField5 != null">
+				trade_extend_field_5,
+			</if>
+			<if test="tradeExtendField6 != null">
+				trade_extend_field_6,
+			</if>
+			<if test="tradeExtendField7 != null">
+				trade_extend_field_7,
+			</if>
+			<if test="tradeExtendField8 != null">
+				trade_extend_field_8,
+			</if>
+			<if test="tradeExtendField9 != null">
+				trade_extend_field_9,
+			</if>
+			<if test="tradeExtendField10 != null">
+				trade_extend_field_10,
+			</if>
+			<if test="extendProfitLoss != null">
+				extend_profit_loss,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="partnerId != null">
+				#{partnerId,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeNo != null">
+				#{tradeNo,jdbcType=VARCHAR},
+			</if>
+			<if test="coreMerchantNo != null">
+				#{coreMerchantNo,jdbcType=VARCHAR},
+			</if>
+			<if test="fundPoolNo != null">
+				#{fundPoolNo,jdbcType=VARCHAR},
+			</if>
+			<if test="originalTradeNo != null">
+				#{originalTradeNo,jdbcType=VARCHAR},
+			</if>
+			<if test="outTradeNoExt != null">
+				#{outTradeNoExt,jdbcType=VARCHAR},
+			</if>
+			<if test="outTradeNo != null">
+				#{outTradeNo,jdbcType=VARCHAR},
+			</if>
+			<if test="gmtCreated != null">
+				#{gmtCreated,jdbcType=TIMESTAMP},
+			</if>
+			<if test="gmtModifiedLatest != null">
+				#{gmtModifiedLatest,jdbcType=TIMESTAMP},
+			</if>
+			<if test="latestTradeReqType != null">
+				#{latestTradeReqType,jdbcType=VARCHAR},
+			</if>
+			<if test="latestReqNo != null">
+				#{latestReqNo,jdbcType=VARCHAR},
+			</if>
+			<if test="closeStatus != null">
+				#{closeStatus,jdbcType=CHAR},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=CHAR},
+			</if>
+			<if test="tradeCatagory != null">
+				#{tradeCatagory,jdbcType=CHAR},
+			</if>
+			<if test="version != null">
+				#{version,jdbcType=INTEGER},
+			</if>
+			<if test="notifyUrl != null">
+				#{notifyUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantExtendField1 != null">
+				#{merchantExtendField1,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantExtendField2 != null">
+				#{merchantExtendField2,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantExtendField3 != null">
+				#{merchantExtendField3,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantExtendField4 != null">
+				#{merchantExtendField4,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantExtendField5 != null">
+				#{merchantExtendField5,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantExtendField6 != null">
+				#{merchantExtendField6,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantExtendField7 != null">
+				#{merchantExtendField7,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantExtendField8 != null">
+				#{merchantExtendField8,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantExtendField9 != null">
+				#{merchantExtendField9,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantExtendField10 != null">
+				#{merchantExtendField10,jdbcType=VARCHAR},
+			</if>
+			<if test="gmtFailPay != null">
+				#{gmtFailPay,jdbcType=TIMESTAMP},
+			</if>
+			<if test="gmtWaitPay != null">
+				#{gmtWaitPay,jdbcType=TIMESTAMP},
+			</if>
+			<if test="gmtWaitInAccountting != null">
+				#{gmtWaitInAccountting,jdbcType=TIMESTAMP},
+			</if>
+			<if test="gmtWaitRefund != null">
+				#{gmtWaitRefund,jdbcType=TIMESTAMP},
+			</if>
+			<if test="gmtRefundPay != null">
+				#{gmtRefundPay,jdbcType=TIMESTAMP},
+			</if>
+			<if test="gmtSuccessPay != null">
+				#{gmtSuccessPay,jdbcType=TIMESTAMP},
+			</if>
+			<if test="gmtAbortUnexcepted != null">
+				#{gmtAbortUnexcepted,jdbcType=TIMESTAMP},
+			</if>
+			<if test="payAmt != null">
+				#{payAmt,jdbcType=BIGINT},
+			</if>
+			<if test="payType != null">
+				#{payType,jdbcType=CHAR},
+			</if>
+			<if test="payUrl != null">
+				#{payUrl,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="externalPayLedgerNo != null">
+				#{externalPayLedgerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="externalPayChannel != null">
+				#{externalPayChannel,jdbcType=VARCHAR},
+			</if>
+			<if test="externalPayChannelFeeAmt != null">
+				#{externalPayChannelFeeAmt,jdbcType=BIGINT},
+			</if>
+			<if test="externalPayChannelRefundFeeAmt != null">
+				#{externalPayChannelRefundFeeAmt,jdbcType=BIGINT},
+			</if>
+			<if test="externalPayChannelBatchNo != null">
+				#{externalPayChannelBatchNo,jdbcType=VARCHAR},
+			</if>
+			<if test="externalPayChannelSerialNo != null">
+				#{externalPayChannelSerialNo,jdbcType=VARCHAR},
+			</if>
+			<if test="externalPayReceivedAmt != null">
+				#{externalPayReceivedAmt,jdbcType=BIGINT},
+			</if>
+			<if test="gmtSuccessExternalPayChannel != null">
+				#{gmtSuccessExternalPayChannel,jdbcType=TIMESTAMP},
+			</if>
+			<if test="externalPayChannelTradeNo != null">
+				#{externalPayChannelTradeNo,jdbcType=VARCHAR},
+			</if>
+			<if test="payProfitLossLedgerNo != null">
+				#{payProfitLossLedgerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="payProfitLossIncomeDecr != null">
+				#{payProfitLossIncomeDecr,jdbcType=BIGINT},
+			</if>
+			<if test="payProfitLossCostIncr != null">
+				#{payProfitLossCostIncr,jdbcType=BIGINT},
+			</if>
+			<if test="payAccountNo != null">
+				#{payAccountNo,jdbcType=VARCHAR},
+			</if>
+			<if test="payAccountMerchantNo != null">
+				#{payAccountMerchantNo,jdbcType=VARCHAR},
+			</if>
+			<if test="payAccountOutAccountingAmt != null">
+				#{payAccountOutAccountingAmt,jdbcType=BIGINT},
+			</if>
+			<if test="payAccountOutAccountingType != null">
+				#{payAccountOutAccountingType,jdbcType=CHAR},
+			</if>
+			<if test="payAccountOutAccountingHis1 != null">
+				#{payAccountOutAccountingHis1,jdbcType=VARCHAR},
+			</if>
+			<if test="payAccountOutAccountingHis2 != null">
+				#{payAccountOutAccountingHis2,jdbcType=VARCHAR},
+			</if>
+			<if test="payAccountOutAccountingHis3 != null">
+				#{payAccountOutAccountingHis3,jdbcType=VARCHAR},
+			</if>
+			<if test="payAccountInAccountingType != null">
+				#{payAccountInAccountingType,jdbcType=CHAR},
+			</if>
+			<if test="payAccountInAccountingHis1 != null">
+				#{payAccountInAccountingHis1,jdbcType=VARCHAR},
+			</if>
+			<if test="payAccountInAccountingHis2 != null">
+				#{payAccountInAccountingHis2,jdbcType=VARCHAR},
+			</if>
+			<if test="payAccountInAccountingHis3 != null">
+				#{payAccountInAccountingHis3,jdbcType=VARCHAR},
+			</if>
+			<if test="payFeeAccountNo != null">
+				#{payFeeAccountNo,jdbcType=VARCHAR},
+			</if>
+			<if test="payFeeAccountMerchantNo != null">
+				#{payFeeAccountMerchantNo,jdbcType=VARCHAR},
+			</if>
+			<if test="payFeeAccountOutAccountingAmt != null">
+				#{payFeeAccountOutAccountingAmt,jdbcType=BIGINT},
+			</if>
+			<if test="payFeeAccountOutAccountingType != null">
+				#{payFeeAccountOutAccountingType,jdbcType=CHAR},
+			</if>
+			<if test="payFeeAccountOutAccountingHis1 != null">
+				#{payFeeAccountOutAccountingHis1,jdbcType=VARCHAR},
+			</if>
+			<if test="payFeeAccountOutAccountingHis2 != null">
+				#{payFeeAccountOutAccountingHis2,jdbcType=VARCHAR},
+			</if>
+			<if test="payFeeAccountOutAccountingHis3 != null">
+				#{payFeeAccountOutAccountingHis3,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveAmt != null">
+				#{receiveAmt,jdbcType=BIGINT},
+			</if>
+			<if test="receiveType != null">
+				#{receiveType,jdbcType=CHAR},
+			</if>
+			<if test="receiveProfitLossLedgerNo != null">
+				#{receiveProfitLossLedgerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveProfitLossIncomeIncr != null">
+				#{receiveProfitLossIncomeIncr,jdbcType=BIGINT},
+			</if>
+			<if test="receiveProfitLossCostDecr != null">
+				#{receiveProfitLossCostDecr,jdbcType=BIGINT},
+			</if>
+			<if test="receiveAccountNo != null">
+				#{receiveAccountNo,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveAccountMerchantNo != null">
+				#{receiveAccountMerchantNo,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveAccountInAccountingAmt != null">
+				#{receiveAccountInAccountingAmt,jdbcType=BIGINT},
+			</if>
+			<if test="receiveAccountInAccountingType != null">
+				#{receiveAccountInAccountingType,jdbcType=BIGINT},
+			</if>
+			<if test="receiveAccountInAccountingHis1 != null">
+				#{receiveAccountInAccountingHis1,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveAccountInAccountingHis2 != null">
+				#{receiveAccountInAccountingHis2,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveAccountInAccountingHis3 != null">
+				#{receiveAccountInAccountingHis3,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveFeeAccountNo != null">
+				#{receiveFeeAccountNo,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveFeeAccountMerchantNo != null">
+				#{receiveFeeAccountMerchantNo,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveFeeAccountOutAccountingAmt != null">
+				#{receiveFeeAccountOutAccountingAmt,jdbcType=BIGINT},
+			</if>
+			<if test="receiveFeeAccountOutAccountingType != null">
+				#{receiveFeeAccountOutAccountingType,jdbcType=CHAR},
+			</if>
+			<if test="receiveFeeAccountOutAccountingHis1 != null">
+				#{receiveFeeAccountOutAccountingHis1,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveFeeAccountOutAccountingHis2 != null">
+				#{receiveFeeAccountOutAccountingHis2,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveFeeAccountOutAccountingHis3 != null">
+				#{receiveFeeAccountOutAccountingHis3,jdbcType=VARCHAR},
+			</if>
+			<if test="refundPayType != null">
+				#{refundPayType,jdbcType=CHAR},
+			</if>
+			<if test="externalRefundLedgerNo != null">
+				#{externalRefundLedgerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="externalRefundChannel != null">
+				#{externalRefundChannel,jdbcType=VARCHAR},
+			</if>
+			<if test="externalRefundChannelPayAmt != null">
+				#{externalRefundChannelPayAmt,jdbcType=BIGINT},
+			</if>
+			<if test="externalRefundChannelRefundFeeAmt != null">
+				#{externalRefundChannelRefundFeeAmt,jdbcType=BIGINT},
+			</if>
+			<if test="externalRefundAmt != null">
+				#{externalRefundAmt,jdbcType=BIGINT},
+			</if>
+			<if test="gmtSuccessRefundExternalPayChannel != null">
+				#{gmtSuccessRefundExternalPayChannel,jdbcType=TIMESTAMP},
+			</if>
+			<if test="externalRefundChannelTradeNo != null">
+				#{externalRefundChannelTradeNo,jdbcType=VARCHAR},
+			</if>
+			<if test="externalRefundChannelBatchNo != null">
+				#{externalRefundChannelBatchNo,jdbcType=VARCHAR},
+			</if>
+			<if test="externalRefundChannelSerialNo != null">
+				#{externalRefundChannelSerialNo,jdbcType=VARCHAR},
+			</if>
+			<if test="refundPayProfitLossLedgerNo != null">
+				#{refundPayProfitLossLedgerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="refundPayProfitLossIncomeIncr != null">
+				#{refundPayProfitLossIncomeIncr,jdbcType=BIGINT},
+			</if>
+			<if test="refundPayProfitLossCostDecr != null">
+				#{refundPayProfitLossCostDecr,jdbcType=BIGINT},
+			</if>
+			<if test="refundPayAccountNo != null">
+				#{refundPayAccountNo,jdbcType=VARCHAR},
+			</if>
+			<if test="refundPayMerchantNo != null">
+				#{refundPayMerchantNo,jdbcType=VARCHAR},
+			</if>
+			<if test="refundPayInAccountingAmt != null">
+				#{refundPayInAccountingAmt,jdbcType=INTEGER},
+			</if>
+			<if test="refundPayOutAccountingType != null">
+				#{refundPayOutAccountingType,jdbcType=CHAR},
+			</if>
+			<if test="refundPayOutAccountingHis1 != null">
+				#{refundPayOutAccountingHis1,jdbcType=VARCHAR},
+			</if>
+			<if test="refundPayOutAccountingHis2 != null">
+				#{refundPayOutAccountingHis2,jdbcType=VARCHAR},
+			</if>
+			<if test="refundPayOutAccountingHis3 != null">
+				#{refundPayOutAccountingHis3,jdbcType=VARCHAR},
+			</if>
+			<if test="refundPayInAccountingType != null">
+				#{refundPayInAccountingType,jdbcType=CHAR},
+			</if>
+			<if test="refundPayInAccountingHis1 != null">
+				#{refundPayInAccountingHis1,jdbcType=VARCHAR},
+			</if>
+			<if test="refundPayInAccountingHis2 != null">
+				#{refundPayInAccountingHis2,jdbcType=VARCHAR},
+			</if>
+			<if test="refundPayInAccountingHis3 != null">
+				#{refundPayInAccountingHis3,jdbcType=VARCHAR},
+			</if>
+			<if test="payFreezeBal != null">
+				#{payFreezeBal,jdbcType=BIGINT},
+			</if>
+			<if test="receiveFreezeBal != null">
+				#{receiveFreezeBal,jdbcType=BIGINT},
+			</if>
+			<if test="sumRefundedReceiveAccountAmt != null">
+				#{sumRefundedReceiveAccountAmt,jdbcType=BIGINT},
+			</if>
+			<if test="sumRefundedPayFeeAccountAmt != null">
+				#{sumRefundedPayFeeAccountAmt,jdbcType=BIGINT},
+			</if>
+			<if test="sumRefundedReceiveFeeAccountAmt != null">
+				#{sumRefundedReceiveFeeAccountAmt,jdbcType=BIGINT},
+			</if>
+			<if test="sumRefundedPayAccountOutAccountingAmt != null">
+				#{sumRefundedPayAccountOutAccountingAmt,jdbcType=BIGINT},
+			</if>
+			<if test="sumRefundedPayLedgerAmt != null">
+				#{sumRefundedPayLedgerAmt,jdbcType=BIGINT},
+			</if>
+			<if test="sumSuppliedAmt != null">
+				#{sumSuppliedAmt,jdbcType=BIGINT},
+			</if>
+			<if test="sumRefundedSupplyRefundAmt != null">
+				#{sumRefundedSupplyRefundAmt,jdbcType=BIGINT},
+			</if>
+			<if test="sumDistributedRoyaltyAmt != null">
+				#{sumDistributedRoyaltyAmt,jdbcType=BIGINT},
+			</if>
+			<if test="sumRefundedDistributedRoyaltyAmt != null">
+				#{sumRefundedDistributedRoyaltyAmt,jdbcType=BIGINT},
+			</if>
+			<if test="continueTradeStatus != null">
+				#{continueTradeStatus,jdbcType=CHAR},
+			</if>
+			<if test="tradeExtendField1 != null">
+				#{tradeExtendField1,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeExtendField2 != null">
+				#{tradeExtendField2,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeExtendField3 != null">
+				#{tradeExtendField3,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeExtendField4 != null">
+				#{tradeExtendField4,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeExtendField5 != null">
+				#{tradeExtendField5,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeExtendField6 != null">
+				#{tradeExtendField6,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeExtendField7 != null">
+				#{tradeExtendField7,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeExtendField8 != null">
+				#{tradeExtendField8,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeExtendField9 != null">
+				#{tradeExtendField9,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeExtendField10 != null">
+				#{tradeExtendField10,jdbcType=VARCHAR},
+			</if>
+			<if test="extendProfitLoss != null">
+				#{extendProfitLoss,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+	
+
+	<select id="selectCountByExample"
+		parameterType="com.liantuo.trade.orm.pojo.TradeSinglePaymentExample"
+		resultType="java.lang.Integer">
+		select count(*) from trade_single_payment
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+
+	<select id="pageQueryByExample" resultMap="BaseResultMap"
+		parameterType="com.liantuo.trade.orm.pojo.TradeSinglePaymentExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from trade_single_payment
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	
+	<update id="updateByKeyVersionSelective" parameterType="com.liantuo.trade.orm.pojo.TradeSinglePayment">
+		update trade_single_payment
+		<set>
+			<if test="partnerId != null">
+				partner_id = #{partnerId,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeNo != null">
+				trade_no = #{tradeNo,jdbcType=VARCHAR},
+			</if>
+			<if test="coreMerchantNo != null">
+				core_merchant_no = #{coreMerchantNo,jdbcType=VARCHAR},
+			</if>
+			<if test="fundPoolNo != null">
+				fund_pool_no = #{fundPoolNo,jdbcType=VARCHAR},
+			</if>
+			<if test="originalTradeNo != null">
+				original_trade_no = #{originalTradeNo,jdbcType=VARCHAR},
+			</if>
+			<if test="outTradeNoExt != null">
+				out_trade_no_ext = #{outTradeNoExt,jdbcType=VARCHAR},
+			</if>
+			<if test="outTradeNo != null">
+				out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+			</if>
+			<if test="gmtCreated != null">
+				gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+			</if>
+			<if test="gmtModifiedLatest != null">
+				gmt_modified_latest =
+				#{gmtModifiedLatest,jdbcType=TIMESTAMP},
+			</if>
+			<if test="latestTradeReqType != null">
+				latest_trade_req_type =
+				#{latestTradeReqType,jdbcType=VARCHAR},
+			</if>
+			<if test="latestReqNo != null">
+				latest_req_no = #{latestReqNo,jdbcType=VARCHAR},
+			</if>
+			<if test="closeStatus != null">
+				close_status = #{closeStatus,jdbcType=CHAR},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=CHAR},
+			</if>
+			<if test="tradeCatagory != null">
+				trade_catagory = #{tradeCatagory,jdbcType=CHAR},
+			</if>
+			<if test="notifyUrl != null">
+				notify_url = #{notifyUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantExtendField1 != null">
+				merchant_extend_field_1 =
+				#{merchantExtendField1,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantExtendField2 != null">
+				merchant_extend_field_2 =
+				#{merchantExtendField2,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantExtendField3 != null">
+				merchant_extend_field_3 =
+				#{merchantExtendField3,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantExtendField4 != null">
+				merchant_extend_field_4 =
+				#{merchantExtendField4,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantExtendField5 != null">
+				merchant_extend_field_5 =
+				#{merchantExtendField5,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantExtendField6 != null">
+				merchant_extend_field_6 =
+				#{merchantExtendField6,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantExtendField7 != null">
+				merchant_extend_field_7 =
+				#{merchantExtendField7,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantExtendField8 != null">
+				merchant_extend_field_8 =
+				#{merchantExtendField8,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantExtendField9 != null">
+				merchant_extend_field_9 =
+				#{merchantExtendField9,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantExtendField10 != null">
+				merchant_extend_field_10 =
+				#{merchantExtendField10,jdbcType=VARCHAR},
+			</if>
+			<if test="gmtFailPay != null">
+				gmt_fail_pay = #{gmtFailPay,jdbcType=TIMESTAMP},
+			</if>
+			<if test="gmtWaitPay != null">
+				gmt_wait_pay = #{gmtWaitPay,jdbcType=TIMESTAMP},
+			</if>
+			<if test="gmtWaitInAccountting != null">
+				gmt_wait_in_accountting =
+				#{gmtWaitInAccountting,jdbcType=TIMESTAMP},
+			</if>
+			<if test="gmtWaitRefund != null">
+				gmt_wait_refund = #{gmtWaitRefund,jdbcType=TIMESTAMP},
+			</if>
+			<if test="gmtRefundPay != null">
+				gmt_refund_pay = #{gmtRefundPay,jdbcType=TIMESTAMP},
+			</if>
+			<if test="gmtSuccessPay != null">
+				gmt_success_pay = #{gmtSuccessPay,jdbcType=TIMESTAMP},
+			</if>
+			<if test="gmtAbortUnexcepted != null">
+				gmt_abort_unexcepted =
+				#{gmtAbortUnexcepted,jdbcType=TIMESTAMP},
+			</if>
+			<if test="payAmt != null">
+				pay_amt = #{payAmt,jdbcType=BIGINT},
+			</if>
+			<if test="payType != null">
+				pay_type = #{payType,jdbcType=CHAR},
+			</if>
+			<if test="payUrl != null">
+				pay_url = #{payUrl,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="externalPayLedgerNo != null">
+				external_pay_ledger_no =
+				#{externalPayLedgerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="externalPayChannel != null">
+				external_pay_channel =
+				#{externalPayChannel,jdbcType=VARCHAR},
+			</if>
+			<if test="externalPayChannelFeeAmt != null">
+				external_pay_channel_fee_amt =
+				#{externalPayChannelFeeAmt,jdbcType=BIGINT},
+			</if>
+			<if test="externalPayChannelRefundFeeAmt != null">
+				external_pay_channel_refund_fee_amt =
+				#{externalPayChannelRefundFeeAmt,jdbcType=BIGINT},
+			</if>
+			<if test="externalPayChannelBatchNo != null">
+				external_pay_channel_batch_no =
+				#{externalPayChannelBatchNo,jdbcType=VARCHAR},
+			</if>
+			<if test="externalPayChannelSerialNo != null">
+				external_pay_channel_serial_no =
+				#{externalPayChannelSerialNo,jdbcType=VARCHAR},
+			</if>
+			<if test="externalPayReceivedAmt != null">
+				external_pay_received_amt =
+				#{externalPayReceivedAmt,jdbcType=BIGINT},
+			</if>
+			<if test="gmtSuccessExternalPayChannel != null">
+				gmt_success_external_pay_channel =
+				#{gmtSuccessExternalPayChannel,jdbcType=TIMESTAMP},
+			</if>
+			<if test="externalPayChannelTradeNo != null">
+				external_pay_channel_trade_no =
+				#{externalPayChannelTradeNo,jdbcType=VARCHAR},
+			</if>
+			<if test="payProfitLossLedgerNo != null">
+				pay_profit_loss_ledger_no =
+				#{payProfitLossLedgerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="payProfitLossIncomeDecr != null">
+				pay_profit_loss_income_decr =
+				#{payProfitLossIncomeDecr,jdbcType=BIGINT},
+			</if>
+			<if test="payProfitLossCostIncr != null">
+				pay_profit_loss_cost_incr =
+				#{payProfitLossCostIncr,jdbcType=BIGINT},
+			</if>
+			<if test="payAccountNo != null">
+				pay_account_no = #{payAccountNo,jdbcType=VARCHAR},
+			</if>
+			<if test="payAccountMerchantNo != null">
+				pay_account_merchant_no =
+				#{payAccountMerchantNo,jdbcType=VARCHAR},
+			</if>
+			<if test="payAccountOutAccountingAmt != null">
+				pay_account_out_accounting_amt =
+				#{payAccountOutAccountingAmt,jdbcType=BIGINT},
+			</if>
+			<if test="payAccountOutAccountingType != null">
+				pay_account_out_accounting_type =
+				#{payAccountOutAccountingType,jdbcType=CHAR},
+			</if>
+			<if test="payAccountOutAccountingHis1 != null">
+				pay_account_out_accounting_his1 =
+				#{payAccountOutAccountingHis1,jdbcType=VARCHAR},
+			</if>
+			<if test="payAccountOutAccountingHis2 != null">
+				pay_account_out_accounting_his2 =
+				#{payAccountOutAccountingHis2,jdbcType=VARCHAR},
+			</if>
+			<if test="payAccountOutAccountingHis3 != null">
+				pay_account_out_accounting_his3 =
+				#{payAccountOutAccountingHis3,jdbcType=VARCHAR},
+			</if>
+			<if test="payAccountInAccountingType != null">
+				pay_account_in_accounting_type =
+				#{payAccountInAccountingType,jdbcType=CHAR},
+			</if>
+			<if test="payAccountInAccountingHis1 != null">
+				pay_account_in_accounting_his1 =
+				#{payAccountInAccountingHis1,jdbcType=VARCHAR},
+			</if>
+			<if test="payAccountInAccountingHis2 != null">
+				pay_account_in_accounting_his2 =
+				#{payAccountInAccountingHis2,jdbcType=VARCHAR},
+			</if>
+			<if test="payAccountInAccountingHis3 != null">
+				pay_account_in_accounting_his3 =
+				#{payAccountInAccountingHis3,jdbcType=VARCHAR},
+			</if>
+			<if test="payFeeAccountNo != null">
+				pay_fee_account_no = #{payFeeAccountNo,jdbcType=VARCHAR},
+			</if>
+			<if test="payFeeAccountMerchantNo != null">
+				pay_fee_account_merchant_no =
+				#{payFeeAccountMerchantNo,jdbcType=VARCHAR},
+			</if>
+			<if test="payFeeAccountOutAccountingAmt != null">
+				pay_fee_account_out_accounting_amt =
+				#{payFeeAccountOutAccountingAmt,jdbcType=BIGINT},
+			</if>
+			<if test="payFeeAccountOutAccountingType != null">
+				pay_fee_account_out_accounting_type =
+				#{payFeeAccountOutAccountingType,jdbcType=CHAR},
+			</if>
+			<if test="payFeeAccountOutAccountingHis1 != null">
+				pay_fee_account_out_accounting_his1 =
+				#{payFeeAccountOutAccountingHis1,jdbcType=VARCHAR},
+			</if>
+			<if test="payFeeAccountOutAccountingHis2 != null">
+				pay_fee_account_out_accounting_his2 =
+				#{payFeeAccountOutAccountingHis2,jdbcType=VARCHAR},
+			</if>
+			<if test="payFeeAccountOutAccountingHis3 != null">
+				pay_fee_account_out_accounting_his3 =
+				#{payFeeAccountOutAccountingHis3,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveAmt != null">
+				receive_amt = #{receiveAmt,jdbcType=BIGINT},
+			</if>
+			<if test="receiveType != null">
+				receive_type = #{receiveType,jdbcType=CHAR},
+			</if>
+			<if test="receiveProfitLossLedgerNo != null">
+				receive_profit_loss_ledger_no =
+				#{receiveProfitLossLedgerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveProfitLossIncomeIncr != null">
+				receive_profit_loss_income_incr =
+				#{receiveProfitLossIncomeIncr,jdbcType=BIGINT},
+			</if>
+			<if test="receiveProfitLossCostDecr != null">
+				receive_profit_loss_cost_decr =
+				#{receiveProfitLossCostDecr,jdbcType=BIGINT},
+			</if>
+			<if test="receiveAccountNo != null">
+				receive_account_no =
+				#{receiveAccountNo,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveAccountMerchantNo != null">
+				receive_account_merchant_no =
+				#{receiveAccountMerchantNo,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveAccountInAccountingAmt != null">
+				receive_account_in_accounting_amt =
+				#{receiveAccountInAccountingAmt,jdbcType=BIGINT},
+			</if>
+			<if test="receiveAccountInAccountingType != null">
+				receive_account_in_accounting_type =
+				#{receiveAccountInAccountingType,jdbcType=CHAR},
+			</if>
+			<if test="receiveAccountInAccountingHis1 != null">
+				receive_account_in_accounting_his1 =
+				#{receiveAccountInAccountingHis1,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveAccountInAccountingHis2 != null">
+				receive_account_in_accounting_his2 =
+				#{receiveAccountInAccountingHis2,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveAccountInAccountingHis3 != null">
+				receive_account_in_accounting_his3 =
+				#{receiveAccountInAccountingHis3,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveFeeAccountNo != null">
+				receive_fee_account_no =
+				#{receiveFeeAccountNo,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveFeeAccountMerchantNo != null">
+				receive_fee_account_merchant_no =
+				#{receiveFeeAccountMerchantNo,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveFeeAccountOutAccountingAmt != null">
+				receive_fee_account_out_accounting_amt =
+				#{receiveFeeAccountOutAccountingAmt,jdbcType=BIGINT},
+			</if>
+			<if test="receiveFeeAccountOutAccountingType != null">
+				receive_fee_account_out_accounting_type =
+				#{receiveFeeAccountOutAccountingType,jdbcType=CHAR},
+			</if>
+			<if test="receiveFeeAccountOutAccountingHis1 != null">
+				receive_fee_account_out_accounting_his1 =
+				#{receiveFeeAccountOutAccountingHis1,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveFeeAccountOutAccountingHis2 != null">
+				receive_fee_account_out_accounting_his2 =
+				#{receiveFeeAccountOutAccountingHis2,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveFeeAccountOutAccountingHis3 != null">
+				receive_fee_account_out_accounting_his3 =
+				#{receiveFeeAccountOutAccountingHis3,jdbcType=VARCHAR},
+			</if>
+			<if test="refundPayType != null">
+				refund_pay_type = #{refundPayType,jdbcType=CHAR},
+			</if>
+			<if test="externalRefundLedgerNo != null">
+				external_refund_ledger_no =
+				#{externalRefundLedgerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="externalRefundChannel != null">
+				external_refund_channel =
+				#{externalRefundChannel,jdbcType=VARCHAR},
+			</if>
+			<if test="externalRefundChannelPayAmt != null">
+				external_refund_channel_pay_amt =
+				#{externalRefundChannelPayAmt,jdbcType=BIGINT},
+			</if>
+			<if test="externalRefundChannelRefundFeeAmt != null">
+				external_refund_channel_refund_fee_amt =
+				#{externalRefundChannelRefundFeeAmt,jdbcType=BIGINT},
+			</if>
+			<if test="externalRefundAmt != null">
+				external_refund_amt =
+				#{externalRefundAmt,jdbcType=BIGINT},
+			</if>
+			<if test="gmtSuccessRefundExternalPayChannel != null">
+				gmt_success_refund_external_pay_channel =
+				#{gmtSuccessRefundExternalPayChannel,jdbcType=TIMESTAMP},
+			</if>
+			<if test="externalRefundChannelTradeNo != null">
+				external_refund_channel_trade_no =
+				#{externalRefundChannelTradeNo,jdbcType=VARCHAR},
+			</if>
+			<if test="externalRefundChannelBatchNo != null">
+				external_refund_channel_batch_no =
+				#{externalRefundChannelBatchNo,jdbcType=VARCHAR},
+			</if>
+			<if test="externalRefundChannelSerialNo != null">
+				external_refund_channel_serial_no =
+				#{externalRefundChannelSerialNo,jdbcType=VARCHAR},
+			</if>
+			<if test="refundPayProfitLossLedgerNo != null">
+				refund_pay_profit_loss_ledger_no =
+				#{refundPayProfitLossLedgerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="refundPayProfitLossIncomeIncr != null">
+				refund_pay_profit_loss_income_incr =
+				#{refundPayProfitLossIncomeIncr,jdbcType=BIGINT},
+			</if>
+			<if test="refundPayProfitLossCostDecr != null">
+				refund_pay_profit_loss_cost_decr =
+				#{refundPayProfitLossCostDecr,jdbcType=BIGINT},
+			</if>
+			<if test="refundPayAccountNo != null">
+				refund_pay_account_no =
+				#{refundPayAccountNo,jdbcType=VARCHAR},
+			</if>
+			<if test="refundPayMerchantNo != null">
+				refund_pay_merchant_no =
+				#{refundPayMerchantNo,jdbcType=VARCHAR},
+			</if>
+			<if test="refundPayInAccountingAmt != null">
+				refund_pay_in_accounting_amt =
+				#{refundPayInAccountingAmt,jdbcType=BIGINT},
+			</if>
+			<if test="refundPayOutAccountingType != null">
+				refund_pay_out_accounting_type =
+				#{refundPayOutAccountingType,jdbcType=CHAR},
+			</if>
+			<if test="refundPayOutAccountingHis1 != null">
+				refund_pay_out_accounting_his1 =
+				#{refundPayOutAccountingHis1,jdbcType=VARCHAR},
+			</if>
+			<if test="refundPayOutAccountingHis2 != null">
+				refund_pay_out_accounting_his2 =
+				#{refundPayOutAccountingHis2,jdbcType=VARCHAR},
+			</if>
+			<if test="refundPayOutAccountingHis3 != null">
+				refund_pay_out_accounting_his3 =
+				#{refundPayOutAccountingHis3,jdbcType=VARCHAR},
+			</if>
+			<if test="refundPayInAccountingType != null">
+				refund_pay_in_accounting_type =
+				#{refundPayInAccountingType,jdbcType=CHAR},
+			</if>
+			<if test="refundPayInAccountingHis1 != null">
+				refund_pay_in_accounting_his1 =
+				#{refundPayInAccountingHis1,jdbcType=VARCHAR},
+			</if>
+			<if test="refundPayInAccountingHis2 != null">
+				refund_pay_in_accounting_his2 =
+				#{refundPayInAccountingHis2,jdbcType=VARCHAR},
+			</if>
+			<if test="refundPayInAccountingHis3 != null">
+				refund_pay_in_accounting_his3 =
+				#{refundPayInAccountingHis3,jdbcType=VARCHAR},
+			</if>
+			<if test="payFreezeBal != null">
+				pay_freeze_bal = #{payFreezeBal,jdbcType=BIGINT},
+			</if>
+			<if test="receiveFreezeBal != null">
+				receive_freeze_bal = #{receiveFreezeBal,jdbcType=BIGINT},
+			</if>
+			<if test="sumRefundedReceiveAccountAmt != null">
+				sum_refunded_receive_account_amt =
+				#{sumRefundedReceiveAccountAmt,jdbcType=BIGINT},
+			</if>
+			<if test="sumRefundedPayFeeAccountAmt != null">
+				sum_refunded_pay_fee_account_amt =
+				#{sumRefundedPayFeeAccountAmt,jdbcType=BIGINT},
+			</if>
+			<if test="sumRefundedReceiveFeeAccountAmt != null">
+				sum_refunded_receive_fee_account_amt =
+				#{sumRefundedReceiveFeeAccountAmt,jdbcType=BIGINT},
+			</if>
+			<if test="sumRefundedPayAccountOutAccountingAmt != null">
+				sum_refunded_pay_account_out_accounting_amt =
+				#{sumRefundedPayAccountOutAccountingAmt,jdbcType=BIGINT},
+			</if>
+			<if test="sumRefundedPayLedgerAmt != null">
+				sum_refunded_pay_ledger_amt =
+				#{sumRefundedPayLedgerAmt,jdbcType=BIGINT},
+			</if>
+			<if test="sumSuppliedAmt != null">
+				sum_supplied_amt = #{sumSuppliedAmt,jdbcType=BIGINT},
+			</if>
+			<if test="sumRefundedSupplyRefundAmt != null">
+				sum_refunded_supply_refund_amt =
+				#{sumRefundedSupplyRefundAmt,jdbcType=BIGINT},
+			</if>
+			<if test="sumDistributedRoyaltyAmt != null">
+				sum_distributed_royalty_amt =
+				#{sumDistributedRoyaltyAmt,jdbcType=BIGINT},
+			</if>
+			<if test="sumRefundedDistributedRoyaltyAmt != null">
+				sum_refunded_distributed_royalty_amt =
+				#{sumRefundedDistributedRoyaltyAmt,jdbcType=BIGINT},
+			</if>
+			<if test="continueTradeStatus != null">
+				continue_trade_status =
+				#{continueTradeStatus,jdbcType=CHAR},
+			</if>
+			<if test="tradeExtendField1 != null">
+				trade_extend_field_1 =
+				#{tradeExtendField1,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeExtendField2 != null">
+				trade_extend_field_2 =
+				#{tradeExtendField2,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeExtendField3 != null">
+				trade_extend_field_3 =
+				#{tradeExtendField3,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeExtendField4 != null">
+				trade_extend_field_4 =
+				#{tradeExtendField4,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeExtendField5 != null">
+				trade_extend_field_5 =
+				#{tradeExtendField5,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeExtendField6 != null">
+				trade_extend_field_6 =
+				#{tradeExtendField6,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeExtendField7 != null">
+				trade_extend_field_7 =
+				#{tradeExtendField7,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeExtendField8 != null">
+				trade_extend_field_8 =
+				#{tradeExtendField8,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeExtendField9 != null">
+				trade_extend_field_9 =
+				#{tradeExtendField9,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeExtendField10 != null">
+				trade_extend_field_10 =
+				#{tradeExtendField10,jdbcType=VARCHAR},
+			</if>
+			<if test="extendProfitLoss != null">
+				extend_profit_loss =
+				#{extendProfitLoss,jdbcType=LONGVARCHAR},
+			</if>
+			version = version+1,
+		</set>
+		where id = #{id,jdbcType=BIGINT} and version =
+		#{version,jdbcType=INTEGER}
+	</update>
+</mapper>

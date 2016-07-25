@@ -1,0 +1,9 @@
+package com.liantuo.deposit.web.vo;
+
+public interface DepReq {
+	 /**
+	  * 格式验证
+	 * @return
+	 */
+	DepRsp validate();
+}

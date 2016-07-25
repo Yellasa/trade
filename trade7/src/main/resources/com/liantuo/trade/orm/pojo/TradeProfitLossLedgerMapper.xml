@@ -1,0 +1,822 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liantuo.trade.orm.mapper.TradeProfitLossLedgerMapper" >
+  <resultMap id="BaseResultMap" type="com.liantuo.trade.orm.pojo.TradeProfitLossLedger" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="ledger_no" property="ledgerNo" jdbcType="VARCHAR" />
+    <result column="core_merchant_no" property="coreMerchantNo" jdbcType="VARCHAR" />
+    <result column="fund_pool_no" property="fundPoolNo" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_1" property="merchantExtendField1" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_2" property="merchantExtendField2" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_3" property="merchantExtendField3" jdbcType="VARCHAR" />
+    <result column="trade_type" property="tradeType" jdbcType="VARCHAR" />
+    <result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+    <result column="gmt_trade_created" property="gmtTradeCreated" jdbcType="TIMESTAMP" />
+    <result column="out_trade_no_ext" property="outTradeNoExt" jdbcType="VARCHAR" />
+    <result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR" />
+    <result column="create_req_type" property="createReqType" jdbcType="VARCHAR" />
+    <result column="create_req_no" property="createReqNo" jdbcType="VARCHAR" />
+    <result column="gmt_created" property="gmtCreated" jdbcType="TIMESTAMP" />
+    <result column="effective_req_type" property="effectiveReqType" jdbcType="VARCHAR" />
+    <result column="effective_req_no" property="effectiveReqNo" jdbcType="VARCHAR" />
+    <result column="gmt_effective" property="gmtEffective" jdbcType="TIMESTAMP" />
+    <result column="fail_req_type" property="failReqType" jdbcType="VARCHAR" />
+    <result column="fail_req_no" property="failReqNo" jdbcType="VARCHAR" />
+    <result column="gmt_failed" property="gmtFailed" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="CHAR" />
+    <result column="profit_loss_attr_1" property="profitLossAttr1" jdbcType="VARCHAR" />
+    <result column="profit_loss_attr_2" property="profitLossAttr2" jdbcType="VARCHAR" />
+    <result column="profit_loss_attr_3" property="profitLossAttr3" jdbcType="VARCHAR" />
+    <result column="profit_loss_attr_4" property="profitLossAttr4" jdbcType="VARCHAR" />
+    <result column="profit_loss_attr_5" property="profitLossAttr5" jdbcType="VARCHAR" />
+    <result column="profit_loss_attr_6" property="profitLossAttr6" jdbcType="VARCHAR" />
+    <result column="profit_loss_attr_7" property="profitLossAttr7" jdbcType="VARCHAR" />
+    <result column="profit_loss_attr_8" property="profitLossAttr8" jdbcType="VARCHAR" />
+    <result column="profit_loss_attr_9" property="profitLossAttr9" jdbcType="VARCHAR" />
+    <result column="profit_loss_attr_10" property="profitLossAttr10" jdbcType="VARCHAR" />
+    <result column="income_incr" property="incomeIncr" jdbcType="BIGINT" />
+    <result column="income_decr" property="incomeDecr" jdbcType="BIGINT" />
+    <result column="cost_incr" property="costIncr" jdbcType="BIGINT" />
+    <result column="cost_decr" property="costDecr" jdbcType="BIGINT" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, ledger_no, core_merchant_no, fund_pool_no, merchant_extend_field_1, merchant_extend_field_2, 
+    merchant_extend_field_3, trade_type, trade_no, gmt_trade_created, out_trade_no_ext, 
+    out_trade_no, create_req_type, create_req_no, gmt_created, effective_req_type, effective_req_no, 
+    gmt_effective, fail_req_type, fail_req_no, gmt_failed, status, profit_loss_attr_1, 
+    profit_loss_attr_2, profit_loss_attr_3, profit_loss_attr_4, profit_loss_attr_5, profit_loss_attr_6, 
+    profit_loss_attr_7, profit_loss_attr_8, profit_loss_attr_9, profit_loss_attr_10, 
+    income_incr, income_decr, cost_incr, cost_decr, version
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.liantuo.trade.orm.pojo.TradeProfitLossLedgerExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from trade_profit_loss_ledger
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from trade_profit_loss_ledger
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <!-- <insert id="insert" parameterType="com.liantuo.trade.orm.pojo.TradeProfitLossLedger" >
+    insert into trade_profit_loss_ledger (id, ledger_no, core_merchant_no, 
+      fund_pool_no, merchant_extend_field_1, merchant_extend_field_2, 
+      merchant_extend_field_3, trade_type, trade_no, 
+      gmt_trade_created, out_trade_no_ext, out_trade_no, 
+      create_req_type, create_req_no, gmt_created, 
+      effective_req_type, effective_req_no, gmt_effective, 
+      fail_req_type, fail_req_no, gmt_failed, 
+      status, profit_loss_attr_1, profit_loss_attr_2, 
+      profit_loss_attr_3, profit_loss_attr_4, profit_loss_attr_5, 
+      profit_loss_attr_6, profit_loss_attr_7, profit_loss_attr_8, 
+      profit_loss_attr_9, profit_loss_attr_10, income_incr, 
+      income_decr, cost_incr, cost_decr, 
+      version)
+    values (#{id,jdbcType=BIGINT}, #{ledgerNo,jdbcType=VARCHAR}, #{coreMerchantNo,jdbcType=VARCHAR}, 
+      #{fundPoolNo,jdbcType=VARCHAR}, #{merchantExtendField1,jdbcType=VARCHAR}, #{merchantExtendField2,jdbcType=VARCHAR}, 
+      #{merchantExtendField3,jdbcType=VARCHAR}, #{tradeType,jdbcType=VARCHAR}, #{tradeNo,jdbcType=VARCHAR}, 
+      #{gmtTradeCreated,jdbcType=TIMESTAMP}, #{outTradeNoExt,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, 
+      #{createReqType,jdbcType=VARCHAR}, #{createReqNo,jdbcType=VARCHAR}, #{gmtCreated,jdbcType=TIMESTAMP}, 
+      #{effectiveReqType,jdbcType=VARCHAR}, #{effectiveReqNo,jdbcType=VARCHAR}, #{gmtEffective,jdbcType=TIMESTAMP}, 
+      #{failReqType,jdbcType=VARCHAR}, #{failReqNo,jdbcType=VARCHAR}, #{gmtFailed,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=CHAR}, #{profitLossAttr1,jdbcType=VARCHAR}, #{profitLossAttr2,jdbcType=VARCHAR}, 
+      #{profitLossAttr3,jdbcType=VARCHAR}, #{profitLossAttr4,jdbcType=VARCHAR}, #{profitLossAttr5,jdbcType=VARCHAR}, 
+      #{profitLossAttr6,jdbcType=VARCHAR}, #{profitLossAttr7,jdbcType=VARCHAR}, #{profitLossAttr8,jdbcType=VARCHAR}, 
+      #{profitLossAttr9,jdbcType=VARCHAR}, #{profitLossAttr10,jdbcType=VARCHAR}, #{incomeIncr,jdbcType=BIGINT}, 
+      #{incomeDecr,jdbcType=BIGINT}, #{costIncr,jdbcType=BIGINT}, #{costDecr,jdbcType=BIGINT}, 
+      #{version,jdbcType=INTEGER})
+  </insert>-->
+  <insert id="insertSelective" parameterType="com.liantuo.trade.orm.pojo.TradeProfitLossLedger" >
+    <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+		SELECT LAST_INSERT_ID() AS id
+	</selectKey>
+    insert into trade_profit_loss_ledger
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="ledgerNo != null" >
+        ledger_no,
+      </if>
+      <if test="coreMerchantNo != null" >
+        core_merchant_no,
+      </if>
+      <if test="fundPoolNo != null" >
+        fund_pool_no,
+      </if>
+      <if test="merchantExtendField1 != null" >
+        merchant_extend_field_1,
+      </if>
+      <if test="merchantExtendField2 != null" >
+        merchant_extend_field_2,
+      </if>
+      <if test="merchantExtendField3 != null" >
+        merchant_extend_field_3,
+      </if>
+      <if test="tradeType != null" >
+        trade_type,
+      </if>
+      <if test="tradeNo != null" >
+        trade_no,
+      </if>
+      <if test="gmtTradeCreated != null" >
+        gmt_trade_created,
+      </if>
+      <if test="outTradeNoExt != null" >
+        out_trade_no_ext,
+      </if>
+      <if test="outTradeNo != null" >
+        out_trade_no,
+      </if>
+      <if test="createReqType != null" >
+        create_req_type,
+      </if>
+      <if test="createReqNo != null" >
+        create_req_no,
+      </if>
+      <if test="gmtCreated != null" >
+        gmt_created,
+      </if>
+      <if test="effectiveReqType != null" >
+        effective_req_type,
+      </if>
+      <if test="effectiveReqNo != null" >
+        effective_req_no,
+      </if>
+      <if test="gmtEffective != null" >
+        gmt_effective,
+      </if>
+      <if test="failReqType != null" >
+        fail_req_type,
+      </if>
+      <if test="failReqNo != null" >
+        fail_req_no,
+      </if>
+      <if test="gmtFailed != null" >
+        gmt_failed,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="profitLossAttr1 != null" >
+        profit_loss_attr_1,
+      </if>
+      <if test="profitLossAttr2 != null" >
+        profit_loss_attr_2,
+      </if>
+      <if test="profitLossAttr3 != null" >
+        profit_loss_attr_3,
+      </if>
+      <if test="profitLossAttr4 != null" >
+        profit_loss_attr_4,
+      </if>
+      <if test="profitLossAttr5 != null" >
+        profit_loss_attr_5,
+      </if>
+      <if test="profitLossAttr6 != null" >
+        profit_loss_attr_6,
+      </if>
+      <if test="profitLossAttr7 != null" >
+        profit_loss_attr_7,
+      </if>
+      <if test="profitLossAttr8 != null" >
+        profit_loss_attr_8,
+      </if>
+      <if test="profitLossAttr9 != null" >
+        profit_loss_attr_9,
+      </if>
+      <if test="profitLossAttr10 != null" >
+        profit_loss_attr_10,
+      </if>
+      <if test="incomeIncr != null" >
+        income_incr,
+      </if>
+      <if test="incomeDecr != null" >
+        income_decr,
+      </if>
+      <if test="costIncr != null" >
+        cost_incr,
+      </if>
+      <if test="costDecr != null" >
+        cost_decr,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="ledgerNo != null" >
+        #{ledgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="coreMerchantNo != null" >
+        #{coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fundPoolNo != null" >
+        #{fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField1 != null" >
+        #{merchantExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField2 != null" >
+        #{merchantExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField3 != null" >
+        #{merchantExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeType != null" >
+        #{tradeType,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeNo != null" >
+        #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtTradeCreated != null" >
+        #{gmtTradeCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="outTradeNoExt != null" >
+        #{outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null" >
+        #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="createReqType != null" >
+        #{createReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="createReqNo != null" >
+        #{createReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreated != null" >
+        #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="effectiveReqType != null" >
+        #{effectiveReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="effectiveReqNo != null" >
+        #{effectiveReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtEffective != null" >
+        #{gmtEffective,jdbcType=TIMESTAMP},
+      </if>
+      <if test="failReqType != null" >
+        #{failReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="failReqNo != null" >
+        #{failReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtFailed != null" >
+        #{gmtFailed,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=CHAR},
+      </if>
+      <if test="profitLossAttr1 != null" >
+        #{profitLossAttr1,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr2 != null" >
+        #{profitLossAttr2,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr3 != null" >
+        #{profitLossAttr3,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr4 != null" >
+        #{profitLossAttr4,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr5 != null" >
+        #{profitLossAttr5,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr6 != null" >
+        #{profitLossAttr6,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr7 != null" >
+        #{profitLossAttr7,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr8 != null" >
+        #{profitLossAttr8,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr9 != null" >
+        #{profitLossAttr9,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr10 != null" >
+        #{profitLossAttr10,jdbcType=VARCHAR},
+      </if>
+      <if test="incomeIncr != null" >
+        #{incomeIncr,jdbcType=BIGINT},
+      </if>
+      <if test="incomeDecr != null" >
+        #{incomeDecr,jdbcType=BIGINT},
+      </if>
+      <if test="costIncr != null" >
+        #{costIncr,jdbcType=BIGINT},
+      </if>
+      <if test="costDecr != null" >
+        #{costDecr,jdbcType=BIGINT},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <!--  <update id="updateByExampleSelective" parameterType="map" >
+    update trade_profit_loss_ledger
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.ledgerNo != null" >
+        ledger_no = #{record.ledgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.coreMerchantNo != null" >
+        core_merchant_no = #{record.coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fundPoolNo != null" >
+        fund_pool_no = #{record.fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField1 != null" >
+        merchant_extend_field_1 = #{record.merchantExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField2 != null" >
+        merchant_extend_field_2 = #{record.merchantExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField3 != null" >
+        merchant_extend_field_3 = #{record.merchantExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tradeType != null" >
+        trade_type = #{record.tradeType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tradeNo != null" >
+        trade_no = #{record.tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gmtTradeCreated != null" >
+        gmt_trade_created = #{record.gmtTradeCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.outTradeNoExt != null" >
+        out_trade_no_ext = #{record.outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+      <if test="record.outTradeNo != null" >
+        out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createReqType != null" >
+        create_req_type = #{record.createReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createReqNo != null" >
+        create_req_no = #{record.createReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gmtCreated != null" >
+        gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.effectiveReqType != null" >
+        effective_req_type = #{record.effectiveReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.effectiveReqNo != null" >
+        effective_req_no = #{record.effectiveReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gmtEffective != null" >
+        gmt_effective = #{record.gmtEffective,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.failReqType != null" >
+        fail_req_type = #{record.failReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.failReqNo != null" >
+        fail_req_no = #{record.failReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gmtFailed != null" >
+        gmt_failed = #{record.gmtFailed,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=CHAR},
+      </if>
+      <if test="record.profitLossAttr1 != null" >
+        profit_loss_attr_1 = #{record.profitLossAttr1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.profitLossAttr2 != null" >
+        profit_loss_attr_2 = #{record.profitLossAttr2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.profitLossAttr3 != null" >
+        profit_loss_attr_3 = #{record.profitLossAttr3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.profitLossAttr4 != null" >
+        profit_loss_attr_4 = #{record.profitLossAttr4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.profitLossAttr5 != null" >
+        profit_loss_attr_5 = #{record.profitLossAttr5,jdbcType=VARCHAR},
+      </if>
+      <if test="record.profitLossAttr6 != null" >
+        profit_loss_attr_6 = #{record.profitLossAttr6,jdbcType=VARCHAR},
+      </if>
+      <if test="record.profitLossAttr7 != null" >
+        profit_loss_attr_7 = #{record.profitLossAttr7,jdbcType=VARCHAR},
+      </if>
+      <if test="record.profitLossAttr8 != null" >
+        profit_loss_attr_8 = #{record.profitLossAttr8,jdbcType=VARCHAR},
+      </if>
+      <if test="record.profitLossAttr9 != null" >
+        profit_loss_attr_9 = #{record.profitLossAttr9,jdbcType=VARCHAR},
+      </if>
+      <if test="record.profitLossAttr10 != null" >
+        profit_loss_attr_10 = #{record.profitLossAttr10,jdbcType=VARCHAR},
+      </if>
+      <if test="record.incomeIncr != null" >
+        income_incr = #{record.incomeIncr,jdbcType=BIGINT},
+      </if>
+      <if test="record.incomeDecr != null" >
+        income_decr = #{record.incomeDecr,jdbcType=BIGINT},
+      </if>
+      <if test="record.costIncr != null" >
+        cost_incr = #{record.costIncr,jdbcType=BIGINT},
+      </if>
+      <if test="record.costDecr != null" >
+        cost_decr = #{record.costDecr,jdbcType=BIGINT},
+      </if>
+      <if test="record.version != null" >
+        version = #{record.version,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update trade_profit_loss_ledger
+    set id = #{record.id,jdbcType=BIGINT},
+      ledger_no = #{record.ledgerNo,jdbcType=VARCHAR},
+      core_merchant_no = #{record.coreMerchantNo,jdbcType=VARCHAR},
+      fund_pool_no = #{record.fundPoolNo,jdbcType=VARCHAR},
+      merchant_extend_field_1 = #{record.merchantExtendField1,jdbcType=VARCHAR},
+      merchant_extend_field_2 = #{record.merchantExtendField2,jdbcType=VARCHAR},
+      merchant_extend_field_3 = #{record.merchantExtendField3,jdbcType=VARCHAR},
+      trade_type = #{record.tradeType,jdbcType=VARCHAR},
+      trade_no = #{record.tradeNo,jdbcType=VARCHAR},
+      gmt_trade_created = #{record.gmtTradeCreated,jdbcType=TIMESTAMP},
+      out_trade_no_ext = #{record.outTradeNoExt,jdbcType=VARCHAR},
+      out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
+      create_req_type = #{record.createReqType,jdbcType=VARCHAR},
+      create_req_no = #{record.createReqNo,jdbcType=VARCHAR},
+      gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP},
+      effective_req_type = #{record.effectiveReqType,jdbcType=VARCHAR},
+      effective_req_no = #{record.effectiveReqNo,jdbcType=VARCHAR},
+      gmt_effective = #{record.gmtEffective,jdbcType=TIMESTAMP},
+      fail_req_type = #{record.failReqType,jdbcType=VARCHAR},
+      fail_req_no = #{record.failReqNo,jdbcType=VARCHAR},
+      gmt_failed = #{record.gmtFailed,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=CHAR},
+      profit_loss_attr_1 = #{record.profitLossAttr1,jdbcType=VARCHAR},
+      profit_loss_attr_2 = #{record.profitLossAttr2,jdbcType=VARCHAR},
+      profit_loss_attr_3 = #{record.profitLossAttr3,jdbcType=VARCHAR},
+      profit_loss_attr_4 = #{record.profitLossAttr4,jdbcType=VARCHAR},
+      profit_loss_attr_5 = #{record.profitLossAttr5,jdbcType=VARCHAR},
+      profit_loss_attr_6 = #{record.profitLossAttr6,jdbcType=VARCHAR},
+      profit_loss_attr_7 = #{record.profitLossAttr7,jdbcType=VARCHAR},
+      profit_loss_attr_8 = #{record.profitLossAttr8,jdbcType=VARCHAR},
+      profit_loss_attr_9 = #{record.profitLossAttr9,jdbcType=VARCHAR},
+      profit_loss_attr_10 = #{record.profitLossAttr10,jdbcType=VARCHAR},
+      income_incr = #{record.incomeIncr,jdbcType=BIGINT},
+      income_decr = #{record.incomeDecr,jdbcType=BIGINT},
+      cost_incr = #{record.costIncr,jdbcType=BIGINT},
+      cost_decr = #{record.costDecr,jdbcType=BIGINT},
+      version = #{record.version,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>-->
+ <!--  <update id="updateByPrimaryKeySelective" parameterType="com.liantuo.trade.orm.pojo.TradeProfitLossLedger" >
+    update trade_profit_loss_ledger
+    <set >
+      <if test="ledgerNo != null" >
+        ledger_no = #{ledgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="coreMerchantNo != null" >
+        core_merchant_no = #{coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fundPoolNo != null" >
+        fund_pool_no = #{fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField1 != null" >
+        merchant_extend_field_1 = #{merchantExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField2 != null" >
+        merchant_extend_field_2 = #{merchantExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField3 != null" >
+        merchant_extend_field_3 = #{merchantExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeType != null" >
+        trade_type = #{tradeType,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeNo != null" >
+        trade_no = #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtTradeCreated != null" >
+        gmt_trade_created = #{gmtTradeCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="outTradeNoExt != null" >
+        out_trade_no_ext = #{outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null" >
+        out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="createReqType != null" >
+        create_req_type = #{createReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="createReqNo != null" >
+        create_req_no = #{createReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreated != null" >
+        gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="effectiveReqType != null" >
+        effective_req_type = #{effectiveReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="effectiveReqNo != null" >
+        effective_req_no = #{effectiveReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtEffective != null" >
+        gmt_effective = #{gmtEffective,jdbcType=TIMESTAMP},
+      </if>
+      <if test="failReqType != null" >
+        fail_req_type = #{failReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="failReqNo != null" >
+        fail_req_no = #{failReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtFailed != null" >
+        gmt_failed = #{gmtFailed,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=CHAR},
+      </if>
+      <if test="profitLossAttr1 != null" >
+        profit_loss_attr_1 = #{profitLossAttr1,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr2 != null" >
+        profit_loss_attr_2 = #{profitLossAttr2,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr3 != null" >
+        profit_loss_attr_3 = #{profitLossAttr3,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr4 != null" >
+        profit_loss_attr_4 = #{profitLossAttr4,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr5 != null" >
+        profit_loss_attr_5 = #{profitLossAttr5,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr6 != null" >
+        profit_loss_attr_6 = #{profitLossAttr6,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr7 != null" >
+        profit_loss_attr_7 = #{profitLossAttr7,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr8 != null" >
+        profit_loss_attr_8 = #{profitLossAttr8,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr9 != null" >
+        profit_loss_attr_9 = #{profitLossAttr9,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr10 != null" >
+        profit_loss_attr_10 = #{profitLossAttr10,jdbcType=VARCHAR},
+      </if>
+      <if test="incomeIncr != null" >
+        income_incr = #{incomeIncr,jdbcType=BIGINT},
+      </if>
+      <if test="incomeDecr != null" >
+        income_decr = #{incomeDecr,jdbcType=BIGINT},
+      </if>
+      <if test="costIncr != null" >
+        cost_incr = #{costIncr,jdbcType=BIGINT},
+      </if>
+      <if test="costDecr != null" >
+        cost_decr = #{costDecr,jdbcType=BIGINT},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.liantuo.trade.orm.pojo.TradeProfitLossLedger" >
+    update trade_profit_loss_ledger
+    set ledger_no = #{ledgerNo,jdbcType=VARCHAR},
+      core_merchant_no = #{coreMerchantNo,jdbcType=VARCHAR},
+      fund_pool_no = #{fundPoolNo,jdbcType=VARCHAR},
+      merchant_extend_field_1 = #{merchantExtendField1,jdbcType=VARCHAR},
+      merchant_extend_field_2 = #{merchantExtendField2,jdbcType=VARCHAR},
+      merchant_extend_field_3 = #{merchantExtendField3,jdbcType=VARCHAR},
+      trade_type = #{tradeType,jdbcType=VARCHAR},
+      trade_no = #{tradeNo,jdbcType=VARCHAR},
+      gmt_trade_created = #{gmtTradeCreated,jdbcType=TIMESTAMP},
+      out_trade_no_ext = #{outTradeNoExt,jdbcType=VARCHAR},
+      out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      create_req_type = #{createReqType,jdbcType=VARCHAR},
+      create_req_no = #{createReqNo,jdbcType=VARCHAR},
+      gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      effective_req_type = #{effectiveReqType,jdbcType=VARCHAR},
+      effective_req_no = #{effectiveReqNo,jdbcType=VARCHAR},
+      gmt_effective = #{gmtEffective,jdbcType=TIMESTAMP},
+      fail_req_type = #{failReqType,jdbcType=VARCHAR},
+      fail_req_no = #{failReqNo,jdbcType=VARCHAR},
+      gmt_failed = #{gmtFailed,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=CHAR},
+      profit_loss_attr_1 = #{profitLossAttr1,jdbcType=VARCHAR},
+      profit_loss_attr_2 = #{profitLossAttr2,jdbcType=VARCHAR},
+      profit_loss_attr_3 = #{profitLossAttr3,jdbcType=VARCHAR},
+      profit_loss_attr_4 = #{profitLossAttr4,jdbcType=VARCHAR},
+      profit_loss_attr_5 = #{profitLossAttr5,jdbcType=VARCHAR},
+      profit_loss_attr_6 = #{profitLossAttr6,jdbcType=VARCHAR},
+      profit_loss_attr_7 = #{profitLossAttr7,jdbcType=VARCHAR},
+      profit_loss_attr_8 = #{profitLossAttr8,jdbcType=VARCHAR},
+      profit_loss_attr_9 = #{profitLossAttr9,jdbcType=VARCHAR},
+      profit_loss_attr_10 = #{profitLossAttr10,jdbcType=VARCHAR},
+      income_incr = #{incomeIncr,jdbcType=BIGINT},
+      income_decr = #{incomeDecr,jdbcType=BIGINT},
+      cost_incr = #{costIncr,jdbcType=BIGINT},
+      cost_decr = #{costDecr,jdbcType=BIGINT},
+      version = #{version,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update> -->
+  
+  <update id="updateByKeyVersionSelective" parameterType="com.liantuo.trade.orm.pojo.TradeProfitLossLedger" >
+    update trade_profit_loss_ledger
+    <set >
+      <if test="ledgerNo != null" >
+        ledger_no = #{ledgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="coreMerchantNo != null" >
+        core_merchant_no = #{coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fundPoolNo != null" >
+        fund_pool_no = #{fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField1 != null" >
+        merchant_extend_field_1 = #{merchantExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField2 != null" >
+        merchant_extend_field_2 = #{merchantExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField3 != null" >
+        merchant_extend_field_3 = #{merchantExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeType != null" >
+        trade_type = #{tradeType,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeNo != null" >
+        trade_no = #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtTradeCreated != null" >
+        gmt_trade_created = #{gmtTradeCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="outTradeNoExt != null" >
+        out_trade_no_ext = #{outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null" >
+        out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="createReqType != null" >
+        create_req_type = #{createReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="createReqNo != null" >
+        create_req_no = #{createReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreated != null" >
+        gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="effectiveReqType != null" >
+        effective_req_type = #{effectiveReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="effectiveReqNo != null" >
+        effective_req_no = #{effectiveReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtEffective != null" >
+        gmt_effective = #{gmtEffective,jdbcType=TIMESTAMP},
+      </if>
+      <if test="failReqType != null" >
+        fail_req_type = #{failReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="failReqNo != null" >
+        fail_req_no = #{failReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtFailed != null" >
+        gmt_failed = #{gmtFailed,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=CHAR},
+      </if>
+      <if test="profitLossAttr1 != null" >
+        profit_loss_attr_1 = #{profitLossAttr1,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr2 != null" >
+        profit_loss_attr_2 = #{profitLossAttr2,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr3 != null" >
+        profit_loss_attr_3 = #{profitLossAttr3,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr4 != null" >
+        profit_loss_attr_4 = #{profitLossAttr4,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr5 != null" >
+        profit_loss_attr_5 = #{profitLossAttr5,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr6 != null" >
+        profit_loss_attr_6 = #{profitLossAttr6,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr7 != null" >
+        profit_loss_attr_7 = #{profitLossAttr7,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr8 != null" >
+        profit_loss_attr_8 = #{profitLossAttr8,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr9 != null" >
+        profit_loss_attr_9 = #{profitLossAttr9,jdbcType=VARCHAR},
+      </if>
+      <if test="profitLossAttr10 != null" >
+        profit_loss_attr_10 = #{profitLossAttr10,jdbcType=VARCHAR},
+      </if>
+      <if test="incomeIncr != null" >
+        income_incr = #{incomeIncr,jdbcType=BIGINT},
+      </if>
+      <if test="incomeDecr != null" >
+        income_decr = #{incomeDecr,jdbcType=BIGINT},
+      </if>
+      <if test="costIncr != null" >
+        cost_incr = #{costIncr,jdbcType=BIGINT},
+      </if>
+      <if test="costDecr != null" >
+        cost_decr = #{costDecr,jdbcType=BIGINT},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      version = version+1,
+    </set>
+    where id = #{id,jdbcType=BIGINT} and version = #{version,jdbcType=INTEGER}
+  </update>
+</mapper>

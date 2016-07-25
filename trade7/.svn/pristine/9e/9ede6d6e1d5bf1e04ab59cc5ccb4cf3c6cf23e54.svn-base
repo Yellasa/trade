@@ -1,0 +1,253 @@
+package com.liantuo.trade.web.controller.local;
+
+import java.io.IOException;
+import java.util.Date;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.liantuo.trade.bus.process.NotifyProcess;
+import com.liantuo.trade.client.trade.packet.NotifyPacket;
+import com.liantuo.trade.client.trade.packet.NotifyPacketResultInfo;
+import com.liantuo.trade.client.trade.packet.NotifyRspPacket;
+import com.liantuo.trade.client.trade.packet.req.NotifyPacketReqCommon;
+import com.liantuo.trade.client.trade.packet.rsp.NotifyRspCommonPacket;
+import com.liantuo.trade.common.constants.TradeConstants;
+import com.liantuo.trade.common.message.MessageBundleService;
+import com.liantuo.trade.common.util.trade.NotifyReqContext;
+import com.liantuo.trade.common.util.trade.TradeUtilCommon;
+import com.liantuo.trade.common.validate.ValidationUtil;
+import com.liantuo.trade.exception.BusinessCheckedException;
+import com.liantuo.trade.orm.pojo.TradeNotifyPaymentLogWithBLOBs;
+import com.liantuo.trade.orm.service.TradeNotifyPaymentLogService;
+import com.liantuo.trade.orm.service.TradeReqLogService;
+import com.liantuo.trade.seqno.StepSequenceFactoryForSpdb;
+
+@Controller
+@RequestMapping("/notify")
+public class TradeNotifyController {
+    
+    private final Log LOGGER = LogFactory.getLog(TradeNotifyController.class);
+
+    private final String TRADE_NO_PRMT_NAME = "trade_no";
+    private final String SERVICE_NAME_PRMT_NAME = "service_name";
+    private final String VERSION_PRMT_NAME = "version";
+    
+    @Resource(name = "idFactoryNotifyReqLogReqNo")
+    private StepSequenceFactoryForSpdb idFactoryNotifyReqLogReqNo;
+
+    @Resource(name = "messageBundleServiceImpl")
+    private MessageBundleService messageBundleService;
+    
+    @Resource(name = "tradeReqLogServiceImpl")
+    private TradeReqLogService tradeRequestLogServ;
+    
+    @Resource
+    private TradeNotifyPaymentLogService tradeNotifyPaymentLogService;
+    
+    @Resource(name = "notifyDispatcher")
+    private NotifyProcess process;
+    
+    @RequestMapping(value = "/tx", method = RequestMethod.POST)
+    public String excuteRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // 写入请求日志
+        Date startTime = new Date();
+        String reqXml = request.getParameter("para").trim();
+        String tradeNo = request.getParameter(TRADE_NO_PRMT_NAME);
+        String serviceName = request.getParameter(SERVICE_NAME_PRMT_NAME);
+        
+        TradeNotifyPaymentLogWithBLOBs notifyLog = saveNotifyReqLog(reqXml, request, startTime);
+        
+        // 返回结果给支付中心
+        responsePaymentCenter(response);
+        
+        String result = TradeConstants.TRADE_RESPONSE_STATUS_FAILURE;
+        // 报文解析
+        NotifyPacketReqCommon notifyReq = parsePacket(reqXml);
+        if(notifyReq == null){
+            updateTradeReqLogById(notifyLog.getId(), notifyReq, 
+                    buildReqByCodeAndErrorMsg("trade.failure.head.validate", "通知报文解析错误"), result, startTime);
+            return null;
+        }
+        notifyReq.getBusHead().setTrade_no(tradeNo);
+        notifyReq.getBusHead().setService_name(serviceName);
+        notifyReq.getBusHead().setVersion(request.getParameter(VERSION_PRMT_NAME));
+        
+        // 报文校验
+        String validatedMsg = validatePacket(notifyReq);
+        if(!StringUtils.isEmpty(validatedMsg)){
+            updateTradeReqLogById(notifyLog.getId(), notifyReq, 
+                    buildReqByCodeAndErrorMsg("trade.failure.head.validate", validatedMsg), result, startTime);
+            return null;
+        }
+        
+        /** 通知处理 */
+        NotifyRspPacket tradeRsp = null;
+        if(process == null){
+            LOGGER.error(" >>> 接收到支付中心通知未找到 process: " + reqXml);
+            updateTradeReqLogById(notifyLog.getId(), notifyReq, 
+                    buildReqByCodeAndErrorMsg("trade.failure.process.not.found", "提现通知", 
+                            notifyReq.getBusHead().getPay_channel() + "_" + notifyReq.getBusHead().getTrade_type()), 
+                    result, startTime);
+            return null;
+        } else {
+            NotifyReqContext reqContext = new NotifyReqContext();
+            reqContext.setReq(notifyLog);
+            reqContext.setBusHead(notifyReq.getBusHead());
+            
+            try {
+                tradeRsp = process.processHandle(reqXml, reqContext);
+                result = TradeConstants.TRADE_RESPONSE_STATUS_SUCCESS;
+            } catch (BusinessCheckedException e) {
+                tradeRsp = buildReq(e.getErrorCode(), e.getErrorMessage());
+                LOGGER.error(" >>> 接收到支付中心通知,处理时异常 ", e);
+            } catch (Exception e) {
+                tradeRsp = buildReq(messageBundleService.getCode("trade.biz.error"), e.getMessage());
+                LOGGER.error(" >>> 接收到支付中心通知,处理时异常 ", e);
+            } finally{
+                tradeRsp.setBusHead(notifyReq.getBusHead());
+            }
+        }
+        
+        /** 更新请求日志,通知前置失败  */
+        updateTradeReqLogById(notifyLog.getId(), notifyReq, tradeRsp, result, startTime);
+        
+        return null;
+    }
+    
+    private NotifyPacketReqCommon parsePacket(String xml){
+        NotifyPacketReqCommon packet = NotifyPacket.unmarshal(xml, NotifyPacketReqCommon.class);
+        if (packet == null || packet.getBusHead() == null) {
+            //未获取头信息，无法通知前置失败
+            return null;
+        }
+        return packet;
+    }
+    
+    private String validatePacket(NotifyPacketReqCommon packet){
+        // 头信息参数校验
+        String errorMessage = null;
+        errorMessage = ValidationUtil.validateRequired(packet.getBusHead());
+        if (StringUtils.isEmpty(errorMessage)) {
+          //交易协议参数格式校验
+            errorMessage = ValidationUtil.validateFormat(packet.getBusHead());
+        }
+        // 请求格式校验失败
+        
+        return errorMessage;
+    }
+
+    private void updateTradeReqLogById(Long logId, NotifyPacketReqCommon req, 
+            NotifyRspPacket rsp, String status, Date startTime) {
+        try {
+            updateTradeReqLog(logId, req, rsp, status, startTime);
+        } catch (Exception e) {
+            LOGGER.error(" >>> 更新提现通知的请求日志失败", e);
+        }
+    }
+    private void updateTradeReqLog(Long logId, NotifyPacketReqCommon req, 
+            NotifyRspPacket rsp, String status, Date startTime) {
+        TradeNotifyPaymentLogWithBLOBs log = new TradeNotifyPaymentLogWithBLOBs();
+        log.setId(logId);
+        // 响应日期时间
+        log.setResDateTime(new Date());
+        // 请求耗时
+        log.setReqCostTime(Long.toString(log.getResDateTime().getTime() - startTime.getTime()));
+        // 通信状态
+        log.setReqStatus(TradeConstants.TRADE_SUCCESS);
+        
+        if(req != null && req.getBusHead() != null){
+            // 支付中心渠道编号 --- 支付渠道（1：支付宝 2：财付通 7：微信 8：贵银联）
+            log.setPayChannel(req.getBusHead().getPay_channel());
+            // 支付中心接口编号 --- 渠道接口编号（36支付宝批量付款）
+            log.setTradeType(req.getBusHead().getTrade_type());
+        }
+        
+        if(rsp == null){
+            // nothing
+        } else {
+            if(rsp.getBody() != null){
+                // 交易处理结果
+                log.setResultCode(rsp.getBody().getResult_code());
+                // 错误编码
+                log.setErrCode(rsp.getBody().getErr_code());
+                
+            }
+        }
+        
+        tradeNotifyPaymentLogService.updateTradeNotifyPaymentLogById(log);
+    }
+    
+    private TradeNotifyPaymentLogWithBLOBs saveNotifyReqLog(String xml, HttpServletRequest request, Date startTime) throws Exception {
+        TradeNotifyPaymentLogWithBLOBs log = insertNotifyReqLog(xml, request, startTime);
+        tradeNotifyPaymentLogService.insertTradeNotifyPaymentLog(log);
+        return log;
+    }
+
+    private TradeNotifyPaymentLogWithBLOBs insertNotifyReqLog(String xml, HttpServletRequest request, Date startTime) throws Exception {
+        TradeNotifyPaymentLogWithBLOBs log = new TradeNotifyPaymentLogWithBLOBs();
+        // 交易请求编号
+        log.setReqNo(TradeUtilCommon.getServiceCode(request.getParameter(SERVICE_NAME_PRMT_NAME))+idFactoryNotifyReqLogReqNo.generate().toString());
+        // 交易编号
+        log.setTradeNo(request.getParameter(TRADE_NO_PRMT_NAME));
+        // 调用日期时间
+        log.setReqDateTime(startTime);
+        // 请求报文
+        log.setReqText(xml);
+        // 返回报文
+        log.setResText(TradeConstants.NOTIFY_RESPONSE_SUCCESS_TEXT);
+        // 请求方IP地址
+        log.setReqIp(getIp(request));
+        // 接口服务
+        log.setServiceName(request.getParameter(SERVICE_NAME_PRMT_NAME));
+        // 接口版本号
+        log.setPaymentVersion(request.getParameter(VERSION_PRMT_NAME));
+        // 记录创建日期
+        // log.setGmtCreated(startTime);
+        
+        return log;
+    }
+    
+    private void responsePaymentCenter(HttpServletResponse response){
+        try {
+            response.setContentType("text/plain;charset=utf-8");
+            response.getWriter().println(TradeConstants.NOTIFY_RESPONSE_SUCCESS_TEXT);
+            response.getWriter().flush();
+        } catch (IOException e) {
+            LOGGER.error("应答支付中心通知异常", e);
+        }
+    }
+
+    private String getIp(HttpServletRequest request) {
+        String ip = request.getHeader("x-real-ip");
+        if (StringUtils.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
+    }
+
+    private NotifyRspPacket buildReqByCodeAndErrorMsg(String errorCode, String ... msg) {
+        return buildReq(messageBundleService.getCode(errorCode), 
+                messageBundleService.getMessage(errorCode, msg));
+    }
+    
+    private NotifyRspPacket buildReq(String code, String message) {
+        NotifyPacketResultInfo body = new NotifyPacketResultInfo();
+        body.setResult_code(TradeConstants.TRADE_RESPONSE_STATUS_FAILURE);
+        
+        body.setErr_code(code);
+        body.setErr_code_des(message);
+
+        NotifyRspCommonPacket bizFieldValidateRsp = new NotifyRspCommonPacket();
+        bizFieldValidateRsp.setBody(body);
+        return bizFieldValidateRsp;
+    }
+}

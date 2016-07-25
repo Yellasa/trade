@@ -1,0 +1,47 @@
+package com.liantuo.deposit.advanceaccount.bus.service.impl;
+
+
+import java.util.Date;
+
+import javax.annotation.Resource;
+
+import org.junit.Test;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+
+import com.liantuo.deposit.advanceaccount.bus.service.CreditAccountService;
+import com.liantuo.deposit.advanceaccount.bus.service.CreditAccountTradeHistoryService;
+import com.liantuo.deposit.advanceaccount.bus.vo.RealTimeAccountingVo;
+import com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccount;
+@ContextConfiguration(locations = { "classpath:config/spring/applicationContext-myBatis.xml",
+									"classpath:config/spring/applicationContext-common.xml",
+							        "classpath:config/biz/trade-*.xml"})
+@TransactionConfiguration(defaultRollback = false)
+public class CreditAccountTradeHistoryServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+	
+	@Resource
+	CreditAccountTradeHistoryService creditAccountTradeHistoryService;
+	@Resource
+	CreditAccountService creditAccountService;
+
+	@Test
+	public void testInsertCaTradeHistory() throws Exception {
+		CreditAccount creditAccount = creditAccountService.selectByAccountNo("CA21000000019141");
+		RealTimeAccountingVo vo = new RealTimeAccountingVo();
+		vo.setAccountNo("CA21000000019141");
+		vo.setCoreMerchantNo("ebillmaster");
+		vo.setPoolNo("PN01000000000003124");
+		vo.setReservedFields1("预留1");
+		vo.setReservedFields2("预留2");
+		vo.setTradeCode("123");
+		vo.setTradeNo("456");
+		vo.setTradeGmtCreated(new Date());
+		vo.setRmk("备注");
+		vo.setTradeReqCode("535345345");
+		vo.setTradeStepNo("4645645645");
+		vo.setSequenceNo("234234234234234");
+		vo.setAvlBalDecrAmt(Long.valueOf(32323));
+		creditAccountTradeHistoryService.insertCaTradeHistory(vo,creditAccount,new Date());
+	}
+}

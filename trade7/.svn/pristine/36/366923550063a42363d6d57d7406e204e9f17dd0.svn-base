@@ -1,0 +1,77 @@
+package com.liantuo.trade.bus.service;
+
+import java.util.List;
+
+import com.liantuo.trade.orm.pojo.TradeRecharge;
+import com.liantuo.trade.orm.pojo.TradeSinglePayment;
+import com.liantuo.trade.orm.pojo.TradeSinglePaymentExample;
+
+public interface SinglePaymentService {
+	/**
+	 * 创建支付充值成功交易记录
+	 * @param TradeSinglePayment
+	 * @return
+	 * @throws Exception
+	 */
+	public TradeSinglePayment createTradeForPayOfSuccess(TradeSinglePayment tradeSinglePayment) throws Exception;
+
+	/**
+	 * 创建等待支付交易
+	 */
+	public TradeSinglePayment createForPayOfWait(TradeSinglePayment tradePayment) throws Exception;
+	
+	/**
+	 * 创建等待入账充值交易
+	 * @param TradeSinglePayment
+	 * @return
+	 * @throws Exception
+	 */
+	public TradeSinglePayment createForEnterOfWait(TradeSinglePayment tradeSinglePayment) throws Exception;
+	
+	/**
+	 * 充值成功 修改交易
+	 * @param TradeSinglePayment
+	 * @return
+	 * @throws Exception
+	 */
+	public TradeSinglePayment updateTradeSuccess(TradeSinglePayment tradeSinglePayment) throws Exception;
+	
+	/**
+	 *  修改交易
+	 * @param TradeSinglePayment
+	 * @return
+	 * @throws Exception
+	 */
+	public TradeSinglePayment updateTrade(TradeSinglePayment tradeSinglePayment) throws Exception;
+	
+	/**
+	 * 
+	 * @Description: 创建失败交易记录
+	 * @param @param TradeSinglePayment
+	 * @return TradeSinglePayment  
+	 * @throws
+	 */
+	public TradeSinglePayment createTradeFailureRecode(TradeSinglePayment tradeSinglePayment) throws Exception;
+	
+	
+	
+	
+	/**
+	 * 充值失败 修改交易
+	 * @param TradeSinglePayment
+	 * @return
+	 * @throws Exception
+	 */
+	public TradeSinglePayment updateTradeFail(TradeSinglePayment tradeSinglePayment) throws Exception;
+	
+	
+	/**
+	 * 充值交易列表查询
+	 * @param TradeSinglePaymentExample
+	 * @return
+	 * @throws Exception
+	 */
+	List<TradeSinglePayment> queryByExample(TradeSinglePaymentExample example) ;
+	
+	public TradeSinglePayment queryByTradeNo(String tradeNo);
+}

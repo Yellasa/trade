@@ -1,0 +1,115 @@
+package com.liantuo.trade.bus.template.impl.v1_1.create;
+
+import com.liantuo.trade.bus.process.TradeCreateMultiTxNoPaymentInterface;
+import com.liantuo.trade.bus.template.AbstractTradeTemplate;
+import com.liantuo.trade.client.trade.packet.TradeRequest;
+import com.liantuo.trade.client.trade.packet.TradeResponse;
+import com.liantuo.trade.client.trade.packet.body.TradeResponseBody;
+import com.liantuo.trade.common.annotation.Template;
+import com.liantuo.trade.common.constants.TradeConstants;
+import com.liantuo.trade.common.util.json.ObjectJsonUtil;
+import com.liantuo.trade.exception.BusinessException;
+import com.liantuo.trade.orm.pojo.TradeReqLogWithBLOBs;
+import com.liantuo.trade.orm.service.TradeReqLogService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Resource;
+import java.util.Date;
+
+/**
+ * @version V1.0
+ * @Description: 创建类.线下.多事务
+ */
+@Template
+public class ATradeCreateMultiTxNoPaymentTemp
+        extends AbstractTradeTemplate<TradeCreateMultiTxNoPaymentInterface> {
+
+    @Resource(name = "tradeReqLogServiceImpl")
+    private TradeReqLogService tradeReqLogService;
+
+    private final Logger logger = LoggerFactory.getLogger(ATradeCreateMultiTxNoPaymentTemp.class);
+    protected TradeReqLogWithBLOBs tradeLog;
+
+    @Override
+    public TradeResponse execute(TradeRequest<?> request) throws Exception {
+        //数据准备
+        TradeResponseBody responseBody = new TradeResponseBody();
+        response.setBody(responseBody);
+
+        Date startTime = new Date();
+
+        // 1、执行日志插入：允许失败，需要返回系统错误
+        try {
+            tradeLog = tradeReqLogService.insertTradeRequestLog(request, ip, requestXML);//插入请求log
+            process.setReqNo(tradeLog.getReqNo());
+        } catch (Exception e) {
+            logger.error("插入请求日志异常", e);
+            response = buildSystemExceptionResponse(e);
+            return response;
+        }
+
+        //2、执行验证
+        try {
+            process.validate(request);// 验证处理(格式，业务)
+        } catch (BusinessException e) {
+            response = buildSystemExceptionResponse(e);
+            try {
+                tradeReqLogService.updateTradeReqLogById(tradeLog.getId(), requestXML, response, startTime);//部分更新请求log
+            } catch (Exception e0) {
+                e0.printStackTrace();
+            }
+            return response;
+        }
+
+        //3、进行第一步事务处理
+        try {
+            process.transactionStep01(request);
+        } catch (Exception e) {
+            //执行  创建失败交易记录
+            response = buildSystemExceptionResponse(e);
+            try {
+                process.createTradeFailRecode(request);
+            } catch (Exception e0) {
+                response = buildSystemExceptionResponse(e0);
+            }
+
+            try {
+                tradeReqLogService.updateTradeReqLogById(tradeLog.getId(), requestXML, response, startTime);//部分更新请求log
+            } catch (Exception e3) {
+                e3.printStackTrace();
+            }
+            return response;
+        }
+
+        //4、如果第一步事务执行成功，则进行第二步事务操作
+        try {
+            process.transactionStep02(request);// 进行第二步事务处理
+            responseBody.setIs_success(TradeConstants.TRADE_RESPONSE_STATUS_SUCCESS);
+            responseBody.setReturn_code(TradeConstants.TRADE_RESPONSE_STATUS_SUCCESS);
+            responseBody.setTrade_details(ObjectJsonUtil.object2String(process.getTradeDetails()));
+        } catch (BusinessException e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+            response = buildSystemExceptionResponse(e);
+            response.getBody().setTrade_details(ObjectJsonUtil.object2String(process.getTradeDetails()));
+            try {
+                tradeReqLogService.updateTradeReqLogById(tradeLog.getId(), requestXML, response, startTime);// 部分更新请求log
+            } catch (Exception e0) {
+                e0.printStackTrace();
+            }
+            return response;
+        }
+
+        //5、允许失败，但不影响业务，正常返回
+        try {
+            tradeReqLogService.updateTradeReqLogById(tradeLog.getId(), requestXML, response, startTime);//部分更新请求log
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+            logger.error("更新请求日志异常", e);
+        }
+        return response;
+    }
+
+}

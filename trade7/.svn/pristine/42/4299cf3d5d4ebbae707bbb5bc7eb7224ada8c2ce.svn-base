@@ -1,0 +1,68 @@
+package com.liantuo.trade.bus.process;
+
+
+import org.springframework.transaction.annotation.Transactional;
+
+import com.liantuo.trade.client.trade.packet.TradeRequest;
+import com.liantuo.trade.client.trade.packet.body.TradeRequestBody;
+import com.liantuo.trade.client.trade.packet.body.zf.TradeCommonEntry;
+import com.liantuo.trade.orm.pojo.TradeLedger;
+import com.liantuo.trade.orm.pojo.TradeSinglePayment;
+
+
+public interface XXXInterface<B extends TradeRequestBody> extends TradeSynOuterReciveCreateInterface<B> {
+
+	/**
+	 * 格式、业务校验
+	 */
+	public void validate(TradeRequest<B> tradeRquest) throws Exception;
+	
+	/**
+	 * 根据支付接口标准输入转化空白收付款台账数据
+	 */
+	public TradeLedger data2BlankLedger(TradeCommonEntry data) throws Exception;
+	
+	
+	/**
+	 * 事务处理
+	 */
+	@Transactional(rollbackFor=Exception.class)
+	public void transaction(TradeRequest<B> tradeRquest) throws Exception;
+	
+	/**
+	 * 创建失败交易记录
+	 * @param tradeRquest
+	 * @throws Exception
+	 */
+	public TradeSinglePayment createPayFail(TradeRequest<B> tradeRquest) throws Exception;
+	
+	/**
+	 * 外部收款同步支付或成功，或失败后的事务
+	 */
+	@Transactional(rollbackFor=Exception.class)
+	public void transactionAfterRequestPayment(TradeRequest<B> tradeRquest) throws Exception;
+	
+	/**
+	 * 外部收款同步支付事务成功后的另一个事务
+	 */
+	@Transactional(rollbackFor=Exception.class)
+	public void transactionAfterRequestPaymentSuccess(TradeRequest<B> tradeRquest) throws Exception;
+	
+	public void setReqNo(String reqNo);
+	
+	public Object getTradeDetails();
+	
+	
+	/**
+	 * 修改交易记录
+	 */
+	public void updateTradeRecord(TradeRequest<B> tradeRquest) throws Exception;
+	
+	/**
+	 * 修改充值失败
+	 * @param request_code
+	 * @param reqNo
+	 */
+	public void updateTradeToFailure(TradeRequest<B> tradeRquest);
+	
+}

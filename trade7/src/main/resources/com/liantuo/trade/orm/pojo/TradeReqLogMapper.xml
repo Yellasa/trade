@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liantuo.trade.orm.mapper.TradeReqLogMapper">
+  <resultMap id="BaseResultMap" type="com.liantuo.trade.orm.pojo.TradeReqLog">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="req_no" jdbcType="VARCHAR" property="reqNo" />
+    <result column="req_ip" jdbcType="VARCHAR" property="reqIp" />
+    <result column="partner_id" jdbcType="VARCHAR" property="partnerId" />
+    <result column="core_merchant_no" jdbcType="VARCHAR" property="coreMerchantNo" />
+    <result column="fund_pool_no" jdbcType="VARCHAR" property="fundPoolNo" />
+    <result column="service_name" jdbcType="VARCHAR" property="serviceName" />
+    <result column="service_code" jdbcType="VARCHAR" property="serviceCode" />
+    <result column="out_trade_no" jdbcType="VARCHAR" property="outTradeNo" />
+    <result column="trade_no" jdbcType="VARCHAR" property="tradeNo" />
+    <result column="out_trade_no_ext" jdbcType="VARCHAR" property="outTradeNoExt" />
+    <result column="req_date_time" jdbcType="TIMESTAMP" property="reqDateTime" />
+    <result column="res_date_time" jdbcType="TIMESTAMP" property="resDateTime" />
+    <result column="req_cost_time" jdbcType="BIGINT" property="reqCostTime" />
+    <result column="req_status" jdbcType="CHAR" property="reqStatus" />
+    <result column="result_code" jdbcType="VARCHAR" property="resultCode" />
+    <result column="err_code" jdbcType="VARCHAR" property="errCode" />
+    <result column="gmt_created" jdbcType="TIMESTAMP" property="gmtCreated" />
+    <result column="req_extend_field_1" jdbcType="VARCHAR" property="reqExtendField1" />
+    <result column="req_extend_field_2" jdbcType="VARCHAR" property="reqExtendField2" />
+    <result column="req_extend_field_3" jdbcType="VARCHAR" property="reqExtendField3" />
+    <result column="req_extend_field_4" jdbcType="VARCHAR" property="reqExtendField4" />
+    <result column="req_extend_field_5" jdbcType="VARCHAR" property="reqExtendField5" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.liantuo.trade.orm.pojo.TradeReqLogWithBLOBs">
+    <result column="req_text" jdbcType="LONGVARCHAR" property="reqText" />
+    <result column="res_text" jdbcType="LONGVARCHAR" property="resText" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, req_no, req_ip, partner_id, core_merchant_no, fund_pool_no, service_name, service_code, 
+    out_trade_no, trade_no, out_trade_no_ext, req_date_time, res_date_time, req_cost_time, 
+    req_status, result_code, err_code, gmt_created, req_extend_field_1, req_extend_field_2, 
+    req_extend_field_3, req_extend_field_4, req_extend_field_5
+  </sql>
+  <sql id="Blob_Column_List">
+    req_text, res_text
+  </sql>
+  <!--  <select id="selectByExampleWithBLOBs" parameterType="com.liantuo.trade.orm.pojo.TradeReqLogExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from trade_req_log
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.liantuo.trade.orm.pojo.TradeReqLogExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from trade_req_log
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>-->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from trade_req_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <!--  <insert id="insert" parameterType="com.liantuo.trade.orm.pojo.TradeReqLogWithBLOBs">
+  	<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+		SELECT LAST_INSERT_ID() AS id
+	</selectKey>
+    insert into trade_req_log (id, req_no, req_ip, 
+      partner_id, core_merchant_no, fund_pool_no, 
+      service_name, service_code, out_trade_no, 
+      trade_no, out_trade_no_ext, req_date_time, 
+      res_date_time, req_cost_time, req_status, 
+      result_code, err_code, gmt_created, 
+      req_extend_field_1, req_extend_field_2, req_extend_field_3, 
+      req_extend_field_4, req_extend_field_5, req_text, 
+      res_text)
+    values (#{id,jdbcType=BIGINT}, #{reqNo,jdbcType=VARCHAR}, #{reqIp,jdbcType=VARCHAR}, 
+      #{partnerId,jdbcType=VARCHAR}, #{coreMerchantNo,jdbcType=VARCHAR}, #{fundPoolNo,jdbcType=VARCHAR}, 
+      #{serviceName,jdbcType=VARCHAR}, #{serviceCode,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, 
+      #{tradeNo,jdbcType=VARCHAR}, #{outTradeNoExt,jdbcType=VARCHAR}, #{reqDateTime,jdbcType=TIMESTAMP}, 
+      #{resDateTime,jdbcType=TIMESTAMP}, #{reqCostTime,jdbcType=BIGINT}, #{reqStatus,jdbcType=CHAR}, 
+      #{resultCode,jdbcType=VARCHAR}, #{errCode,jdbcType=VARCHAR},NOW(), 
+      #{reqExtendField1,jdbcType=VARCHAR}, #{reqExtendField2,jdbcType=VARCHAR}, #{reqExtendField3,jdbcType=VARCHAR}, 
+      #{reqExtendField4,jdbcType=VARCHAR}, #{reqExtendField5,jdbcType=VARCHAR}, #{reqText,jdbcType=LONGVARCHAR}, 
+      #{resText,jdbcType=LONGVARCHAR})
+  </insert>-->
+  <insert id="insertSelective" parameterType="com.liantuo.trade.orm.pojo.TradeReqLogWithBLOBs">
+  	<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+		SELECT LAST_INSERT_ID() AS id
+	</selectKey>
+    insert into trade_req_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="reqNo != null">
+        req_no,
+      </if>
+      <if test="reqIp != null">
+        req_ip,
+      </if>
+      <if test="partnerId != null">
+        partner_id,
+      </if>
+      <if test="coreMerchantNo != null">
+        core_merchant_no,
+      </if>
+      <if test="fundPoolNo != null">
+        fund_pool_no,
+      </if>
+      <if test="serviceName != null">
+        service_name,
+      </if>
+      <if test="serviceCode != null">
+        service_code,
+      </if>
+      <if test="outTradeNo != null">
+        out_trade_no,
+      </if>
+      <if test="tradeNo != null">
+        trade_no,
+      </if>
+      <if test="outTradeNoExt != null">
+        out_trade_no_ext,
+      </if>
+      <if test="reqDateTime != null">
+        req_date_time,
+      </if>
+      <if test="resDateTime != null">
+        res_date_time,
+      </if>
+      <if test="reqCostTime != null">
+        req_cost_time,
+      </if>
+      <if test="reqStatus != null">
+        req_status,
+      </if>
+      <if test="resultCode != null">
+        result_code,
+      </if>
+      <if test="errCode != null">
+        err_code,
+      </if>
+        gmt_created,
+      <if test="reqExtendField1 != null">
+        req_extend_field_1,
+      </if>
+      <if test="reqExtendField2 != null">
+        req_extend_field_2,
+      </if>
+      <if test="reqExtendField3 != null">
+        req_extend_field_3,
+      </if>
+      <if test="reqExtendField4 != null">
+        req_extend_field_4,
+      </if>
+      <if test="reqExtendField5 != null">
+        req_extend_field_5,
+      </if>
+      <if test="reqText != null">
+        req_text,
+      </if>
+      <if test="resText != null">
+        res_text,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="reqNo != null">
+        #{reqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="reqIp != null">
+        #{reqIp,jdbcType=VARCHAR},
+      </if>
+      <if test="partnerId != null">
+        #{partnerId,jdbcType=VARCHAR},
+      </if>
+      <if test="coreMerchantNo != null">
+        #{coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fundPoolNo != null">
+        #{fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceName != null">
+        #{serviceName,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceCode != null">
+        #{serviceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null">
+        #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeNo != null">
+        #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNoExt != null">
+        #{outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+      <if test="reqDateTime != null">
+        #{reqDateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="resDateTime != null">
+        #{resDateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reqCostTime != null">
+        #{reqCostTime,jdbcType=BIGINT},
+      </if>
+      <if test="reqStatus != null">
+        #{reqStatus,jdbcType=CHAR},
+      </if>
+      <if test="resultCode != null">
+        #{resultCode,jdbcType=VARCHAR},
+      </if>
+      <if test="errCode != null">
+        #{errCode,jdbcType=VARCHAR},
+      </if>
+      NOW(),
+      <if test="reqExtendField1 != null">
+        #{reqExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField2 != null">
+        #{reqExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField3 != null">
+        #{reqExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField4 != null">
+        #{reqExtendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField5 != null">
+        #{reqExtendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="reqText != null">
+        #{reqText,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="resText != null">
+        #{resText,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <!--  <update id="updateByExampleSelective" parameterType="map">
+    update trade_req_log
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.reqNo != null">
+        req_no = #{record.reqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqIp != null">
+        req_ip = #{record.reqIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.partnerId != null">
+        partner_id = #{record.partnerId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.coreMerchantNo != null">
+        core_merchant_no = #{record.coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fundPoolNo != null">
+        fund_pool_no = #{record.fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.serviceName != null">
+        service_name = #{record.serviceName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.serviceCode != null">
+        service_code = #{record.serviceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.outTradeNo != null">
+        out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tradeNo != null">
+        trade_no = #{record.tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.outTradeNoExt != null">
+        out_trade_no_ext = #{record.outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqDateTime != null">
+        req_date_time = #{record.reqDateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.resDateTime != null">
+        res_date_time = #{record.resDateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.reqCostTime != null">
+        req_cost_time = #{record.reqCostTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.reqStatus != null">
+        req_status = #{record.reqStatus,jdbcType=CHAR},
+      </if>
+      <if test="record.resultCode != null">
+        result_code = #{record.resultCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.errCode != null">
+        err_code = #{record.errCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gmtCreated != null">
+        gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.reqExtendField1 != null">
+        req_extend_field_1 = #{record.reqExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqExtendField2 != null">
+        req_extend_field_2 = #{record.reqExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqExtendField3 != null">
+        req_extend_field_3 = #{record.reqExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqExtendField4 != null">
+        req_extend_field_4 = #{record.reqExtendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqExtendField5 != null">
+        req_extend_field_5 = #{record.reqExtendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqText != null">
+        req_text = #{record.reqText,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.resText != null">
+        res_text = #{record.resText,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update trade_req_log
+    set id = #{record.id,jdbcType=BIGINT},
+      req_no = #{record.reqNo,jdbcType=VARCHAR},
+      req_ip = #{record.reqIp,jdbcType=VARCHAR},
+      partner_id = #{record.partnerId,jdbcType=VARCHAR},
+      core_merchant_no = #{record.coreMerchantNo,jdbcType=VARCHAR},
+      fund_pool_no = #{record.fundPoolNo,jdbcType=VARCHAR},
+      service_name = #{record.serviceName,jdbcType=VARCHAR},
+      service_code = #{record.serviceCode,jdbcType=VARCHAR},
+      out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
+      trade_no = #{record.tradeNo,jdbcType=VARCHAR},
+      out_trade_no_ext = #{record.outTradeNoExt,jdbcType=VARCHAR},
+      req_date_time = #{record.reqDateTime,jdbcType=TIMESTAMP},
+      res_date_time = #{record.resDateTime,jdbcType=TIMESTAMP},
+      req_cost_time = #{record.reqCostTime,jdbcType=BIGINT},
+      req_status = #{record.reqStatus,jdbcType=CHAR},
+      result_code = #{record.resultCode,jdbcType=VARCHAR},
+      err_code = #{record.errCode,jdbcType=VARCHAR},
+      gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP},
+      req_extend_field_1 = #{record.reqExtendField1,jdbcType=VARCHAR},
+      req_extend_field_2 = #{record.reqExtendField2,jdbcType=VARCHAR},
+      req_extend_field_3 = #{record.reqExtendField3,jdbcType=VARCHAR},
+      req_extend_field_4 = #{record.reqExtendField4,jdbcType=VARCHAR},
+      req_extend_field_5 = #{record.reqExtendField5,jdbcType=VARCHAR},
+      req_text = #{record.reqText,jdbcType=LONGVARCHAR},
+      res_text = #{record.resText,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update trade_req_log
+    set id = #{record.id,jdbcType=BIGINT},
+      req_no = #{record.reqNo,jdbcType=VARCHAR},
+      req_ip = #{record.reqIp,jdbcType=VARCHAR},
+      partner_id = #{record.partnerId,jdbcType=VARCHAR},
+      core_merchant_no = #{record.coreMerchantNo,jdbcType=VARCHAR},
+      fund_pool_no = #{record.fundPoolNo,jdbcType=VARCHAR},
+      service_name = #{record.serviceName,jdbcType=VARCHAR},
+      service_code = #{record.serviceCode,jdbcType=VARCHAR},
+      out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
+      trade_no = #{record.tradeNo,jdbcType=VARCHAR},
+      out_trade_no_ext = #{record.outTradeNoExt,jdbcType=VARCHAR},
+      req_date_time = #{record.reqDateTime,jdbcType=TIMESTAMP},
+      res_date_time = #{record.resDateTime,jdbcType=TIMESTAMP},
+      req_cost_time = #{record.reqCostTime,jdbcType=BIGINT},
+      req_status = #{record.reqStatus,jdbcType=CHAR},
+      result_code = #{record.resultCode,jdbcType=VARCHAR},
+      err_code = #{record.errCode,jdbcType=VARCHAR},
+      gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP},
+      req_extend_field_1 = #{record.reqExtendField1,jdbcType=VARCHAR},
+      req_extend_field_2 = #{record.reqExtendField2,jdbcType=VARCHAR},
+      req_extend_field_3 = #{record.reqExtendField3,jdbcType=VARCHAR},
+      req_extend_field_4 = #{record.reqExtendField4,jdbcType=VARCHAR},
+      req_extend_field_5 = #{record.reqExtendField5,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>-->
+  <update id="updateByPrimaryKeySelective" parameterType="com.liantuo.trade.orm.pojo.TradeReqLogWithBLOBs">
+    update trade_req_log
+    <set>
+      <if test="reqNo != null">
+        req_no = #{reqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="reqIp != null">
+        req_ip = #{reqIp,jdbcType=VARCHAR},
+      </if>
+      <if test="partnerId != null">
+        partner_id = #{partnerId,jdbcType=VARCHAR},
+      </if>
+      <if test="coreMerchantNo != null">
+        core_merchant_no = #{coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fundPoolNo != null">
+        fund_pool_no = #{fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceName != null">
+        service_name = #{serviceName,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceCode != null">
+        service_code = #{serviceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null">
+        out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeNo != null">
+        trade_no = #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNoExt != null">
+        out_trade_no_ext = #{outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+      <if test="reqDateTime != null">
+        req_date_time = #{reqDateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="resDateTime != null">
+        res_date_time = #{resDateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reqCostTime != null">
+        req_cost_time = #{reqCostTime,jdbcType=BIGINT},
+      </if>
+      <if test="reqStatus != null">
+        req_status = #{reqStatus,jdbcType=CHAR},
+      </if>
+      <if test="resultCode != null">
+        result_code = #{resultCode,jdbcType=VARCHAR},
+      </if>
+      <if test="errCode != null">
+        err_code = #{errCode,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreated != null">
+        gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reqExtendField1 != null">
+        req_extend_field_1 = #{reqExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField2 != null">
+        req_extend_field_2 = #{reqExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField3 != null">
+        req_extend_field_3 = #{reqExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField4 != null">
+        req_extend_field_4 = #{reqExtendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField5 != null">
+        req_extend_field_5 = #{reqExtendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="reqText != null">
+        req_text = #{reqText,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="resText != null">
+        res_text = #{resText,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <!--  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.liantuo.trade.orm.pojo.TradeReqLogWithBLOBs">
+    update trade_req_log
+    set req_no = #{reqNo,jdbcType=VARCHAR},
+      req_ip = #{reqIp,jdbcType=VARCHAR},
+      partner_id = #{partnerId,jdbcType=VARCHAR},
+      core_merchant_no = #{coreMerchantNo,jdbcType=VARCHAR},
+      fund_pool_no = #{fundPoolNo,jdbcType=VARCHAR},
+      service_name = #{serviceName,jdbcType=VARCHAR},
+      service_code = #{serviceCode,jdbcType=VARCHAR},
+      out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      trade_no = #{tradeNo,jdbcType=VARCHAR},
+      out_trade_no_ext = #{outTradeNoExt,jdbcType=VARCHAR},
+      req_date_time = #{reqDateTime,jdbcType=TIMESTAMP},
+      res_date_time = #{resDateTime,jdbcType=TIMESTAMP},
+      req_cost_time = #{reqCostTime,jdbcType=BIGINT},
+      req_status = #{reqStatus,jdbcType=CHAR},
+      result_code = #{resultCode,jdbcType=VARCHAR},
+      err_code = #{errCode,jdbcType=VARCHAR},
+      gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      req_extend_field_1 = #{reqExtendField1,jdbcType=VARCHAR},
+      req_extend_field_2 = #{reqExtendField2,jdbcType=VARCHAR},
+      req_extend_field_3 = #{reqExtendField3,jdbcType=VARCHAR},
+      req_extend_field_4 = #{reqExtendField4,jdbcType=VARCHAR},
+      req_extend_field_5 = #{reqExtendField5,jdbcType=VARCHAR},
+      req_text = #{reqText,jdbcType=LONGVARCHAR},
+      res_text = #{resText,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.liantuo.trade.orm.pojo.TradeReqLog">
+    update trade_req_log
+    set req_no = #{reqNo,jdbcType=VARCHAR},
+      req_ip = #{reqIp,jdbcType=VARCHAR},
+      partner_id = #{partnerId,jdbcType=VARCHAR},
+      core_merchant_no = #{coreMerchantNo,jdbcType=VARCHAR},
+      fund_pool_no = #{fundPoolNo,jdbcType=VARCHAR},
+      service_name = #{serviceName,jdbcType=VARCHAR},
+      service_code = #{serviceCode,jdbcType=VARCHAR},
+      out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      trade_no = #{tradeNo,jdbcType=VARCHAR},
+      out_trade_no_ext = #{outTradeNoExt,jdbcType=VARCHAR},
+      req_date_time = #{reqDateTime,jdbcType=TIMESTAMP},
+      res_date_time = #{resDateTime,jdbcType=TIMESTAMP},
+      req_cost_time = #{reqCostTime,jdbcType=BIGINT},
+      req_status = #{reqStatus,jdbcType=CHAR},
+      result_code = #{resultCode,jdbcType=VARCHAR},
+      err_code = #{errCode,jdbcType=VARCHAR},
+      gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      req_extend_field_1 = #{reqExtendField1,jdbcType=VARCHAR},
+      req_extend_field_2 = #{reqExtendField2,jdbcType=VARCHAR},
+      req_extend_field_3 = #{reqExtendField3,jdbcType=VARCHAR},
+      req_extend_field_4 = #{reqExtendField4,jdbcType=VARCHAR},
+      req_extend_field_5 = #{reqExtendField5,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>-->
+</mapper>

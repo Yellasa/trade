@@ -1,0 +1,203 @@
+package com.liantuo.trade.bus.template;
+
+import com.liantuo.trade.client.trade.packet.TradeRequest;
+import com.liantuo.trade.client.trade.packet.TradeResponse;
+import com.liantuo.trade.common.constants.TradeConstants;
+import com.liantuo.trade.common.message.MessageBundleService;
+import com.liantuo.trade.exception.BusinessException;
+import com.liantuo.trade.exception.BusinessPaymentException;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.annotation.Resource;
+import javax.xml.bind.JAXBException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * 抽象模板
+ *
+ * @author dengchao
+ */
+public abstract class AbstractTradeTemplate<P> {
+    private static Map<Class, Class> bodyClass = new HashMap<Class, Class>();
+    protected String ip;
+    protected String requestXML;
+    protected TradeResponse response;
+    protected TradeRequest request;
+    protected P process;
+//    protected TradeReqLog tradeReqLog;
+
+    @Resource(name = "messageBundleServiceImpl")
+    private MessageBundleService messageBundleService;
+
+    public abstract TradeResponse execute(TradeRequest<?> request) throws Exception;
+
+    public TradeRequest<?> buildRequest(String xml) throws JAXBException {
+        this.requestXML = xml;
+        if (response == null) {
+            response = new TradeResponse();
+        }
+        request = (TradeRequest) TradeRequest.unmarshal(xml, getBodyClass());
+        //BeanUtils.copyProperties(request.getHead(), response.getHead());
+        response.setHead(request.getHead());
+        return request;
+    }
+
+    public Class getBodyClass() {
+        if (bodyClass.get(process.getClass()) == null) {
+            Class bodyGenType = getGenericType(process.getClass());
+            bodyClass.put(process.getClass(), bodyGenType);
+            return bodyGenType;
+        } else {
+            return bodyClass.get(process.getClass());
+        }
+
+    }
+
+    @SuppressWarnings("rawtypes")
+    private Class<?> getGenericType(Class<?> clazz) {
+        Type genType;
+        if (clazz.getGenericInterfaces().length == 0 || clazz.getGenericInterfaces().length > 1) {
+            return getGenericType(clazz.getSuperclass());
+        } else {
+            genType = clazz.getGenericInterfaces()[0];
+            Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+            return (Class) params[0];
+        }
+    }
+
+    protected final String getInternalFailureCode(String key) {
+        return this.messageBundleService.getCode(key);
+    }
+
+    protected final String getInternalFailureMessage(String key, Object... objs) {
+        //MessageFormat.format(messageBundleService.getMessage(key),objs);
+        return this.messageBundleService.getMessage(key, objs);
+    }
+
+    /**
+     * 构造系统异常返回
+     *
+     * @param e
+     * @return
+     */
+    public TradeResponse buildSystemExceptionResponse(Exception e) {
+        if (e instanceof BusinessException) {
+            return buildSystemExceptionResponse((BusinessException) e);
+        } else if (e instanceof BusinessPaymentException) {
+            return buildPaymentSystemExceptionResponse((BusinessPaymentException) e);
+        }
+        return buildSystemExceptionResponse("trade.system.error");
+    }
+
+    public TradeResponse buildSystemExceptionResponse(BusinessException exception) {
+        if (!StringUtils.isEmpty(exception.getErrorCode()) && !StringUtils.isEmpty(exception.getErrorMessage())) {
+            return buildSystemExceptionResponse(exception.getErrorCode(), exception.getErrorMessage());
+        } else if (!StringUtils.isEmpty(exception.getKey())) {
+            return buildSystemExceptionResponse(exception.getKey());
+        } else {
+            return buildSystemExceptionResponse((Exception) exception);
+        }
+    }
+
+    public TradeResponse buildPaymentSystemExceptionResponse(BusinessPaymentException exception) {
+        if (!StringUtils.isEmpty(exception.getBusErrorCode())
+                && !StringUtils.isEmpty(exception.getBusErrorMessage())) {
+            return buildPaymentSystemExceptionResponse(exception.getBusErrorCode(), exception.getBusErrorMessage());
+        } else if (!StringUtils.isEmpty(exception.getKey())) {
+            return buildPaymentSystemExceptionResponse(exception.getKey());
+        } else {
+            return buildSystemExceptionResponse((Exception) exception);
+        }
+    }
+
+    public TradeResponse buildSystemExceptionResponse(String errorKey, Object... param) {
+        if (response == null) {
+            response = new TradeResponse();
+        }
+        response.getBody().setIs_success(TradeConstants.TRADE_RESPONSE_STATUS_FAILURE);
+        response.getBody().setReturn_code(TradeConstants.TRADE_RESPONSE_STATUS_SUCCESS);
+
+        response.getBody().setErr_code(getInternalFailureCode(errorKey));
+        response.getBody().setErr_code_des(getInternalFailureMessage(errorKey, param));
+
+        return response;
+    }
+
+    public TradeResponse buildSystemExceptionResponse(String errorCode, String errorMessage) {
+        //TradeResponse rsp = new TradeResponse();
+        if (response == null) {
+            response = new TradeResponse();
+        }
+        response.getBody().setReturn_code(TradeConstants.TRADE_RESPONSE_STATUS_SUCCESS);
+        response.getBody().setIs_success(TradeConstants.TRADE_RESPONSE_STATUS_FAILURE);
+        response.getBody().setErr_code(errorCode);
+        response.getBody().setErr_code_des(errorMessage);
+
+        return response;
+    }
+
+    public TradeResponse buildPaymentSystemExceptionResponse(String errorKey, Object... param) {
+        if (response == null) {
+            response = new TradeResponse();
+        }
+        response.getBody().setIs_success(TradeConstants.TRADE_RESPONSE_STATUS_FAILURE);
+        response.getBody().setReturn_code(TradeConstants.TRADE_RESPONSE_STATUS_SUCCESS);
+
+//		response.getBody().setErr_code(getInternalFailureCode(errorKey));
+//		response.getBody().setErr_code_des(
+//				getInternalFailureMessage(errorKey, param));
+        response.getBody().setBus_err_code(getInternalFailureCode(errorKey));
+        response.getBody().setBus_err_code_des(getInternalFailureMessage(errorKey, param));
+
+        return response;
+    }
+
+    public TradeResponse buildPaymentSystemExceptionResponse(String errorCode, String errorMessage) {
+        //TradeResponse rsp = new TradeResponse();
+        if (response == null) {
+            response = new TradeResponse();
+        }
+        response.getBody().setReturn_code(TradeConstants.TRADE_RESPONSE_STATUS_SUCCESS);
+        response.getBody().setIs_success(TradeConstants.TRADE_RESPONSE_STATUS_FAILURE);
+//		response.getBody().setErr_code(errorCode);
+//		response.getBody().setErr_code_des(errorMessage);
+        response.getBody().setBus_err_code(errorCode);
+        response.getBody().setBus_err_code_des(errorMessage);
+        return response;
+    }
+
+    /**
+     * 构造业务错误描述
+     *
+     * @param errorCode
+     * @param errorMessage
+     * @return
+     */
+    public TradeResponse buildBusSystemExceptionResponse(String errorCode, String errorMessage, String bus_error_code, String bus_error_msg) {
+        if (response == null) {
+            response = new TradeResponse();
+        }
+        response.getBody().setReturn_code(TradeConstants.TRADE_RESPONSE_STATUS_SUCCESS);
+        response.getBody().setIs_success(TradeConstants.TRADE_RESPONSE_STATUS_FAILURE);
+        response.getBody().setErr_code(errorCode);
+        response.getBody().setErr_code_des(errorMessage);
+        response.getBody().setBus_err_code(bus_error_code);
+        response.getBody().setBus_err_code_des(bus_error_msg);
+        return response;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public void setRequestXML(String requestXML) {
+        this.requestXML = requestXML;
+    }
+
+    public void setProcess(P p) {
+        process = p;
+    }
+}

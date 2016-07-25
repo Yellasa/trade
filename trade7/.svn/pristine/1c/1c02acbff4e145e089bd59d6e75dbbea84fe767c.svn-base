@@ -1,0 +1,53 @@
+package com.liantuo.trade.unittest.jy0006;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
+import javax.xml.bind.JAXBException;
+
+import org.junit.Test;
+
+import com.liantuo.trade.client.trade.TradeClient;
+import com.liantuo.trade.client.trade.packet.TradeRequest;
+import com.liantuo.trade.client.trade.packet.TradeResponse;
+import com.liantuo.trade.client.trade.packet.body.single_payment.TradePacketReqBodyExternalPayment;
+import com.liantuo.trade.client.trade.packet.body.single_payment.TradePacketReqBodyExternalSynPayment;
+import com.liantuo.trade.client.trade.packet.body.zf.Attachment;
+import com.liantuo.trade.client.trade.packet.body.zf.TradePaymentCommonEntry;
+import com.liantuo.trade.client.trade.packet.body.zf.WxAttachment;
+import com.liantuo.trade.client.trade.packet.head.TradePacketHead;
+
+
+public class TestXMl {
+	@Test
+	public void test() throws JAXBException{
+		TradeRequest<TradePacketReqBodyExternalSynPayment> bizReq = new TradeRequest<TradePacketReqBodyExternalSynPayment>();
+		TradePacketHead head = new TradePacketHead();
+		TradePacketReqBodyExternalPayment body = new TradePacketReqBodyExternalPayment();
+		head.setSign("f644f5387aaeadae26bf45bf6d4759c2");
+		head.setRequest_time(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS").format(Calendar.getInstance().getTime()));
+		head.setRequest_code("0006_001_006");
+		head.setVersion("1.0");
+		
+		
+		TradePacketReqBodyExternalSynPayment sp = new TradePacketReqBodyExternalSynPayment();
+		
+		TradePaymentCommonEntry  tce = new TradePaymentCommonEntry();
+		
+		WxAttachment wxa = new WxAttachment();
+		
+		Attachment ac = new Attachment();
+//		wxa.setTeststr("342323");
+		wxa.setAuth_code("11212");
+//		tce.setOther_attachment_group(wxa);
+		sp.setTradeCommonEntry(tce);
+		bizReq.setHead(head);
+		bizReq.setBody(sp);
+		/*TradeResponse response = TradeClient.excute(bizReq);
+		if (null != response) {
+			System.err.println(response.marshal());
+		}*/
+		System.out.println(bizReq.marshal());
+		
+	}
+}

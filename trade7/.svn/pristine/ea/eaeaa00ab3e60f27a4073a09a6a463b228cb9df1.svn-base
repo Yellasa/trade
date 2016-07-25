@@ -1,0 +1,522 @@
+package com.liantuo.deposit.advanceaccount.orm.mapper;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+
+import java.util.Date;
+import java.util.List;
+
+import org.junit.Test;
+import org.unitils.database.annotations.Transactional;
+import org.unitils.database.util.TransactionMode;
+import org.unitils.dbunit.annotation.DataSet;
+import org.unitils.spring.annotation.SpringBean;
+
+import com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccount;
+import com.liantuo.deposit.advanceaccount.web.vo.queryvo.CreditAccountQueryVo;
+import com.liantuo.deposit.advanceaccount.web.vo.returnvo.CreditAccountVo;
+import com.liantuo.deposit.common.constants.CreditAccountConstants;
+import com.liantuo.trade.common.util.date.DateUtil;
+import com.liantuo.trade.seqno.StepSequenceFactoryForSpdb;
+import com.liantuo.trade.seqno.StepSequenceFactoryForSpdbMock;
+import com.liantuo.unittest.BaseDaoTest;
+
+
+
+
+@Transactional(value = TransactionMode.ROLLBACK)
+@DataSet(value = { "CreditAccount.CreditAccountMapper.xls" })
+public class CreditAccountMapperTest extends BaseDaoTest {
+	@SpringBean("creditAccountMapper")
+	private CreditAccountMapper creditAccountMapper;
+	private StepSequenceFactoryForSpdb idFactoryCaAccountNo;
+	/**
+	 * 
+	 * @Description:查询账户--全条件查询
+	 * @author JiangKun
+	 * @date 2016年6月29日 下午5:39:50
+	 */
+	@Test
+	public void testFindAccountsQuery(){
+		CreditAccountQueryVo vo = new CreditAccountQueryVo();
+		vo.setCoreMerchantNo("liantuo");
+		vo.setPartnerId("12345678901234567");
+		
+		vo.setPoolNo("PN01000000000001761");
+		vo.setMerchantNo("ceshi1");
+		vo.setAccountNo("CA08082110940001");
+		vo.setAccountName("ceshiName1");
+		vo.setAccountType(1);
+		vo.setStatus(1);
+		Date startDate = DateUtil.format("2016-06-27 00:00:00", DateUtil.DEFAULT_DATE_TIME);
+		Date endDate = DateUtil.format("2016-06-29 00:00:00", DateUtil.DEFAULT_DATE_TIME);
+		vo.setCreateTimeStart(startDate);
+		vo.setCreateTimeEnd(endDate);
+		
+		vo.setStartCount(0);
+		vo.setShowCount(10);
+		List<CreditAccountVo> list = creditAccountMapper.findAccountsQuery(vo);
+		assertNotNull("根条件查询账户'查询不该为空", list);
+	}
+	
+	/**
+	 * 
+	 * @Description:查询账户--资金池编号
+	 * @author JiangKun
+	 * @date 2016年6月29日 下午5:39:50
+	 */
+	@Test
+	public void testFindAccountsQueryWithPoolNo(){
+		CreditAccountQueryVo vo = new CreditAccountQueryVo();
+		vo.setCoreMerchantNo("liantuo");
+		vo.setPartnerId("12345678901234567");
+		
+		vo.setPoolNo("PN01000000000001761");
+//		vo.setMerchantNo("ceshi1");
+//		vo.setAccountNo("CA08082110940001");
+//		vo.setAccountName("ceshiName1");
+//		vo.setAccountType(1);
+//		vo.setStatus(1);
+//		Date startDate = DateUtil.format("2016-06-27 00:00:00", DateUtil.DEFAULT_DATE_TIME);
+//		Date endDate = DateUtil.format("2016-06-29 00:00:00", DateUtil.DEFAULT_DATE_TIME);
+//		vo.setCreateTimeStart(startDate);
+//		vo.setCreateTimeEnd(endDate);
+		
+		vo.setStartCount(0);
+		vo.setShowCount(10);
+		List<CreditAccountVo> list = creditAccountMapper.findAccountsQuery(vo);
+		assertNotNull("根条件查询账户'查询不该为空", list);
+	}
+	
+	/**
+	 * 
+	 * @Description:查询账户--商户编号
+	 * @author JiangKun
+	 * @date 2016年6月29日 下午5:39:50
+	 */
+	@Test
+	public void testFindAccountsQueryWithPoolNoWithMerchantNo(){
+		CreditAccountQueryVo vo = new CreditAccountQueryVo();
+		vo.setCoreMerchantNo("liantuo");
+		vo.setPartnerId("12345678901234567");
+		
+//		vo.setPoolNo("PN01000000000001761");
+		vo.setMerchantNo("ceshi2");
+//		vo.setAccountNo("CA08082110940001");
+//		vo.setAccountName("ceshiName1");
+//		vo.setAccountType(1);
+//		vo.setStatus(1);
+//		Date startDate = DateUtil.format("2016-06-27 00:00:00", DateUtil.DEFAULT_DATE_TIME);
+//		Date endDate = DateUtil.format("2016-06-29 00:00:00", DateUtil.DEFAULT_DATE_TIME);
+//		vo.setCreateTimeStart(startDate);
+//		vo.setCreateTimeEnd(endDate);
+		
+		vo.setStartCount(0);
+		vo.setShowCount(10);
+		List<CreditAccountVo> list = creditAccountMapper.findAccountsQuery(vo);
+		assertNotNull("根条件查询账户'查询不该为空", list);
+	}
+	
+	/**
+	 * 
+	 * @Description:查询账户--账户编号
+	 * @author JiangKun
+	 * @date 2016年6月29日 下午5:39:50
+	 */
+	@Test
+	public void testFindAccountsQueryWithPoolNoWithAccountNo(){
+		CreditAccountQueryVo vo = new CreditAccountQueryVo();
+		vo.setCoreMerchantNo("liantuo");
+		vo.setPartnerId("12345678901234567");
+		
+//		vo.setPoolNo("PN01000000000001761");
+//		vo.setMerchantNo("ceshi2");
+		vo.setAccountNo("CA08082110940001");
+//		vo.setAccountName("ceshiName1");
+//		vo.setAccountType(1);
+//		vo.setStatus(1);
+//		Date startDate = DateUtil.format("2016-06-27 00:00:00", DateUtil.DEFAULT_DATE_TIME);
+//		Date endDate = DateUtil.format("2016-06-29 00:00:00", DateUtil.DEFAULT_DATE_TIME);
+//		vo.setCreateTimeStart(startDate);
+//		vo.setCreateTimeEnd(endDate);
+		
+		vo.setStartCount(0);
+		vo.setShowCount(10);
+		List<CreditAccountVo> list = creditAccountMapper.findAccountsQuery(vo);
+		assertNotNull("根条件查询账户'查询不该为空", list);
+	}
+	
+	/**
+	 * 
+	 * @Description:查询账户--账户名称
+	 * @author JiangKun
+	 * @date 2016年6月29日 下午5:39:50
+	 */
+	@Test
+	public void testFindAccountsQueryWithPoolNoWithAccountName(){
+		CreditAccountQueryVo vo = new CreditAccountQueryVo();
+		vo.setCoreMerchantNo("liantuo");
+		vo.setPartnerId("12345678901234567");
+		
+//		vo.setPoolNo("PN01000000000001761");
+//		vo.setMerchantNo("ceshi2");
+//		vo.setAccountNo("CA08082110940001");
+		vo.setAccountName("ceshiName1");
+//		vo.setAccountType(1);
+//		vo.setStatus(1);
+//		Date startDate = DateUtil.format("2016-06-27 00:00:00", DateUtil.DEFAULT_DATE_TIME);
+//		Date endDate = DateUtil.format("2016-06-29 00:00:00", DateUtil.DEFAULT_DATE_TIME);
+//		vo.setCreateTimeStart(startDate);
+//		vo.setCreateTimeEnd(endDate);
+		
+		vo.setStartCount(0);
+		vo.setShowCount(10);
+		List<CreditAccountVo> list = creditAccountMapper.findAccountsQuery(vo);
+		assertNotNull("根条件查询账户'查询不该为空", list);
+	}
+	
+	/**
+	 * 
+	 * @Description:查询账户--账户类型
+	 * @author JiangKun
+	 * @date 2016年6月29日 下午5:39:50
+	 */
+	@Test
+	public void testFindAccountsQueryWithPoolNoWithAccountType(){
+		CreditAccountQueryVo vo = new CreditAccountQueryVo();
+		vo.setCoreMerchantNo("liantuo");
+		vo.setPartnerId("12345678901234567");
+		
+		vo.setPoolNo("PN01000000000001761");
+//		vo.setMerchantNo("ceshi2");
+//		vo.setAccountNo("CA08082110940001");
+//		vo.setAccountName("ceshiName1");
+		vo.setAccountType(1);
+//		vo.setStatus(1);
+//		Date startDate = DateUtil.format("2016-06-27 00:00:00", DateUtil.DEFAULT_DATE_TIME);
+//		Date endDate = DateUtil.format("2016-06-29 00:00:00", DateUtil.DEFAULT_DATE_TIME);
+//		vo.setCreateTimeStart(startDate);
+//		vo.setCreateTimeEnd(endDate);
+		
+		vo.setStartCount(0);
+		vo.setShowCount(10);
+		List<CreditAccountVo> list = creditAccountMapper.findAccountsQuery(vo);
+		assertNotNull("根条件查询账户'查询不该为空", list);
+	}
+	
+	
+	
+	/**
+	 * 
+	 * @Description:查询账户--账户状态
+	 * @author JiangKun
+	 * @date 2016年6月29日 下午5:39:50
+	 */
+	@Test
+	public void testFindAccountsQueryWithPoolNoWithStatus(){
+		CreditAccountQueryVo vo = new CreditAccountQueryVo();
+		vo.setCoreMerchantNo("liantuo");
+		vo.setPartnerId("12345678901234567");
+		
+		vo.setPoolNo("PN01000000000001761");
+//		vo.setMerchantNo("ceshi2");
+//		vo.setAccountNo("CA08082110940001");
+//		vo.setAccountName("ceshiName1");
+//		vo.setAccountType(1);
+		vo.setStatus(1);
+//		Date startDate = DateUtil.format("2016-06-27 00:00:00", DateUtil.DEFAULT_DATE_TIME);
+//		Date endDate = DateUtil.format("2016-06-29 00:00:00", DateUtil.DEFAULT_DATE_TIME);
+//		vo.setCreateTimeStart(startDate);
+//		vo.setCreateTimeEnd(endDate);
+		
+		vo.setStartCount(0);
+		vo.setShowCount(10);
+		List<CreditAccountVo> list = creditAccountMapper.findAccountsQuery(vo);
+		assertNotNull("根条件查询账户'查询不该为空", list);
+	}
+	
+	
+	/**
+	 * 
+	 * @Description:查询账户--起始时间
+	 * @author JiangKun
+	 * @date 2016年6月29日 下午5:39:50
+	 */
+	@Test
+	public void testFindAccountsQueryWithPoolNoWithGmtCreated(){
+		CreditAccountQueryVo vo = new CreditAccountQueryVo();
+		vo.setCoreMerchantNo("liantuo");
+		vo.setPartnerId("12345678901234567");
+		
+		vo.setPoolNo("PN01000000000001761");
+//		vo.setMerchantNo("ceshi2");
+//		vo.setAccountNo("CA08082110940001");
+//		vo.setAccountName("ceshiName1");
+//		vo.setAccountType(1);
+//		vo.setStatus(1);
+		Date startDate = DateUtil.format("2016-06-28 16:45:20", DateUtil.DEFAULT_DATE_TIME);
+		Date endDate = DateUtil.format("2016-06-28 16:45:24", DateUtil.DEFAULT_DATE_TIME);
+		vo.setCreateTimeStart(startDate);
+		vo.setCreateTimeEnd(endDate);
+		
+		vo.setStartCount(0);
+		vo.setShowCount(10);
+		List<CreditAccountVo> list = creditAccountMapper.findAccountsQuery(vo);
+		assertNotNull("根条件查询账户'查询不该为空", list);
+	}
+	
+
+	/**
+	 * 
+	 * @Description: 查询符合条件的记录数
+	 * @author JiangKun
+	 * @date 2016年7月4日 下午2:10:45
+	 */
+	@Test
+	public void testFindAccountsQueryCount(){
+		CreditAccountQueryVo vo = new CreditAccountQueryVo();
+		vo.setCoreMerchantNo("liantuo");
+		vo.setPartnerId("12345678901234567");
+		
+		vo.setPoolNo("PN01000000000001761");
+		vo.setMerchantNo("ceshi1");
+		vo.setAccountNo("CA08082110940001");
+		vo.setAccountName("ceshiName1");
+		vo.setAccountType(1);
+		vo.setStatus(1);
+		Date startDate = DateUtil.format("2016-06-28 16:45:17", DateUtil.DEFAULT_DATE_TIME);
+		Date endDate = DateUtil.format("2016-06-28 16:45:24", DateUtil.DEFAULT_DATE_TIME);
+		vo.setCreateTimeStart(startDate);
+		vo.setCreateTimeEnd(endDate);
+		
+		int count = creditAccountMapper.findAccountsQueryCount(vo);
+		System.out.println(count);
+	}
+	
+	/**
+	 * 
+	 * @Description: 根据资金池编号查询符合条件的记录数
+	 * @author JiangKun
+	 * @date 2016年7月4日 下午2:10:45
+	 */
+	@Test
+	public void testFindAccountsQueryCountWithPoolNo(){
+		CreditAccountQueryVo vo = new CreditAccountQueryVo();
+		vo.setCoreMerchantNo("liantuo");
+		vo.setPartnerId("12345678901234567");
+		
+		vo.setPoolNo("PN01000000000001761");
+//		vo.setMerchantNo("ceshi1");
+//		vo.setAccountNo("CA08082110940001");
+//		vo.setAccountName("ceshiName1");
+//		vo.setAccountType(1);
+//		vo.setStatus(1);
+//		Date startDate = DateUtil.format("2016-06-28 16:45:17", DateUtil.DEFAULT_DATE_TIME);
+//		Date endDate = DateUtil.format("2016-06-28 16:45:24", DateUtil.DEFAULT_DATE_TIME);
+//		vo.setCreateTimeStart(startDate);
+//		vo.setCreateTimeEnd(endDate);
+		
+		int count = creditAccountMapper.findAccountsQueryCount(vo);
+		System.out.println(count);
+	}
+	
+	/**
+	 * 
+	 * @Description: 根据资金池编号查询符合条件的记录数
+	 * @author JiangKun
+	 * @date 2016年7月4日 下午2:10:45
+	 */
+	@Test
+	public void testFindAccountsQueryCountWithMerchantNo(){
+		CreditAccountQueryVo vo = new CreditAccountQueryVo();
+		vo.setCoreMerchantNo("liantuo");
+		vo.setPartnerId("12345678901234567");
+		
+//		vo.setPoolNo("PN01000000000001761");
+		vo.setMerchantNo("ceshi1");
+//		vo.setAccountNo("CA08082110940001");
+//		vo.setAccountName("ceshiName1");
+//		vo.setAccountType(1);
+//		vo.setStatus(1);
+//		Date startDate = DateUtil.format("2016-06-28 16:45:17", DateUtil.DEFAULT_DATE_TIME);
+//		Date endDate = DateUtil.format("2016-06-28 16:45:24", DateUtil.DEFAULT_DATE_TIME);
+//		vo.setCreateTimeStart(startDate);
+//		vo.setCreateTimeEnd(endDate);
+		
+		int count = creditAccountMapper.findAccountsQueryCount(vo);
+		System.out.println(count);
+	}
+	
+	/**
+	 * 
+	 * @Description: 根据账户编号查询符合条件的记录数
+	 * @author JiangKun
+	 * @date 2016年7月4日 下午2:10:45
+	 */
+	@Test
+	public void testFindAccountsQueryCountWithAccountNo(){
+		CreditAccountQueryVo vo = new CreditAccountQueryVo();
+		vo.setCoreMerchantNo("liantuo");
+		vo.setPartnerId("12345678901234567");
+		
+//		vo.setPoolNo("PN01000000000001761");
+//		vo.setMerchantNo("ceshi1");
+		vo.setAccountNo("CA08082110940001");
+//		vo.setAccountName("ceshiName1");
+//		vo.setAccountType(1);
+//		vo.setStatus(1);
+//		Date startDate = DateUtil.format("2016-06-28 16:45:17", DateUtil.DEFAULT_DATE_TIME);
+//		Date endDate = DateUtil.format("2016-06-28 16:45:24", DateUtil.DEFAULT_DATE_TIME);
+//		vo.setCreateTimeStart(startDate);
+//		vo.setCreateTimeEnd(endDate);
+		
+		int count = creditAccountMapper.findAccountsQueryCount(vo);
+		System.out.println(count);
+	}
+	
+	/**
+	 * 
+	 * @Description: 根据账户名称查询符合条件的记录数
+	 * @author JiangKun
+	 * @date 2016年7月4日 下午2:10:45
+	 */
+	@Test
+	public void testFindAccountsQueryCountWithAccountName(){
+		CreditAccountQueryVo vo = new CreditAccountQueryVo();
+		vo.setCoreMerchantNo("liantuo");
+		vo.setPartnerId("12345678901234567");
+		
+//		vo.setPoolNo("PN01000000000001761");
+//		vo.setMerchantNo("ceshi1");
+//		vo.setAccountNo("CA08082110940001");
+		vo.setAccountName("ceshiName1");
+//		vo.setAccountType(1);
+//		vo.setStatus(1);
+//		Date startDate = DateUtil.format("2016-06-28 16:45:17", DateUtil.DEFAULT_DATE_TIME);
+//		Date endDate = DateUtil.format("2016-06-28 16:45:24", DateUtil.DEFAULT_DATE_TIME);
+//		vo.setCreateTimeStart(startDate);
+//		vo.setCreateTimeEnd(endDate);
+		
+		int count = creditAccountMapper.findAccountsQueryCount(vo);
+		System.out.println(count);
+	}
+	
+	/**
+	 * 
+	 * @Description: 根据账户类型查询符合条件的记录数
+	 * @author JiangKun
+	 * @date 2016年7月4日 下午2:10:45
+	 */
+	@Test
+	public void testFindAccountsQueryCountWithAccountType(){
+		CreditAccountQueryVo vo = new CreditAccountQueryVo();
+		vo.setCoreMerchantNo("liantuo");
+		vo.setPartnerId("12345678901234567");
+		
+		vo.setPoolNo("PN01000000000001761");
+//		vo.setMerchantNo("ceshi1");
+//		vo.setAccountNo("CA08082110940001");
+//		vo.setAccountName("ceshiName1");
+		vo.setAccountType(1);
+//		vo.setStatus(1);
+//		Date startDate = DateUtil.format("2016-06-28 16:45:17", DateUtil.DEFAULT_DATE_TIME);
+//		Date endDate = DateUtil.format("2016-06-28 16:45:24", DateUtil.DEFAULT_DATE_TIME);
+//		vo.setCreateTimeStart(startDate);
+//		vo.setCreateTimeEnd(endDate);
+		
+		int count = creditAccountMapper.findAccountsQueryCount(vo);
+		System.out.println(count);
+	}
+	
+	/**
+	 * 
+	 * @Description: 根据账户状态查询符合条件的记录数
+	 * @author JiangKun
+	 * @date 2016年7月4日 下午2:10:45
+	 */
+	@Test
+	public void testFindAccountsQueryCountWithStatus(){
+		CreditAccountQueryVo vo = new CreditAccountQueryVo();
+		vo.setCoreMerchantNo("liantuo");
+		vo.setPartnerId("12345678901234567");
+		
+		vo.setPoolNo("PN01000000000001761");
+//		vo.setMerchantNo("ceshi1");
+//		vo.setAccountNo("CA08082110940001");
+//		vo.setAccountName("ceshiName1");
+//		vo.setAccountType(1);
+		vo.setStatus(1);
+//		Date startDate = DateUtil.format("2016-06-28 16:45:17", DateUtil.DEFAULT_DATE_TIME);
+//		Date endDate = DateUtil.format("2016-06-28 16:45:24", DateUtil.DEFAULT_DATE_TIME);
+//		vo.setCreateTimeStart(startDate);
+//		vo.setCreateTimeEnd(endDate);
+		
+		int count = creditAccountMapper.findAccountsQueryCount(vo);
+		System.out.println(count);
+	}
+	
+	
+	/**
+	 * 
+	 * @Description: 根据创建时间查询符合条件的记录数
+	 * @author JiangKun
+	 * @date 2016年7月4日 下午2:10:45
+	 */
+	@Test
+	public void testFindAccountsQueryCountWithGmtCreated(){
+		CreditAccountQueryVo vo = new CreditAccountQueryVo();
+		vo.setCoreMerchantNo("liantuo");
+		vo.setPartnerId("12345678901234567");
+		
+		vo.setPoolNo("PN01000000000001761");
+//		vo.setMerchantNo("ceshi1");
+//		vo.setAccountNo("CA08082110940001");
+//		vo.setAccountName("ceshiName1");
+//		vo.setAccountType(1);
+//		vo.setStatus(1);
+		Date startDate = DateUtil.format("2016-06-28 16:45:17", DateUtil.DEFAULT_DATE_TIME);
+		Date endDate = DateUtil.format("2016-06-28 16:45:24", DateUtil.DEFAULT_DATE_TIME);
+		vo.setCreateTimeStart(startDate);
+		vo.setCreateTimeEnd(endDate);
+		
+		int count = creditAccountMapper.findAccountsQueryCount(vo);
+		System.out.println(count);
+	}
+	/**
+	 * 
+	 * @Description: 插入账户
+	 * @author JiangKun
+	 * @date 2016年6月29日 下午5:40:13
+	 */
+	@Test
+	public void testInsert(){
+		idFactoryCaAccountNo = mock(StepSequenceFactoryForSpdb.class);
+		StepSequenceFactoryForSpdbMock.mockGenerate(idFactoryCaAccountNo, "123456");
+		CreditAccount account = new CreditAccount();
+        account.setMerchantNo("123456789123123");
+        account.setAccountType(1);//1-企业 2-个人 3-内部
+        account.setCoreMerchantNo("123456789123123");
+        account.setPoolNo("333444");
+        account.setSuperType("xxx");//account_name     
+        account.setBalLastChangeTime(new Date());
+        account.setStatus(CreditAccountConstants.CREDIT_ACCOUNT_STATUS_NORMAL);
+        account.setVersion(0L);
+        account.setAvailableBalance(0.0);
+        account.setFreezenBalance(0.00);
+        account.setFeeRate(0.0);
+        account.setSysTime(new Date());
+        account.setTotalBalance(0.00);
+        account.setAccountNo(idFactoryCaAccountNo.generate().toString());
+        account.setCreditType(Integer.parseInt(CreditAccountConstants.CREDIT_TYPE_DEBIT));
+        account.setCreditLine(0.0);
+        account.setBalanceNFlag(CreditAccountConstants.BALANCE_N_FLAG_N);
+        account.setGmtCreated(new Date());
+        account.setGmtModified(new Date());
+        account.setPassword("");
+		int successCount = creditAccountMapper.insert(account);
+		assertEquals("插入成功返回应该为1",1,successCount);
+		System.out.println(successCount);
+	}
+	
+}

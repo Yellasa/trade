@@ -1,0 +1,107 @@
+package com.liantuo.trade.bus.process;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import com.liantuo.payment.client.pay.PaymentNotify;
+import com.liantuo.trade.bus.vo.AliPaymentAsyNotifyDetailVo;
+import com.liantuo.trade.client.trade.packet.NotifyPacketResultInfo;
+import com.liantuo.trade.client.trade.packet.TradePaymentAsyNotifyPacket;
+import com.liantuo.trade.client.trade.packet.TradeRequest;
+import com.liantuo.trade.client.trade.packet.body.TradeNotifyRequestPacket;
+import com.liantuo.trade.client.trade.packet.body.TradeRequestBody;
+import com.liantuo.trade.orm.pojo.TradeRecharge;
+
+/**
+ * 
+ * ClassName: TradeOnlinePaymentAsyNotifyInterface
+ * @Description: TODO 可以自行增加需要的获取成员变量的方法
+ * @author zzd
+ * @date 2016-4-20
+ */
+public interface TradeOnlinePaymentAsyNotifyInterface<B extends TradeNotifyRequestPacket> {
+
+	/**
+	 * 
+	 * @Description: 格式与业务校验
+	 */
+	public void validate(B tradeRquest) throws Exception;
+	
+	/**
+	 * 
+	 * @Description: 付款成功：执行第一步事务
+	 */
+	@Transactional
+	public void transactionReceipt(B tradeRquest) throws Exception;
+	
+	/**
+	 * 
+	 * @Description: 付款成功： 执行第二步事务
+	 */
+	@Transactional
+	public void transactionEntry(B tradeRquest) throws Exception;
+	
+	/**
+	 * 
+	 * @Description:  付款失败：执行第一步事务
+	 */
+	@Transactional
+	public void transactionFailure(B tradeRquest) throws Exception;
+	
+	
+	/**
+	 * 调用方法向前置发出通知
+	 */
+	public void notifyFrontPaymentResult(NotifyPacketResultInfo notice) throws Exception;
+	
+	/**
+	 * 获取需要进行返回的具体实体内容
+	 */
+	public NotifyPacketResultInfo getNotifyFrontDetailsInfo(String result,String errorCode,String errorMessage,String tradeCode) throws Exception;
+	
+	/**
+	 * 获取需要进行返回的具体实体内容
+	 */
+	public TradeState getTradePaymentStatus();
+	
+	public void setReqNo(String reqNo);
+	
+	public NotifyPacketResultInfo getNotice();
+	
+	public TradeRecharge getTradeInfo();
+	
+	public AliPaymentAsyNotifyDetailVo getAliPaymentAsyNotifyDetail();
+	
+	/**
+	 * 
+	 * @Description: 将传入的值copy到process中具体调用的传值实体类中
+	 * @param @param notify
+	 * @param @param ip   
+	 * @return void  
+	 * @throws
+	 * @author zzd
+	 * @date 2016-5-10
+	 */
+	public void setRequestDetail(PaymentNotify notify , String ip);
+	
+	/**
+	 * 
+	 * @Description: 获取process中具体使用的传值实体类
+	 * @param @return   
+	 * @return B  
+	 * @throws
+	 * @author zzd
+	 * @date 2016-5-10
+	 */
+	public B getTradeRequest();
+	
+	/**
+	 * 
+	 * @Description: 获取本接口服务编号
+	 * @param @return   
+	 * @return String  
+	 * @throws
+	 * @author zzd
+	 * @date 2016-5-11
+	 */
+	public String getServiceName();
+}

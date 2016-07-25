@@ -1,0 +1,740 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liantuo.trade.orm.mapper.TradePaymentMapper" >
+  <resultMap id="BaseResultMap" type="com.liantuo.trade.orm.pojo.TradePayment" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+    <result column="core_merchant_no" property="coreMerchantNo" jdbcType="VARCHAR" />
+    <result column="fund_pool_no" property="fundPoolNo" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_1" property="merchantExtendField1" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_2" property="merchantExtendField2" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_3" property="merchantExtendField3" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_4" property="merchantExtendField4" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_5" property="merchantExtendField5" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_6" property="merchantExtendField6" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_7" property="merchantExtendField7" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_8" property="merchantExtendField8" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_9" property="merchantExtendField9" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_10" property="merchantExtendField10" jdbcType="VARCHAR" />
+    <result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR" />
+    <result column="out_trade_no_ext" property="outTradeNoExt" jdbcType="VARCHAR" />
+    <result column="gmt_created" property="gmtCreated" jdbcType="TIMESTAMP" />
+    <result column="gmt_latest_modified" property="gmtLatestModified" jdbcType="TIMESTAMP" />
+    <result column="latest_trade_req_type" property="latestTradeReqType" jdbcType="VARCHAR" />
+    <result column="latest_req_no" property="latestReqNo" jdbcType="VARCHAR" />
+    <result column="close_status" property="closeStatus" jdbcType="CHAR" />
+    <result column="payment_account_no" property="paymentAccountNo" jdbcType="VARCHAR" />
+    <result column="payment_merchant_no" property="paymentMerchantNo" jdbcType="VARCHAR" />
+    <result column="receive_account_no" property="receiveAccountNo" jdbcType="VARCHAR" />
+    <result column="receive_merchant_no" property="receiveMerchantNo" jdbcType="VARCHAR" />
+    <result column="freeze_amount" property="freezeAmount" jdbcType="BIGINT" />
+    <result column="gmt_freeze" property="gmtFreeze" jdbcType="TIMESTAMP" />
+    <result column="gmt_unfreeze" property="gmtUnfreeze" jdbcType="TIMESTAMP" />
+    <result column="gmt_unfreeze_dedcut" property="gmtUnfreezeDedcut" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="clear_channel" property="clearChannel" jdbcType="VARCHAR" />
+    <result column="gmt_success_clear_channel" property="gmtSuccessClearChannel" jdbcType="TIMESTAMP" />
+    <result column="third_trade_no" property="thirdTradeNo" jdbcType="VARCHAR" />
+    <result column="actual_amount" property="actualAmount" jdbcType="BIGINT" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, trade_no, core_merchant_no, fund_pool_no, merchant_extend_field_1, merchant_extend_field_2, 
+    merchant_extend_field_3, merchant_extend_field_4, merchant_extend_field_5,merchant_extend_field_6,
+    merchant_extend_field_7,merchant_extend_field_8,merchant_extend_field_9,merchant_extend_field_10,out_trade_no, 
+    out_trade_no_ext, gmt_created, gmt_latest_modified, latest_trade_req_type, latest_req_no, 
+    close_status, payment_account_no, payment_merchant_no, receive_account_no, receive_merchant_no, 
+    freeze_amount, gmt_freeze, gmt_unfreeze, gmt_unfreeze_dedcut, status, clear_channel, 
+    gmt_success_clear_channel, third_trade_no, actual_amount, version
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.liantuo.trade.orm.pojo.TradePaymentExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from trade_payment
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="start !=0 or limit!=0">
+      limit #{start},#{limit}
+    </if>
+  </select>
+
+  <select id="pageQueryByExample" resultMap="BaseResultMap" parameterType="com.liantuo.trade.orm.pojo.TradePaymentExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from trade_payment
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+   <select id="selectCountByExample" parameterType="com.liantuo.trade.orm.pojo.TradePaymentExample"  resultType="java.lang.Integer">
+    select  count(*)  from trade_payment
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from trade_payment
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <!--  <insert id="insert" parameterType="com.liantuo.trade.orm.pojo.TradePayment" >
+    insert into trade_payment (id, trade_no, core_merchant_no, 
+      fund_pool_no, merchant_extend_field_1, merchant_extend_field_2, 
+      merchant_extend_field_3, merchant_extend_field_4, 
+      merchant_extend_field_5, out_trade_no, out_trade_no_ext, 
+      gmt_created, gmt_latest_modified, latest_trade_req_type, 
+      latest_req_no, close_status, payment_account_no, 
+      payment_merchant_no, receive_account_no, receive_merchant_no, 
+      freeze_amount, gmt_freeze, gmt_unfreeze, 
+      gmt_unfreeze_dedcut, status, clear_channel, 
+      gmt_success_clear_channel, third_trade_no, 
+      actual_amount, version)
+    values (#{id,jdbcType=BIGINT}, #{tradeNo,jdbcType=VARCHAR}, #{coreMerchantNo,jdbcType=VARCHAR}, 
+      #{fundPoolNo,jdbcType=VARCHAR}, #{merchantExtendField1,jdbcType=VARCHAR}, #{merchantExtendField2,jdbcType=VARCHAR}, 
+      #{merchantExtendField3,jdbcType=VARCHAR}, #{merchantExtendField4,jdbcType=VARCHAR}, 
+      #{merchantExtendField5,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, #{outTradeNoExt,jdbcType=VARCHAR}, 
+      NOW(), NOW(), #{latestTradeReqType,jdbcType=VARCHAR}, 
+      #{latestReqNo,jdbcType=VARCHAR}, #{closeStatus,jdbcType=CHAR}, #{paymentAccountNo,jdbcType=VARCHAR}, 
+      #{paymentMerchantNo,jdbcType=VARCHAR}, #{receiveAccountNo,jdbcType=VARCHAR}, #{receiveMerchantNo,jdbcType=VARCHAR}, 
+      #{freezeAmount,jdbcType=BIGINT}, #{gmtFreeze,jdbcType=TIMESTAMP}, #{gmtUnfreeze,jdbcType=TIMESTAMP}, 
+      #{gmtUnfreezeDedcut,jdbcType=TIMESTAMP}, #{status,jdbcType=VARCHAR}, #{clearChannel,jdbcType=VARCHAR}, 
+      #{gmtSuccessClearChannel,jdbcType=TIMESTAMP}, #{thirdTradeNo,jdbcType=VARCHAR}, 
+      #{actualAmount,jdbcType=BIGINT}, #{version,jdbcType=INTEGER})
+  </insert>-->
+  <insert id="insertSelective" parameterType="com.liantuo.trade.orm.pojo.TradePayment" >
+    <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+		SELECT LAST_INSERT_ID() AS id
+	</selectKey>
+    insert into trade_payment
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="tradeNo != null" >
+        trade_no,
+      </if>
+      <if test="coreMerchantNo != null" >
+        core_merchant_no,
+      </if>
+      <if test="fundPoolNo != null" >
+        fund_pool_no,
+      </if>
+      <if test="merchantExtendField1 != null" >
+        merchant_extend_field_1,
+      </if>
+      <if test="merchantExtendField2 != null" >
+        merchant_extend_field_2,
+      </if>
+      <if test="merchantExtendField3 != null" >
+        merchant_extend_field_3,
+      </if>
+      <if test="merchantExtendField4 != null" >
+        merchant_extend_field_4,
+      </if>
+      <if test="merchantExtendField5 != null" >
+        merchant_extend_field_5,
+      </if>
+      <if test="merchantExtendField6 != null" >
+        merchant_extend_field_6,
+      </if>
+      <if test="merchantExtendField7 != null" >
+        merchant_extend_field_7,
+      </if>
+      <if test="merchantExtendField8 != null" >
+        merchant_extend_field_8,
+      </if>
+      <if test="merchantExtendField9 != null" >
+        merchant_extend_field_9,
+      </if>
+      <if test="merchantExtendField10 != null" >
+        merchant_extend_field_10,
+      </if>
+      <if test="outTradeNo != null" >
+        out_trade_no,
+      </if>
+      <if test="outTradeNoExt != null" >
+        out_trade_no_ext,
+      </if>
+        gmt_created,
+        gmt_latest_modified,
+      <if test="latestTradeReqType != null" >
+        latest_trade_req_type,
+      </if>
+      <if test="latestReqNo != null" >
+        latest_req_no,
+      </if>
+      <if test="closeStatus != null" >
+        close_status,
+      </if>
+      <if test="paymentAccountNo != null" >
+        payment_account_no,
+      </if>
+      <if test="paymentMerchantNo != null" >
+        payment_merchant_no,
+      </if>
+      <if test="receiveAccountNo != null" >
+        receive_account_no,
+      </if>
+      <if test="receiveMerchantNo != null" >
+        receive_merchant_no,
+      </if>
+      <if test="freezeAmount != null" >
+        freeze_amount,
+      </if>
+      <if test="gmtFreeze != null" >
+        gmt_freeze,
+      </if>
+      <if test="gmtUnfreeze != null" >
+        gmt_unfreeze,
+      </if>
+      <if test="gmtUnfreezeDedcut != null" >
+        gmt_unfreeze_dedcut,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="clearChannel != null" >
+        clear_channel,
+      </if>
+      <if test="gmtSuccessClearChannel != null" >
+        gmt_success_clear_channel,
+      </if>
+      <if test="thirdTradeNo != null" >
+        third_trade_no,
+      </if>
+      <if test="actualAmount != null" >
+        actual_amount,
+      </if>
+      <if test="actualAmount != null" >
+        actual_amount,
+      </if>
+      <if test="version != null" >
+        version
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="tradeNo != null" >
+        #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="coreMerchantNo != null" >
+        #{coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fundPoolNo != null" >
+        #{fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField1 != null" >
+        #{merchantExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField2 != null" >
+        #{merchantExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField3 != null" >
+        #{merchantExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField4 != null" >
+        #{merchantExtendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField5 != null" >
+        #{merchantExtendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField6 != null" >
+        #{merchantExtendField6,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField7 != null" >
+        #{merchantExtendField7,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField8 != null" >
+        #{merchantExtendField8,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField9 != null" >
+        #{merchantExtendField9,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField10 != null" >
+        #{merchantExtendField10,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null" >
+        #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNoExt != null" >
+        #{outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+        NOW(),
+        NOW(),
+      <if test="latestTradeReqType != null" >
+        #{latestTradeReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="latestReqNo != null" >
+        #{latestReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="closeStatus != null" >
+        #{closeStatus,jdbcType=CHAR},
+      </if>
+      <if test="paymentAccountNo != null" >
+        #{paymentAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentMerchantNo != null" >
+        #{paymentMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="receiveAccountNo != null" >
+        #{receiveAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="receiveMerchantNo != null" >
+        #{receiveMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="freezeAmount != null" >
+        #{freezeAmount,jdbcType=BIGINT},
+      </if>
+      <if test="gmtFreeze != null" >
+        #{gmtFreeze,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUnfreeze != null" >
+        #{gmtUnfreeze,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUnfreezeDedcut != null" >
+        #{gmtUnfreezeDedcut,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannel != null" >
+        #{clearChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtSuccessClearChannel != null" >
+        #{gmtSuccessClearChannel,jdbcType=TIMESTAMP},
+      </if>
+      <if test="thirdTradeNo != null" >
+        #{thirdTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="actualAmount != null" >
+        #{actualAmount,jdbcType=BIGINT},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER}
+      </if>
+    </trim>
+  </insert>
+   <!-- <update id="updateByExampleSelective" parameterType="map" >
+    update trade_payment
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.tradeNo != null" >
+        trade_no = #{record.tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.coreMerchantNo != null" >
+        core_merchant_no = #{record.coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fundPoolNo != null" >
+        fund_pool_no = #{record.fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField1 != null" >
+        merchant_extend_field_1 = #{record.merchantExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField2 != null" >
+        merchant_extend_field_2 = #{record.merchantExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField3 != null" >
+        merchant_extend_field_3 = #{record.merchantExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField4 != null" >
+        merchant_extend_field_4 = #{record.merchantExtendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField5 != null" >
+        merchant_extend_field_5 = #{record.merchantExtendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="record.outTradeNo != null" >
+        out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.outTradeNoExt != null" >
+        out_trade_no_ext = #{record.outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+        gmt_latest_modified = NOW(),
+      <if test="record.latestTradeReqType != null" >
+        latest_trade_req_type = #{record.latestTradeReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.latestReqNo != null" >
+        latest_req_no = #{record.latestReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.closeStatus != null" >
+        close_status = #{record.closeStatus,jdbcType=CHAR},
+      </if>
+      <if test="record.paymentAccountNo != null" >
+        payment_account_no = #{record.paymentAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.paymentMerchantNo != null" >
+        payment_merchant_no = #{record.paymentMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.receiveAccountNo != null" >
+        receive_account_no = #{record.receiveAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.receiveMerchantNo != null" >
+        receive_merchant_no = #{record.receiveMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.freezeAmount != null" >
+        freeze_amount = #{record.freezeAmount,jdbcType=BIGINT},
+      </if>
+      <if test="record.gmtFreeze != null" >
+        gmt_freeze = #{record.gmtFreeze,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.gmtUnfreeze != null" >
+        gmt_unfreeze = #{record.gmtUnfreeze,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.gmtUnfreezeDedcut != null" >
+        gmt_unfreeze_dedcut = #{record.gmtUnfreezeDedcut,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=VARCHAR},
+      </if>
+      <if test="record.clearChannel != null" >
+        clear_channel = #{record.clearChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gmtSuccessClearChannel != null" >
+        gmt_success_clear_channel = #{record.gmtSuccessClearChannel,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.thirdTradeNo != null" >
+        third_trade_no = #{record.thirdTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.actualAmount != null" >
+        actual_amount = #{record.actualAmount,jdbcType=BIGINT},
+      </if>
+        version = version+1
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update trade_payment
+    set id = #{record.id,jdbcType=BIGINT},
+      trade_no = #{record.tradeNo,jdbcType=VARCHAR},
+      core_merchant_no = #{record.coreMerchantNo,jdbcType=VARCHAR},
+      fund_pool_no = #{record.fundPoolNo,jdbcType=VARCHAR},
+      merchant_extend_field_1 = #{record.merchantExtendField1,jdbcType=VARCHAR},
+      merchant_extend_field_2 = #{record.merchantExtendField2,jdbcType=VARCHAR},
+      merchant_extend_field_3 = #{record.merchantExtendField3,jdbcType=VARCHAR},
+      merchant_extend_field_4 = #{record.merchantExtendField4,jdbcType=VARCHAR},
+      merchant_extend_field_5 = #{record.merchantExtendField5,jdbcType=VARCHAR},
+      out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
+      out_trade_no_ext = #{record.outTradeNoExt,jdbcType=VARCHAR},
+      gmt_latest_modified = NOW(),
+      latest_trade_req_type = #{record.latestTradeReqType,jdbcType=VARCHAR},
+      latest_req_no = #{record.latestReqNo,jdbcType=VARCHAR},
+      close_status = #{record.closeStatus,jdbcType=CHAR},
+      payment_account_no = #{record.paymentAccountNo,jdbcType=VARCHAR},
+      payment_merchant_no = #{record.paymentMerchantNo,jdbcType=VARCHAR},
+      receive_account_no = #{record.receiveAccountNo,jdbcType=VARCHAR},
+      receive_merchant_no = #{record.receiveMerchantNo,jdbcType=VARCHAR},
+      freeze_amount = #{record.freezeAmount,jdbcType=BIGINT},
+      gmt_freeze = #{record.gmtFreeze,jdbcType=TIMESTAMP},
+      gmt_unfreeze = #{record.gmtUnfreeze,jdbcType=TIMESTAMP},
+      gmt_unfreeze_dedcut = #{record.gmtUnfreezeDedcut,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=VARCHAR},
+      clear_channel = #{record.clearChannel,jdbcType=VARCHAR},
+      gmt_success_clear_channel = #{record.gmtSuccessClearChannel,jdbcType=TIMESTAMP},
+      third_trade_no = #{record.thirdTradeNo,jdbcType=VARCHAR},
+      actual_amount = #{record.actualAmount,jdbcType=BIGINT},
+      version = version+1
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.liantuo.trade.orm.pojo.TradePayment" >
+    update trade_payment
+    <set >
+      <if test="tradeNo != null" >
+        trade_no = #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="coreMerchantNo != null" >
+        core_merchant_no = #{coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fundPoolNo != null" >
+        fund_pool_no = #{fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField1 != null" >
+        merchant_extend_field_1 = #{merchantExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField2 != null" >
+        merchant_extend_field_2 = #{merchantExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField3 != null" >
+        merchant_extend_field_3 = #{merchantExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField4 != null" >
+        merchant_extend_field_4 = #{merchantExtendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField5 != null" >
+        merchant_extend_field_5 = #{merchantExtendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null" >
+        out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNoExt != null" >
+        out_trade_no_ext = #{outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+        gmt_latest_modified = NOW(),
+      <if test="latestTradeReqType != null" >
+        latest_trade_req_type = #{latestTradeReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="latestReqNo != null" >
+        latest_req_no = #{latestReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="closeStatus != null" >
+        close_status = #{closeStatus,jdbcType=CHAR},
+      </if>
+      <if test="paymentAccountNo != null" >
+        payment_account_no = #{paymentAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentMerchantNo != null" >
+        payment_merchant_no = #{paymentMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="receiveAccountNo != null" >
+        receive_account_no = #{receiveAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="receiveMerchantNo != null" >
+        receive_merchant_no = #{receiveMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="freezeAmount != null" >
+        freeze_amount = #{freezeAmount,jdbcType=BIGINT},
+      </if>
+      <if test="gmtFreeze != null" >
+        gmt_freeze = #{gmtFreeze,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUnfreeze != null" >
+        gmt_unfreeze = #{gmtUnfreeze,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUnfreezeDedcut != null" >
+        gmt_unfreeze_dedcut = #{gmtUnfreezeDedcut,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannel != null" >
+        clear_channel = #{clearChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtSuccessClearChannel != null" >
+        gmt_success_clear_channel = #{gmtSuccessClearChannel,jdbcType=TIMESTAMP},
+      </if>
+      <if test="thirdTradeNo != null" >
+        third_trade_no = #{thirdTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="actualAmount != null" >
+        actual_amount = #{actualAmount,jdbcType=BIGINT},
+      </if>
+        version = version+1
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.liantuo.trade.orm.pojo.TradePayment" >
+    update trade_payment
+    set trade_no = #{tradeNo,jdbcType=VARCHAR},
+      core_merchant_no = #{coreMerchantNo,jdbcType=VARCHAR},
+      fund_pool_no = #{fundPoolNo,jdbcType=VARCHAR},
+      merchant_extend_field_1 = #{merchantExtendField1,jdbcType=VARCHAR},
+      merchant_extend_field_2 = #{merchantExtendField2,jdbcType=VARCHAR},
+      merchant_extend_field_3 = #{merchantExtendField3,jdbcType=VARCHAR},
+      merchant_extend_field_4 = #{merchantExtendField4,jdbcType=VARCHAR},
+      merchant_extend_field_5 = #{merchantExtendField5,jdbcType=VARCHAR},
+      out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      out_trade_no_ext = #{outTradeNoExt,jdbcType=VARCHAR},
+      gmt_latest_modified = NOW(),
+      latest_trade_req_type = #{latestTradeReqType,jdbcType=VARCHAR},
+      latest_req_no = #{latestReqNo,jdbcType=VARCHAR},
+      close_status = #{closeStatus,jdbcType=CHAR},
+      payment_account_no = #{paymentAccountNo,jdbcType=VARCHAR},
+      payment_merchant_no = #{paymentMerchantNo,jdbcType=VARCHAR},
+      receive_account_no = #{receiveAccountNo,jdbcType=VARCHAR},
+      receive_merchant_no = #{receiveMerchantNo,jdbcType=VARCHAR},
+      freeze_amount = #{freezeAmount,jdbcType=BIGINT},
+      gmt_freeze = #{gmtFreeze,jdbcType=TIMESTAMP},
+      gmt_unfreeze = #{gmtUnfreeze,jdbcType=TIMESTAMP},
+      gmt_unfreeze_dedcut = #{gmtUnfreezeDedcut,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=VARCHAR},
+      clear_channel = #{clearChannel,jdbcType=VARCHAR},
+      gmt_success_clear_channel = #{gmtSuccessClearChannel,jdbcType=TIMESTAMP},
+      third_trade_no = #{thirdTradeNo,jdbcType=VARCHAR},
+      actual_amount = #{actualAmount,jdbcType=BIGINT},
+      version = version+1
+    where id = #{id,jdbcType=BIGINT} and version=#{version}
+  </update>-->
+  
+  <update id="updateByKeyVersionSelective" parameterType="com.liantuo.trade.orm.pojo.TradePayment" >
+    update trade_payment
+    <set >
+      <if test="tradeNo != null" >
+        trade_no = #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="coreMerchantNo != null" >
+        core_merchant_no = #{coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fundPoolNo != null" >
+        fund_pool_no = #{fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField1 != null" >
+        merchant_extend_field_1 = #{merchantExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField2 != null" >
+        merchant_extend_field_2 = #{merchantExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField3 != null" >
+        merchant_extend_field_3 = #{merchantExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField4 != null" >
+        merchant_extend_field_4 = #{merchantExtendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField5 != null" >
+        merchant_extend_field_5 = #{merchantExtendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField6 != null" >
+        merchant_extend_field_6 = #{merchantExtendField6,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField7 != null" >
+        merchant_extend_field_7 = #{merchantExtendField7,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField8 != null" >
+        merchant_extend_field_8 = #{merchantExtendField8,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField9 != null" >
+        merchant_extend_field_9 = #{merchantExtendField9,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField10 != null" >
+        merchant_extend_field_10 = #{merchantExtendField10,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null" >
+        out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNoExt != null" >
+        out_trade_no_ext = #{outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+        gmt_latest_modified = NOW(),
+      <if test="latestTradeReqType != null" >
+        latest_trade_req_type = #{latestTradeReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="latestReqNo != null" >
+        latest_req_no = #{latestReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="closeStatus != null" >
+        close_status = #{closeStatus,jdbcType=CHAR},
+      </if>
+      <if test="paymentAccountNo != null" >
+        payment_account_no = #{paymentAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentMerchantNo != null" >
+        payment_merchant_no = #{paymentMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="receiveAccountNo != null" >
+        receive_account_no = #{receiveAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="receiveMerchantNo != null" >
+        receive_merchant_no = #{receiveMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="freezeAmount != null" >
+        freeze_amount = #{freezeAmount,jdbcType=BIGINT},
+      </if>
+      <if test="gmtFreeze != null" >
+        gmt_freeze = #{gmtFreeze,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUnfreeze != null" >
+        gmt_unfreeze = #{gmtUnfreeze,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUnfreezeDedcut != null" >
+        gmt_unfreeze_dedcut = #{gmtUnfreezeDedcut,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannel != null" >
+        clear_channel = #{clearChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtSuccessClearChannel != null" >
+        gmt_success_clear_channel = #{gmtSuccessClearChannel,jdbcType=TIMESTAMP},
+      </if>
+      <if test="thirdTradeNo != null" >
+        third_trade_no = #{thirdTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="actualAmount != null" >
+        actual_amount = #{actualAmount,jdbcType=BIGINT},
+      </if>
+       version = version+1,
+    </set>
+    where id = #{id,jdbcType=BIGINT} and version = #{version,jdbcType=INTEGER}
+  </update>
+  
+</mapper>

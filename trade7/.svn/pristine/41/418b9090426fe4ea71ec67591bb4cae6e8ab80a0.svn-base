@@ -1,0 +1,123 @@
+package com.liantuo.deposit.advanceaccount.web.controller;
+
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.ebill.framework.exception.BusinessException;
+import com.ebill.framework.res.JsonUtil;
+import com.ebill.framework.validator.ValidatorUtil;
+import com.liantuo.deposit.advanceaccount.bus.service.CreditAccountService;
+import com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccount;
+import com.liantuo.deposit.advanceaccount.web.util.MyBeanUtils;
+import com.liantuo.deposit.advanceaccount.web.vo.req.OpenCreditAccountReqVo;
+import com.liantuo.deposit.advanceaccount.web.vo.returnvo.CreditAccountVo;
+import com.liantuo.deposit.advanceaccount.web.vo.rsp.OpenCreditAccountRspVo;
+import com.liantuo.deposit.common.constants.ErrorCode001Constants;
+import com.liantuo.deposit.common.constants.RspConstants;
+import com.liantuo.deposit.common.constants.errorcode.ErrorCode009Constants;
+
+
+/**
+ * <p>
+ * Title: AccountServiceController.java
+ * </p>
+ * <p>
+ * Package Name: com.ebill.web.deposit.remote.wallet.controller
+ * </p>
+ * <p>
+ * Description:账户操作服务类
+ * </p>
+ * <p>
+ * Company: liantuobank.com
+ * </p>
+ *
+ * @author liujingbei
+ * @date :2016-06-06
+ * @version :1.0
+ */
+@Controller
+@RequestMapping(value = "/openAdvanceAccount")
+public class OpenAdvanceAccountController {
+
+        private static final Logger LOGGER = LoggerFactory.getLogger(OpenAdvanceAccountController.class);
+        @Resource
+        private CreditAccountService creditAccountService;
+        /**
+         * @Title: openDepositAccount
+         * @Description: 创建联拓账户
+         * @param request
+         * @param response
+         * @author liujingbei
+         * @Date 2015-1-21 下午2:57:40
+         */
+        @RequestMapping(value = "/openAccount")
+        public void openDepositAccount(HttpServletRequest request,
+                        HttpServletResponse response, OpenCreditAccountReqVo vo) {
+          OpenCreditAccountRspVo rsp = new OpenCreditAccountRspVo();
+                String success = "";
+                String retCode = "";
+                String retInfo = "";
+                Map<String, String[]> m = request.getParameterMap();
+                try {
+                        LOGGER.info("开通预存款账户http接口接收参数列表：{}", JsonUtil.object2String(m));
+                        /** 验证参数 */
+                        String str = ValidatorUtil.validateResult(vo, vo.getClass());
+                        if (str != null && !str.trim().equals("")) {
+                        // 抛出业务异常
+                        LOGGER.error("====================参数错误信息" + str+ "=====================");
+                        throw new BusinessException(ErrorCode009Constants.ACCOUNT_PARAS_CHECK_NOT_PASS, "参数错误："+ str);
+                        }
+                        /** 业务校验 */
+                        creditAccountService.serviceVerification(vo);
+                        /** 业务处理 */
+                        CreditAccount ca = creditAccountService.insertOpenCreditAccount(vo);
+                        CreditAccountVo creditAccoutVo =new CreditAccountVo();
+                        MyBeanUtils.copyBeanNotNull2Bean(ca, creditAccoutVo);
+                        creditAccoutVo.setAccountName(ca.getSuperType());
+                        /** 处理成功 */
+                        rsp.setCreditAccountVo(creditAccoutVo);
+                        // 创建成功
+                        success = RspConstants.SUCCESS_S;
+                        retCode = RspConstants.SUCCESS_S;
+                        retInfo = "";
+                } catch (BusinessException e) {
+                        /** 处理业务异常 */
+                        LOGGER.error("开通预存款账户失败!失败代码{}失败原因{}", e.getErrorCode(),
+                                        e.getErrorMessage());
+                        LOGGER.error(e.getMessage(), e);
+                        success = RspConstants.SUCCESS_F;
+                        retCode = e.getErrorCode();
+                        retInfo = e.getErrorMessage();
+                } catch (Exception e) {
+                        /** 处理未知异常 */
+                        LOGGER.error("开通预存款账户失败!发生未知错误，错误原因{}", e.getMessage());
+                        LOGGER.error(e.getMessage(), e);
+                        success = RspConstants.SUCCESS_F;
+                        retCode = ErrorCode001Constants.SYSTEM_EXCEPTION;
+                        retInfo = e.getMessage();
+                }
+                /** 组织返回 */
+                try {
+                        response.setCharacterEncoding("UTF-8");
+                        response.setContentType("application/json; charset=utf-8");
+                        LOGGER.info(JsonUtil.object2String(rsp));
+                        rsp.setResult(success, retCode, retInfo);
+                        response.getWriter().print(JsonUtil.object2String(rsp));
+
+                } catch (Exception e) {
+                        LOGGER.error("开通预存款账户接口处理结果发送异常！处理结果：返回结果Success:{};RetCode:{};RetInfo:{};merchantNo{}",
+                                        new Object[] { rsp.getSuccess(),
+                                                        rsp.getRetCode(), rsp.getRetInfo(),
+                                                        vo.getMerchantNo() });
+                        LOGGER.error(e.getMessage(), e);
+                }
+        }
+}

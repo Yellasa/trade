@@ -1,0 +1,385 @@
+package com.liantuo.deposit.advanceaccount.orm.mapper;
+
+import static org.junit.Assert.*;
+
+import java.util.List;
+
+import org.junit.Test;
+import org.unitils.database.annotations.Transactional;
+import org.unitils.database.util.TransactionMode;
+import org.unitils.spring.annotation.SpringBean;
+
+import ch.qos.logback.classic.Logger;
+
+import com.liantuo.deposit.advanceaccount.bus.vo.SingleAccountHisPageQueryInnerVo;
+import com.liantuo.deposit.advanceaccount.bus.vo.SingleAccountHisPageQueryVo;
+import com.liantuo.deposit.advanceaccount.bus.vo.SingleAccountHisQueryVo;
+import com.liantuo.deposit.advanceaccount.web.vo.rsp.SingleAccountAccountRecord;
+import com.liantuo.deposit.advanceaccount.web.vo.rsp.SingleAccountAccountingRecord;
+import com.liantuo.trade.common.util.date.DateUtil;
+import com.liantuo.unittest.BaseDaoTest;
+
+@Transactional(value = TransactionMode.ROLLBACK)
+//@DataSet(value = { "" })
+public class CreditAccountTradeHistoryMapperTest extends BaseDaoTest {
+	
+	@SpringBean("creditAccountTradeHistoryMapper")
+	private CreditAccountTradeHistoryMapper creditAccountTradeHistoryMapper;
+	
+	/**
+	 * 单账户账务历史查询接口 (外部用)
+	 * @Description: 
+	 * @author JiangKun
+	 * @date 2016年7月5日 下午5:55:29
+	 */
+	@Test
+	public void testSelectSingleAccountHisPageQueryCase1(){
+		SingleAccountHisPageQueryVo vo = new SingleAccountHisPageQueryVo();
+		vo.setCreditAccountId(186791);
+		vo.setSequenceNo("1379543234434");
+		vo.setTradeCode("123");
+		vo.setTradeNo("456");
+		vo.setTradeReqCode("avl_decr");
+		vo.setTradeStepNo("12345907654");
+		vo.setBeginTime(DateUtil.format("2015-12-18 00:00:00", DateUtil.DEFAULT_DATE_TIME));
+		vo.setEndTime(DateUtil.format("2015-12-20 00:00:00", DateUtil.DEFAULT_DATE_TIME));
+
+		vo.setReservedFields1("冻结金额增加1块钱");
+//		vo.setReservedFields1Fuzzy("冻结金额增加1块");
+		
+		List<SingleAccountAccountingRecord> list = creditAccountTradeHistoryMapper.selectSingleAccountHisPageQuery(vo);
+		assertNotNull("不应该为空",list);
+		System.out.println(list.size());
+	}
+	
+	/**
+	 * 单账户账务历史查询接口 (外部用)
+	 * @Description: 只有时间条件
+	 * @author JiangKun
+	 * @date 2016年7月5日 下午5:55:29
+	 */
+	@Test
+	public void testSelectSingleAccountHisPageQueryCase2(){
+		SingleAccountHisPageQueryVo vo = new SingleAccountHisPageQueryVo();
+		vo.setCreditAccountId(186791);
+//		vo.setSequenceNo("1379543234434");
+//		vo.setTradeCode("123");
+//		vo.setTradeNo("456");
+//		vo.setTradeReqCode("avl_decr");
+//		vo.setTradeStepNo("12345907654");
+		vo.setBeginTime(DateUtil.format("2015-12-19 13:06:39", DateUtil.DEFAULT_DATE_TIME));
+		vo.setEndTime(DateUtil.format("2015-12-19 13:06:39", DateUtil.DEFAULT_DATE_TIME));
+
+//		vo.setReservedFields1("冻结金额增加1块钱");
+//		vo.setReservedFields1Fuzzy("冻结金额增加1块");
+		
+		List<SingleAccountAccountingRecord> list = creditAccountTradeHistoryMapper.selectSingleAccountHisPageQuery(vo);
+		assertNotNull("不应该为空",list);
+		System.out.println(list.size());
+	}
+	
+	/**
+	 * 单账户账务历史查询接口 (外部用)
+	 * @Description: 只有时间条件查不出数据
+	 * @author JiangKun
+	 * @date 2016年7月5日 下午5:55:29
+	 */
+	@Test
+	public void testSelectSingleAccountHisPageQueryCase3(){
+		SingleAccountHisPageQueryVo vo = new SingleAccountHisPageQueryVo();
+		vo.setCreditAccountId(186791);
+//		vo.setSequenceNo("1379543234434");
+//		vo.setTradeCode("123");
+//		vo.setTradeNo("456");
+//		vo.setTradeReqCode("avl_decr");
+//		vo.setTradeStepNo("12345907654");
+		vo.setBeginTime(DateUtil.format("2015-12-19 13:06:40", DateUtil.DEFAULT_DATE_TIME));
+		vo.setEndTime(DateUtil.format("2015-12-19 13:06:41", DateUtil.DEFAULT_DATE_TIME));
+
+//		vo.setReservedFields1("冻结金额增加1块钱");
+//		vo.setReservedFields1Fuzzy("冻结金额增加1块");
+		
+		List<SingleAccountAccountingRecord> list = creditAccountTradeHistoryMapper.selectSingleAccountHisPageQuery(vo);
+		assertEquals("应该为空",0,list.size());
+		System.out.println(list.size());
+	}
+	
+	/**
+	 * 单账户账务历史查询接口-数据标准版
+	 * @Description: 
+	 * @author JiangKun
+	 * @date 2016年7月5日 下午5:55:29
+	 */
+	@Test
+	public void testSingleAccountHisPageQueryCase1(){
+		SingleAccountHisQueryVo vo = new SingleAccountHisQueryVo();
+		vo.setAccountNo("186791");
+		vo.setOutTradeNo("1379543234434");
+		vo.setTradeCode("123");
+		vo.setTradeNo("456");
+		vo.setTradeReqCode("avl_decr");
+		vo.setTradeReqNo("12345907654");
+		vo.setGmtCreateBegin(DateUtil.format("2015-12-19 00:00:00", DateUtil.DEFAULT_DATE_TIME));
+		vo.setGmtCreateEnd(DateUtil.format("2015-12-20 00:00:00", DateUtil.DEFAULT_DATE_TIME));
+		vo.setReservedFields1("可用金额减少1块钱");
+//		vo.setReservedFields1Fuzzy("冻结金额增加1块");
+		
+		List<SingleAccountAccountRecord> list = creditAccountTradeHistoryMapper.singleAccountHisPageQueryStand(vo);
+		assertNotNull("不应该为空！",list);
+		assertNotEquals("应该为空",0,list.size());
+		System.out.println(list.size());
+	}
+	
+	/**
+	 * 单账户账务历史查询接口-数据标准版
+	 * @Description: 只有时间条件
+	 * @author JiangKun
+	 * @date 2016年7月5日 下午5:55:29
+	 */
+	@Test
+	public void testSingleAccountHisPageQueryCase2(){
+		SingleAccountHisQueryVo vo = new SingleAccountHisQueryVo();
+		vo.setAccountNo("186791");
+//		vo.setOutTradeNo("1379543234434");
+//		vo.setTradeCode("123");
+//		vo.setTradeNo("456");
+//		vo.setTradeReqCode("avl_decr");
+//		vo.setTradeReqNo("12345907654");
+		vo.setGmtCreateBegin(DateUtil.format("2015-12-19 13:06:39", DateUtil.DEFAULT_DATE_TIME));
+		vo.setGmtCreateEnd(DateUtil.format("2015-12-19 13:06:39", DateUtil.DEFAULT_DATE_TIME));
+//		vo.setReservedFields1("可用金额减少1块钱");
+//		vo.setReservedFields1Fuzzy("冻结金额增加1块");
+		
+		List<SingleAccountAccountRecord> list = creditAccountTradeHistoryMapper.singleAccountHisPageQueryStand(vo);
+		assertNotNull("不应该为空！",list);
+		System.out.println(list.size());
+	}
+	
+	
+	/**
+	 * 单账户账务历史查询接口-数据标准版
+	 * @Description: 只有时间条件查不出数据
+	 * @author JiangKun
+	 * @date 2016年7月5日 下午5:55:29
+	 */
+	@Test
+	public void testSingleAccountHisPageQueryCase3(){
+		SingleAccountHisQueryVo vo = new SingleAccountHisQueryVo();
+		vo.setAccountNo("186791");
+//		vo.setOutTradeNo("1379543234434");
+//		vo.setTradeCode("123");
+//		vo.setTradeNo("456");
+//		vo.setTradeReqCode("avl_decr");
+//		vo.setTradeReqNo("12345907654");
+		vo.setGmtCreateBegin(DateUtil.format("2015-12-19 13:06:40", DateUtil.DEFAULT_DATE_TIME));
+		vo.setGmtCreateEnd(DateUtil.format("2015-12-19 13:06:41", DateUtil.DEFAULT_DATE_TIME));
+//		vo.setReservedFields1("可用金额减少1块钱");
+//		vo.setReservedFields1Fuzzy("冻结金额增加1块");
+		
+		List<SingleAccountAccountRecord> list = creditAccountTradeHistoryMapper.singleAccountHisPageQueryStand(vo);
+		assertEquals("应该为空",0,list.size());
+		System.out.println(list.size());
+	}
+	
+	/**
+	 * 
+	 * @Description: 查询账务历史记录数
+	 * @author JiangKun
+	 * @date 2016年7月6日 上午10:02:39
+	 */
+	@Test
+	public void testSelectCountSingleAccountHisCase1(){
+		SingleAccountHisPageQueryVo vo = new SingleAccountHisPageQueryVo();
+		vo.setCreditAccountId(186791);
+		vo.setSequenceNo("1379543234434");
+		vo.setTradeCode("123");
+		vo.setTradeNo("456");
+		vo.setTradeReqCode("avl_decr");
+		vo.setTradeStepNo("12345907654");
+		vo.setBeginTime(DateUtil.format("2015-12-19 13:06:39", DateUtil.DEFAULT_DATE_TIME));
+		vo.setEndTime(DateUtil.format("2015-12-19 13:06:39", DateUtil.DEFAULT_DATE_TIME));
+//		vo.setReservedFields1("可用金额减少1块钱");
+		int count = creditAccountTradeHistoryMapper.selectCountSingleAccountHis(vo);
+		assertEquals("查询记录数应该为2", 2, count);
+		System.out.print(count);
+	}
+	
+	/**
+	 * 
+	 * @Description: 查询账务历史记录数
+	 * @author JiangKun
+	 * @date 2016年7月6日 上午10:02:39
+	 */
+	@Test
+	public void testSelectCountSingleAccountHisCase2(){
+		SingleAccountHisPageQueryVo vo = new SingleAccountHisPageQueryVo();
+		vo.setCreditAccountId(186791);
+//		vo.setSequenceNo("1379543234434");
+//		vo.setTradeCode("123");
+//		vo.setTradeNo("456");
+//		vo.setTradeReqCode("avl_decr");
+//		vo.setTradeStepNo("12345907654");
+		vo.setBeginTime(DateUtil.format("2015-12-19 13:06:39", DateUtil.DEFAULT_DATE_TIME));
+		vo.setEndTime(DateUtil.format("2015-12-19 13:06:39", DateUtil.DEFAULT_DATE_TIME));
+//		vo.setReservedFields1("可用金额减少1块钱");
+		int count = creditAccountTradeHistoryMapper.selectCountSingleAccountHis(vo);
+		assertEquals("查询记录数应该为2", 2, count);
+		System.out.print(count);
+	}
+	
+	/**
+	 * 
+	 * @Description: 查询账务历史记录数--没有记录数
+	 * @author JiangKun
+	 * @date 2016年7月6日 上午10:02:39
+	 */
+	@Test
+	public void testSelectCountSingleAccountHisCase3(){
+		SingleAccountHisPageQueryVo vo = new SingleAccountHisPageQueryVo();
+		vo.setCreditAccountId(186791);
+//		vo.setSequenceNo("1379543234434");
+//		vo.setTradeCode("123");
+//		vo.setTradeNo("456");
+//		vo.setTradeReqCode("avl_decr");
+//		vo.setTradeStepNo("12345907654");
+		vo.setBeginTime(DateUtil.format("2015-12-19 13:06:40", DateUtil.DEFAULT_DATE_TIME));
+		vo.setEndTime(DateUtil.format("2015-12-19 13:06:40", DateUtil.DEFAULT_DATE_TIME));
+//		vo.setReservedFields1("可用金额减少1块钱");
+		int count = creditAccountTradeHistoryMapper.selectCountSingleAccountHis(vo);
+		assertEquals("查询记录数应该为0", 0, count);
+		System.out.print(count);
+	}
+	
+	/**
+	 * 
+	 * @Description: <!-- 单账户账务历史查询接口(内部接口) -->
+	 * @author JiangKun
+	 * @date 2016年7月6日 上午10:08:50
+	 */
+	@Test
+	public void testSelectSingleInnerCAHisPageQueryCase1(){
+		SingleAccountHisPageQueryInnerVo vo = new SingleAccountHisPageQueryInnerVo();
+		vo.setCreditAccountId(186791);
+		vo.setSequenceNo("1379543234434");
+		vo.setTradeCode("123");
+		vo.setTradeNo("456");
+		vo.setTradeReqCode("avl_decr");
+		vo.setTradeStepNo("12345907654");
+		vo.setBeginTime(DateUtil.format("2015-12-19 13:06:39", DateUtil.DEFAULT_DATE_TIME));
+		vo.setEndTime(DateUtil.format("2015-12-19 13:06:39", DateUtil.DEFAULT_DATE_TIME));
+		List<com.liantuo.deposit.advanceaccount.web.inner.vo.rsp.SingleAccountAccountingRecord> list = creditAccountTradeHistoryMapper.selectSingleInnerCAHisPageQuery(vo);
+		System.out.println(list.size());
+		assertNotNull("不应该为空",list);
+	}
+	
+	/**
+	 * 
+	 * @Description: <!-- 单账户账务历史查询接口(内部接口) -->
+	 * @author JiangKun
+	 * @date 2016年7月6日 上午10:08:50
+	 */
+	@Test
+	public void testSelectSingleInnerCAHisPageQueryCase2(){
+		SingleAccountHisPageQueryInnerVo vo = new SingleAccountHisPageQueryInnerVo();
+		vo.setCreditAccountId(186791);
+//		vo.setSequenceNo("1379543234434");
+//		vo.setTradeCode("123");
+//		vo.setTradeNo("456");
+//		vo.setTradeReqCode("avl_decr");
+//		vo.setTradeStepNo("12345907654");
+		vo.setBeginTime(DateUtil.format("2015-12-19 13:06:39", DateUtil.DEFAULT_DATE_TIME));
+		vo.setEndTime(DateUtil.format("2015-12-19 13:06:39", DateUtil.DEFAULT_DATE_TIME));
+		List<com.liantuo.deposit.advanceaccount.web.inner.vo.rsp.SingleAccountAccountingRecord> list = creditAccountTradeHistoryMapper.selectSingleInnerCAHisPageQuery(vo);
+		System.out.println(list.size());
+		assertNotNull("不应该为空",list);
+	}
+	
+	/**
+	 * 
+	 * @Description: <!-- 单账户账务历史查询接口(内部接口)--无记录
+	 * @author JiangKun
+	 * @date 2016年7月6日 上午10:08:50
+	 */
+	@Test
+	public void testSelectSingleInnerCAHisPageQueryCase3(){
+		SingleAccountHisPageQueryInnerVo vo = new SingleAccountHisPageQueryInnerVo();
+		vo.setCreditAccountId(186791);
+//		vo.setSequenceNo("1379543234434");
+//		vo.setTradeCode("123");
+//		vo.setTradeNo("456");
+//		vo.setTradeReqCode("avl_decr");
+//		vo.setTradeStepNo("12345907654");
+		vo.setBeginTime(DateUtil.format("2015-12-19 13:06:40", DateUtil.DEFAULT_DATE_TIME));
+		vo.setEndTime(DateUtil.format("2015-12-19 13:06:40", DateUtil.DEFAULT_DATE_TIME));
+		List<com.liantuo.deposit.advanceaccount.web.inner.vo.rsp.SingleAccountAccountingRecord> list = creditAccountTradeHistoryMapper.selectSingleInnerCAHisPageQuery(vo);
+		System.out.println(list.size());
+		assertNotNull("不应该为空",list);
+	}
+	
+	/**
+	 * 
+	 * @Description: 单账户账务历史查询总记录数接口(内部接口)
+	 * @author JiangKun
+	 * @date 2016年7月6日 上午10:20:48
+	 */
+	@Test
+	public void testSelectCountSingleInnerCAHisCase1(){
+		SingleAccountHisPageQueryInnerVo vo = new SingleAccountHisPageQueryInnerVo();
+		vo.setCreditAccountId(186791);
+		vo.setSequenceNo("1379543234434");
+		vo.setTradeCode("123");
+		vo.setTradeNo("456");
+		vo.setTradeReqCode("avl_decr");
+		vo.setTradeStepNo("12345907654");
+		vo.setBeginTime(DateUtil.format("2015-12-19 13:06:39", DateUtil.DEFAULT_DATE_TIME));
+		vo.setEndTime(DateUtil.format("2015-12-19 13:06:39", DateUtil.DEFAULT_DATE_TIME));
+		int count = creditAccountTradeHistoryMapper.selectCountSingleInnerCAHis(vo);
+		assertNotEquals("查询记录数不应该为0", 0, count);
+		System.out.print(count);
+	}
+	
+	
+	/**
+	 * 
+	 * @Description: 单账户账务历史查询总记录数接口(内部接口)
+	 * @author JiangKun
+	 * @date 2016年7月6日 上午10:20:48
+	 */
+	@Test
+	public void testSelectCountSingleInnerCAHisCase2(){
+		SingleAccountHisPageQueryInnerVo vo = new SingleAccountHisPageQueryInnerVo();
+		vo.setCreditAccountId(186791);
+//		vo.setSequenceNo("1379543234434");
+//		vo.setTradeCode("123");
+//		vo.setTradeNo("456");
+//		vo.setTradeReqCode("avl_decr");
+//		vo.setTradeStepNo("12345907654");
+		vo.setBeginTime(DateUtil.format("2015-12-19 13:06:39", DateUtil.DEFAULT_DATE_TIME));
+		vo.setEndTime(DateUtil.format("2015-12-19 13:06:39", DateUtil.DEFAULT_DATE_TIME));
+		int count = creditAccountTradeHistoryMapper.selectCountSingleInnerCAHis(vo);
+		assertNotEquals("查询记录数不应该为0", 0, count);
+		System.out.print(count);
+	}
+	
+	/**
+	 * 
+	 * @Description: 单账户账务历史查询总记录数接口(内部接口)
+	 * @author JiangKun
+	 * @date 2016年7月6日 上午10:20:48
+	 */
+	@Test
+	public void testSelectCountSingleInnerCAHisCase3(){
+		SingleAccountHisPageQueryInnerVo vo = new SingleAccountHisPageQueryInnerVo();
+		vo.setCreditAccountId(186791);
+//		vo.setSequenceNo("1379543234434");
+//		vo.setTradeCode("123");
+//		vo.setTradeNo("456");
+//		vo.setTradeReqCode("avl_decr");
+//		vo.setTradeStepNo("12345907654");
+		vo.setBeginTime(DateUtil.format("2015-12-19 13:06:40", DateUtil.DEFAULT_DATE_TIME));
+		vo.setEndTime(DateUtil.format("2015-12-19 13:06:40", DateUtil.DEFAULT_DATE_TIME));
+		int count = creditAccountTradeHistoryMapper.selectCountSingleInnerCAHis(vo);
+		assertEquals("查询记录数应该为0", 0, count);
+		System.out.print(count);
+	}
+}

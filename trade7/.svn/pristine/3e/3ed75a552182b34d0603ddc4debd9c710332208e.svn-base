@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liantuo.deposit.advanceaccount.orm.mapper.PoolMapper">
+	<resultMap id="BaseResultMap"
+		type="com.liantuo.deposit.advanceaccount.orm.pojo.Pool">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="pool_no" property="poolNo" jdbcType="VARCHAR" />
+		<result column="pool_name" property="poolName" jdbcType="VARCHAR" />
+		<result column="merchant_no" property="merchantNo" jdbcType="VARCHAR" />
+		<result column="organization_no" property="organizationNo"
+			jdbcType="VARCHAR" />
+		<result column="rmk" property="rmk" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="CHAR" />
+		<result column="gmt_created" property="gmtCreated" jdbcType="TIMESTAMP" />
+		<result column="creator_no" property="creatorNo" jdbcType="VARCHAR" />
+		<result column="creator_cn" property="creatorCn" jdbcType="VARCHAR" />
+		<result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
+		<result column="modifier_no" property="modifierNo" jdbcType="VARCHAR" />
+		<result column="modifier_cn" property="modifierCn" jdbcType="VARCHAR" />
+		<result column="open_info_id" property="openInfoId" jdbcType="INTEGER" />
+		<result column="short_name" property="shortName" jdbcType="VARCHAR" />
+	</resultMap>
+
+
+	<sql id="Base_Column_List">
+		id, pool_no, pool_name, merchant_no, organization_no, rmk, status,
+		gmt_created, creator_no,
+		creator_cn, gmt_modified, modifier_no, modifier_cn, open_info_id, short_name
+	</sql>
+	<!-- <select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from dep_pool
+		where id = #{id,jdbcType=INTEGER}
+	</select> -->
+	<!-- <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from dep_pool
+		where id = #{id,jdbcType=INTEGER}
+	</delete> -->
+	<insert id="insert" parameterType="com.liantuo.deposit.advanceaccount.orm.pojo.Pool"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into dep_pool (id, pool_no, pool_name,
+		merchant_no, organization_no, rmk,
+		status, gmt_created, creator_no,
+		creator_cn, gmt_modified, modifier_no,
+		modifier_cn, open_info_id, short_name
+		)
+		values (#{id,jdbcType=INTEGER}, #{poolNo,jdbcType=VARCHAR},
+		#{poolName,jdbcType=VARCHAR},
+		#{merchantNo,jdbcType=VARCHAR}, #{organizationNo,jdbcType=VARCHAR}, #{rmk,jdbcType=VARCHAR},
+		#{status,jdbcType=CHAR}, #{gmtCreated,jdbcType=TIMESTAMP},
+		#{creatorNo,jdbcType=VARCHAR},
+		#{creatorCn,jdbcType=VARCHAR}, #{gmtModified,jdbcType=TIMESTAMP}, #{modifierNo,jdbcType=VARCHAR},
+		#{modifierCn,jdbcType=VARCHAR}, #{openInfoId,jdbcType=INTEGER},
+		#{shortName,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<!-- <update id="updateByPrimaryKey" parameterType="com.liantuo.deposit.advanceaccount.orm.pojo.Pool">
+		update dep_pool
+		set pool_no = #{poolNo,jdbcType=VARCHAR},
+		pool_name = #{poolName,jdbcType=VARCHAR},
+		merchant_no = #{merchantNo,jdbcType=VARCHAR},
+		organization_no = #{organizationNo,jdbcType=VARCHAR},
+		rmk = #{rmk,jdbcType=VARCHAR},
+		status = #{status,jdbcType=CHAR},
+		gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+		creator_no = #{creatorNo,jdbcType=VARCHAR},
+		creator_cn = #{creatorCn,jdbcType=VARCHAR},
+		gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+		modifier_no = #{modifierNo,jdbcType=VARCHAR},
+		modifier_cn = #{modifierCn,jdbcType=VARCHAR},
+		open_info_id = #{openInfoId,jdbcType=INTEGER},
+		short_name = #{shortName,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update> -->
+
+
+	<select id="findPoolsByQueryVO"
+		resultType="com.liantuo.deposit.advanceaccount.web.vo.rsp.PoolRspVo"
+		parameterType="com.liantuo.deposit.advanceaccount.web.vo.queryvo.PoolQueryVo">
+		select pool_no as poolNo,
+		pool_name as poolName,
+		merchant_no as coreMerchantNo,
+		rmk as rmk,
+		status as status,
+		gmt_created as gmtCreated
+		from dep_pool
+		where merchant_no=#{coreMerchantNo,jdbcType=VARCHAR}
+		<if test="poolNo != null">
+			and pool_no = #{poolNo,jdbcType=VARCHAR}
+		</if>
+		<if test="poolName != null">
+			and pool_name = #{poolName,jdbcType=VARCHAR}
+		</if>
+		order by gmt_created desc
+		limit #{startCount,jdbcType=INTEGER}, #{showCount,jdbcType=INTEGER}
+	</select>
+
+	<select id="countPoolsByQueryVO" resultType="java.lang.Integer"
+		parameterType="com.liantuo.deposit.advanceaccount.web.vo.queryvo.PoolQueryVo">
+		select count(id)
+		from dep_pool
+		where merchant_no=#{coreMerchantNo,jdbcType=VARCHAR}
+		<if test="poolNo != null">
+			and pool_no = #{poolNo,jdbcType=VARCHAR}
+		</if>
+		<if test="poolName != null">
+			and pool_name = #{poolName,jdbcType=VARCHAR}
+		</if>
+	</select>
+
+	<select id="findByMerchantNoAndPoolName"
+		resultType="com.liantuo.deposit.advanceaccount.web.vo.rsp.PoolRspVo"
+		parameterType="com.liantuo.deposit.advanceaccount.web.vo.queryvo.PoolQueryVo">
+		select pool_no as poolNo,
+		pool_name as poolName,
+		merchant_no as coreMerchantNo,
+		rmk as rmk,
+		status as status,
+		gmt_created as gmtCreated
+		from dep_pool
+		where 1=1 and merchant_no=#{coreMerchantNo,jdbcType=VARCHAR} and pool_name
+		= #{poolName,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findPoolsByQueryInnerVO"
+		resultType="com.liantuo.deposit.advanceaccount.web.inner.vo.rsp.PoolInnerRspVo"
+		parameterType="com.liantuo.deposit.advanceaccount.web.inner.vo.queryvo.PoolQueryInnerVo">
+		select pool_no as poolNo,
+		pool_name as poolName,
+		merchant_no as coreMerchantNo,
+		rmk as rmk,
+		status as status,
+		gmt_created as gmtCreated
+		from dep_pool where merchant_no=#{coreMerchantNo,jdbcType=VARCHAR}
+		<if test="poolNo != null">
+			and pool_no = #{poolNo,jdbcType=VARCHAR}
+		</if>
+		<if test="poolName != null">
+			and pool_name = #{poolName,jdbcType=VARCHAR}
+		</if>
+		order by gmt_created desc
+		limit #{startCount,jdbcType=INTEGER}, #{showCount,jdbcType=INTEGER}
+	</select>
+
+
+	<select id="countPoolsByQueryInnerVO" resultType="java.lang.Integer"
+		parameterType="com.liantuo.deposit.advanceaccount.web.inner.vo.queryvo.PoolQueryInnerVo">
+		select count(id) from dep_pool where
+		merchant_no=#{coreMerchantNo,jdbcType=VARCHAR}
+		<if test="poolNo != null">
+			and pool_no = #{poolNo,jdbcType=VARCHAR}
+		</if>
+		<if test="poolName != null">
+			and pool_name = #{poolName,jdbcType=VARCHAR}
+		</if>
+	</select>
+
+	<select id="selectByPoolNo" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from dep_pool
+		where pool_no = #{poolNo,jdbcType=VARCHAR}
+	</select>
+</mapper>

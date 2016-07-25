@@ -1,0 +1,201 @@
+package com.liantuo.trade.bus.template.impl;
+
+import com.liantuo.trade.bus.template.NotifyDistributedHandle;
+import com.liantuo.trade.bus.vo.ANotifyBizVo;
+import com.liantuo.trade.client.trade.packet.NotifyPacket;
+import com.liantuo.trade.client.trade.packet.NotifyRspPacket;
+import com.liantuo.trade.common.constants.TradeConstants;
+import com.liantuo.trade.common.util.trade.NotifyReqContext;
+import com.liantuo.trade.exception.BizException;
+import com.liantuo.trade.exception.BizRuntimeException;
+import com.liantuo.trade.mq.rabbitmq.notice.NotifyService;
+import com.liantuo.trade.orm.pojo.TradeLedger;
+import com.liantuo.trade.orm.pojo.TradeOutFrontLogWithBLOBs;
+import com.liantuo.trade.orm.service.TradeOutFrontLogService;
+import com.liantuo.trade.orm.service.TradeWithdrawErrorinfoService;
+import org.springframework.util.StringUtils;
+
+import javax.annotation.Resource;
+import java.util.Date;
+
+
+/**
+ * 提现通知服务处理模板
+ * @param <R>
+ * @param <Q>
+ * @param <T>
+ */
+public abstract class ANotifyWithdrawTemp<R extends NotifyPacket, Q extends NotifyRspPacket, T extends ANotifyBizVo<?>> extends ANotifyTemp<R, Q, T> {
+
+    @Resource(name = "notifyDistributedHandleInvoker")
+    private NotifyDistributedHandleInvoker notifyDistributedHandleInvoker;
+
+    @Resource
+    private NotifyService notifyService;
+
+    @Resource
+    private TradeOutFrontLogService tradeOutFrontLogService;
+
+    @Resource
+    private TradeWithdrawErrorinfoService errorinfoService;
+
+    protected T preTrade(R notifyPacket, NotifyReqContext reqContext) throws BizException {
+        // 格式校验与报文解封
+        T bizVo = assembleRequest(notifyPacket);
+        bizVo.setReqContext(reqContext);
+
+        // 查询原交易  -- 此处根据 batchNo 来查询原交易
+        queryOriginalTrade(notifyPacket, bizVo);
+
+        if (null == bizVo.getTrade()) {
+            // 交易编号不存在
+            throw this.buildBusinessException("withdraw.trade.not.exists", BizException.class);
+        }
+
+        return bizVo;
+    }
+
+    /**
+     * 事务处理
+     *
+     * @param notifyPacket
+     * @param bizVo
+     * @return
+     */
+    protected Q doDistTx(R notifyPacket, T bizVo) {
+        try {
+            if (TradeConstants.ALIPAY_PAY_INFO_SUCCESS.equals(bizVo.getPayInfo().getResultCode())) {
+                // 成功 (同事务：生效台帐，修改交易状态)
+                notifyDistributedHandleInvoker.realAccountInvoke(new NotifyDistributedHandle<R, T>() {
+                    @Override
+                    public void doDistTx(R tradePacket, T trade) throws BizRuntimeException {
+                        doSuccessDistTx(tradePacket, trade);
+                    }
+                }, notifyPacket, bizVo);
+
+                return buildRsp(bizVo, getInternalFailureCode("trade.success"), getInternalFailureMessage("trade.success"));
+            } else if (TradeConstants.ALIPAY_PAY_INFO_FAILURE.equals(bizVo.getPayInfo().getResultCode())) {
+
+                // 失败 (同事务：失败台帐，修改交易状态)
+                notifyDistributedHandleInvoker.realAccountInvoke(new NotifyDistributedHandle<R, T>() {
+                    @Override
+                    public void doDistTx(R tradePacket, T trade) throws BizRuntimeException {
+                        doFailedDistTx(tradePacket, trade);
+                    }
+                }, notifyPacket, bizVo);
+
+                return paymentCenterError(bizVo, "thired.unknown.error.code");
+            }
+
+        } catch (BizRuntimeException e) {
+            logger(bizVo.getReqContext(), "", " >>> 回调通知结果事务中业务异常", e);
+            return buildRsp(bizVo, e.getErrorCode(), e.getErrorMessage());
+        } catch (Exception e) {
+            logger(bizVo.getReqContext(), "", " >>> 回调通知结果事务中未知异常", e);
+            return buildRsp(bizVo, this.getInternalFailureCode("withdraw.system.error"),
+                    this.getInternalFailureMessage("withdraw.system.error"));
+        }
+
+        // 处理中
+        return buildRsp(bizVo, this.getInternalFailureCode("withdraw.paymentcenter.exception"),
+                this.getInternalFailureMessage("withdraw.paymentcenter.exception"));
+    }
+
+    /**
+     * 修改外部收付款业务生效台账
+     *
+     * @param notifyPacket
+     * @param bizVo
+     * @throws BizRuntimeException
+     */
+    public final void doSuccessDistTx(R notifyPacket, T bizVo) throws BizRuntimeException {
+        TradeLedger ledger = getNotifyLegderService().updateToEffect(notifyPacket, bizVo);
+        getNotifyTradeService().updateToSuccess(notifyPacket, bizVo);
+        // 台帐历史
+        addTradeLedgerHistoryLog(ledger);
+        // 交易历史
+        addTradeHistoryLog(bizVo);
+    }
+
+    /**
+     * 修改外部收付款业务失败台账
+     *
+     * @param notifyPacket
+     * @param bizVo
+     * @throws BizRuntimeException
+     */
+    public final void doFailedDistTx(R notifyPacket, T bizVo) throws BizRuntimeException {
+        TradeLedger ledger = getNotifyLegderService().updateToField(notifyPacket, bizVo);
+        getNotifyTradeService().updateToFailed(notifyPacket, bizVo);
+        // 台帐历史
+        addTradeLedgerHistoryLog(ledger);
+        // 交易历史
+        addTradeHistoryLog(bizVo);
+    }
+
+    /**
+     * 交易执行完成后处理
+     *
+     * @param notifyPacket
+     * @param rsp
+     * @param bizVo
+     */
+    protected void postTrade(R notifyPacket, Q rsp, T bizVo) {
+        if (rsp != null && rsp.getBody() != null && !StringUtils.isEmpty(rsp.getBody().getNotify_url())) {
+            try {
+                // 插入提现通知处理结果--通知前置的日志
+                TradeOutFrontLogWithBLOBs log = insertNotifyOutLog(notifyPacket, rsp, bizVo);
+
+                // 异步通知前置
+                notifyService.sendNotice(rsp.getBody().getNotify_url(), rsp.getBody().getPartner_id(),
+                        rsp.getBody().getCore_merchant_no(), rsp.getBody().getFund_pool_no(),
+                        rsp.getBody().getResult_code(),
+                        rsp.getBody().getErr_code(), rsp.getBody().getErr_code_des(),
+                        rsp.getBody().getTrade_details(), notifyPacket.getBusHead().getService_name());
+
+                // 更新通知前置的结果
+                updateNotifyOutLog(log, rsp, bizVo);
+            } catch (Exception e) {
+                logger(bizVo.getReqContext(), "", " >>> 提现交易调用mq通知前置失败", e);
+            }
+        }
+    }
+
+    /**
+     * 插入提现通知前置的日志
+     *
+     * @param notifyPacket
+     * @param rsp
+     * @param bizVo
+     * @return
+     */
+    protected TradeOutFrontLogWithBLOBs insertNotifyOutLog(R notifyPacket, Q rsp, T bizVo) {
+        TradeOutFrontLogWithBLOBs log = createNotifyOutLog(notifyPacket, rsp, bizVo);
+        tradeOutFrontLogService.insertTradeOutFrontLog(log);
+        return log;
+    }
+
+    protected abstract TradeOutFrontLogWithBLOBs createNotifyOutLog(R notifyPacket, Q rsp, T bizVo);
+
+    /**
+     * 更新提醒通知前置的日志
+     *
+     * @param log
+     * @param rsp
+     * @param bizVo
+     */
+    protected void updateNotifyOutLog(TradeOutFrontLogWithBLOBs log, Q rsp, T bizVo) {
+        TradeOutFrontLogWithBLOBs newLog = updateNotifyOutLogById(log.getId(), log.getReqDateTime(), rsp, bizVo);
+        tradeOutFrontLogService.updateTradeOutFrontLog(newLog);
+    }
+
+    protected abstract TradeOutFrontLogWithBLOBs updateNotifyOutLogById(Long logId, Date start, Q rsp, T bizVo);
+
+
+    public TradeWithdrawErrorinfoService getErrorinfoService() {
+        return errorinfoService;
+    }
+
+    protected abstract Q paymentCenterError(T bizVo, String msgCode);
+
+}

@@ -1,0 +1,116 @@
+package com.liantuo.deposit.advanceaccount.bus.service.impl;
+
+import java.util.Date;
+
+import javax.annotation.Resource;
+
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+
+import com.liantuo.deposit.advanceaccount.bus.service.CreditAccountService;
+import com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccount;
+import com.liantuo.trade.exception.BusinessUncheckedException;
+
+@ContextConfiguration(locations = { "classpath:config/spring/applicationContext-myBatis.xml","classpath:config/spring/applicationContext-common.xml", "classpath:config/spring/applicationContext-template.xml" })
+@TransactionConfiguration(defaultRollback = false)
+public class CreditAccountServiceTest_Old extends AbstractTransactionalJUnit4SpringContextTests {
+	private static final Logger LOGGER = LoggerFactory.getLogger(CreditAccountServiceTest_Old.class);
+	
+	@Resource(name="creditAccountServiceImpl")
+	private CreditAccountService creditAccountService;
+	
+	/**
+	 * @方法名: testUpdateAvlBalDecr
+	 * @方法说明:测试可用金额减少金额超过可用余额和正常数据情况下
+	 * @返回类型 void
+	 * @创建人: bjl
+	 * @创建时间: 2015年12月18日 下午1:20:27
+	 */
+	@Test
+	public void testUpdateAvlBalDecr(){
+		CreditAccount creditAccount = creditAccountService.selectByAccountNo("CA21000000019141");
+		try {
+			boolean b=creditAccountService.updateAvlBalDecr(creditAccount, 4000000L, new Date());
+			Assert.assertEquals(Boolean.TRUE, b);
+		} catch (BusinessUncheckedException e) {	
+			LOGGER.error(e.getMessage(), e);
+			LOGGER.error("可用余额减少金额超过可用余额");
+		}
+	}
+	
+	/**
+	 * @方法名: testUpdateAvlBalIncr
+	 * @方法说明: 测试可用金额增加接口
+	 * @返回类型 void
+	 * @创建人: bjl
+	 * @创建时间: 2015年12月18日 下午1:21:34
+	 */
+	@Test
+	@Ignore
+	public void testUpdateAvlBalIncr(){
+		CreditAccount creditAccount = creditAccountService.selectByAccountNo("CA21000000019141");
+		try {
+			boolean b = creditAccountService.updateAvlBalIncr(creditAccount, 4000000L, new Date());
+			Assert.assertEquals(Boolean.TRUE, b);
+		} catch (BusinessUncheckedException e) {	
+			LOGGER.error(e.getMessage(), e);
+		}
+	}
+	
+	/**
+	 * @方法名: testUpdateFrozenBalIncr
+	 * @方法说明: 测试冻结金额增加金额正常数据
+	 * @返回类型 void
+	 * @创建人: bjl
+	 * @创建时间: 2015年12月18日 下午1:22:04
+	 */
+	@Test
+	public void testUpdateFrozenBalIncr(){
+		CreditAccount creditAccount = creditAccountService.selectByAccountNo("CA21000000019141");
+		try {
+			boolean b = creditAccountService.updateFrozenBalIncr(creditAccount, 4000000L, new Date());
+			Assert.assertEquals(Boolean.TRUE, b);
+		} catch (BusinessUncheckedException e) {	
+			LOGGER.error(e.getMessage(), e);
+		}
+	}
+	
+	/**
+	 * @方法名: testUpdateFrozenBalDecr
+	 * @方法说明: 测试冻结金额减少金额超过冻结金额和正常数据
+	 * @返回类型 void
+	 * @创建人: bjl
+	 * @创建时间: 2015年12月18日 下午1:22:30
+	 */
+	@Ignore
+	@Test
+	public void testUpdateFrozenBalDecr(){
+		CreditAccount creditAccount = creditAccountService.selectByAccountNo("CA21000000019141");
+		try {
+			boolean b = creditAccountService.updateFrozenBalDecr(creditAccount, Long.valueOf(99994000000L), new Date());
+			Assert.assertEquals(Boolean.TRUE, b);
+		} catch (BusinessUncheckedException e) {	
+			LOGGER.error(e.getMessage(), e);
+		}
+	}
+	
+	/**
+	 * @方法名: testAscAccountNosAndLock
+	 * @方法说明:测试锁定账户
+	 * @返回类型 void
+	 * @创建人: bjl
+	 * @创建时间: 2015年12月18日 下午1:23:50
+	 */
+	/*@Test
+	public void testAscAccountNosAndLock(){
+		String[] accountNos = {"CA21000000019141","CA09070321569000"};
+		creditAccountService.ascAccountNosAndLock(accountNos);
+	}*/
+	
+}

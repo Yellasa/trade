@@ -1,0 +1,206 @@
+package com.liantuo.deposit.advanceaccount.bus.service.impl;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import com.alibaba.fastjson.JSON;
+import com.ebill.framework.validator.ValidatorUtil;
+import com.liantuo.deposit.advanceaccount.bus.service.AdvanceAccountService;
+import com.liantuo.deposit.advanceaccount.bus.service.CreditAccountService;
+import com.liantuo.deposit.advanceaccount.bus.service.CreditAccountTradeHistoryService;
+import com.liantuo.deposit.advanceaccount.bus.vo.AccountingRecord;
+import com.liantuo.deposit.advanceaccount.bus.vo.AdvanceAccountVO;
+import com.liantuo.deposit.advanceaccount.bus.vo.RealTimeAccountingRsp;
+import com.liantuo.deposit.advanceaccount.bus.vo.RealTimeAccountingVo;
+import com.liantuo.deposit.advanceaccount.orm.mapper.CreditAccountMapper;
+import com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccount;
+import com.liantuo.deposit.common.constants.ErrorCodeConstants;
+import com.liantuo.deposit.common.constants.RspConstants;
+import com.liantuo.deposit.common.constants.errorcode.ErrorCode002Constants;
+import com.liantuo.trade.common.util.amount.AmountUtils;
+import com.liantuo.trade.exception.BusinessUncheckedException;
+
+/**
+ * @类名: AdvanceAccountServiceImpl
+ * @类说明: 交易系统账务处理
+ * @版本号 V1.0
+ * @版权 Copyright © 2013-2015 合肥联拓金融信息服务有限公司
+ * @创建人: bjl
+ * @创建时间: 2015年12月14日 下午5:18:42
+ *
+ * 修改日期    修改者     版本      修改原因说明<br>
+ * -----------------------------------------------------------------------------------<br>
+ *                       <br>
+ * -----------------------------------------------------------------------------------<br>
+ */
+@Component(value="advanceAccountServiceImpl")
+public class AdvanceAccountServiceImpl implements AdvanceAccountService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(AdvanceAccountServiceImpl.class);
+	
+	@Resource
+	private CreditAccountService creditAccountService;
+	@Resource
+	private CreditAccountTradeHistoryService creditAccountTradeHistoryService;
+	@Resource
+	private CreditAccountMapper creditAccountMapper;
+	
+	@Override
+	public AdvanceAccountVO selectByAccountNo(String accountNo) {
+		CreditAccount ca=creditAccountMapper.selectByAccountNo(accountNo);
+		if(ca==null){
+			return null;
+		}
+		
+		AdvanceAccountVO vo=new AdvanceAccountVO();
+		vo.setAccountName(ca.getSuperType());
+		vo.setAccountNo(ca.getAccountNo());
+		vo.setAccountType(ca.getAccountType());
+		vo.setAvailableBalance(AmountUtils.bizDoubleAmtConvertToLong(ca.getAvailableBalance()));
+		vo.setBalLastChangeTime(ca.getBalLastChangeTime());
+		vo.setCoreMerchantNo(ca.getCoreMerchantNo());
+		vo.setFreezenBalance(AmountUtils.bizDoubleAmtConvertToLong(ca.getFreezenBalance()));
+		vo.setGmtCreated(ca.getGmtCreated());
+		vo.setMerchantNo(ca.getMerchantNo());
+		vo.setPoolNo(ca.getPoolNo());
+		vo.setStatus(ca.getStatus());
+		vo.setSysTime(ca.getSysTime());
+		vo.setTotalBalance(AmountUtils.bizDoubleAmtConvertToLong(ca.getTotalBalance()));
+		vo.setVersion(ca.getVersion());
+		return vo;		
+	}
+	
+	@Override
+	public List<RealTimeAccountingRsp> realTimeAccounting(List<RealTimeAccountingVo> list) throws BusinessUncheckedException {
+		List<RealTimeAccountingRsp> rspList = new ArrayList<RealTimeAccountingRsp>();
+		String success = RspConstants.SUCCESS_S;
+		String errMessage = "成功";
+		List<Integer> ids = new ArrayList<Integer>();
+		RealTimeAccountingVo realTimeAccountingVo ;   //入参
+		/**入参格式校验*/
+		this.batchValidateParas(list);
+		/*****业务验证*****/
+		for(int i = 0;i<list.size();i++){//遍历循环账务指令
+			realTimeAccountingVo = list.get(i);
+			CreditAccount creditAccount = creditAccountMapper.selectByAccountNo(realTimeAccountingVo.getAccountNo());
+			if(creditAccount!=null){
+				ids.add(creditAccount.getId());
+			}
+			/**账户状态校验*/
+			creditAccountService.accountStatusValidate(realTimeAccountingVo,creditAccount);
+		}
+		Integer[] arr = (Integer[])ids.toArray(new Integer[ids.size()]);
+		/**锁定账户*/
+		HashMap<String, CreditAccount> creditAccountMap = creditAccountService.ascAccountNosAndLock(arr);
+		
+
+		CreditAccount creditAccount;
+		Date balLastChangeTime = new Date();
+//		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//		String dateDatabase = creditAccountMapper.selectDatabaseTime();
+//		try {
+//			balLastChangeTime = sdf.parse(dateDatabase);
+//		} catch (ParseException e) {
+//			LOGGER.error("数据库当前时间转换异常");
+//			throw new BusinessUncheckedException(ErrorCodeConstants.SYSTEM_EXCEPTION, "系统异常");
+//		}
+		//账户余额变动的最终日期时间
+
+		AccountingRecord accountingRecord ;		  //返回的账务历史
+
+		RealTimeAccountingRsp realTimeAccountingRsp = new RealTimeAccountingRsp();//回参	
+		for(int i = 0;i<list.size();i++){//遍历循环账务指令
+			realTimeAccountingVo = list.get(i);
+			LOGGER.info("当前执行的账户：" + realTimeAccountingVo.getAccountNo() + ";所属业务交易请求编号:"+realTimeAccountingVo.getTradeStepNo());
+			creditAccount = creditAccountMap.get(realTimeAccountingVo.getAccountNo());//从锁定的账户中获取当前遍历的账户
+			LOGGER.info("当前线程id{},得到的账户版本号为{}",Thread.currentThread().getId(),creditAccount.getVersion());
+			
+			/**判断余额变化类型，然后操作账户余额变化*/
+			  judgeBalChangeType(realTimeAccountingVo, creditAccount, balLastChangeTime);
+			
+			/**记账*/
+			accountingRecord = creditAccountTradeHistoryService.insertCaTradeHistory(realTimeAccountingVo,creditAccount,balLastChangeTime);
+			
+			/**组织接口返回参数*/
+			realTimeAccountingRsp.setAccountingRecord(accountingRecord);
+			realTimeAccountingRsp.setSuccess(success);
+			realTimeAccountingRsp.setErrMessage(errMessage);
+			rspList.add(realTimeAccountingRsp);
+			LOGGER.info("账户:" + realTimeAccountingVo.getAccountNo() + ";所属业务交易请求编号:"+realTimeAccountingVo.getTradeStepNo() +"执行账务指令成功");
+		}
+		return rspList;
+	}
+	
+	public void judgeBalChangeType(RealTimeAccountingVo vo,CreditAccount creditAccount,Date balLastChangeTime){
+		if(vo.getAvlBalIncrAmt()!= null && vo.getAvlBalIncrAmt().longValue()!=0l){		//判断可用金额增加金额是否为空
+			 creditAccountService.updateAvlBalIncr(creditAccount, vo.getAvlBalIncrAmt(), balLastChangeTime);
+		}
+		
+		if(vo.getAvlBalDecrAmt()!=null && vo.getAvlBalDecrAmt().longValue()!=0l){		//判断可用金额减少金额是否为空
+			 creditAccountService.updateAvlBalDecr(creditAccount, vo.getAvlBalDecrAmt(), balLastChangeTime);
+		}
+		
+		if(vo.getFrozenBalIncrAmt()!=null && vo.getFrozenBalIncrAmt().longValue()!=0l){	//判断冻结金额增加金额是否为空
+        		 creditAccountService.updateFrozenBalIncr(creditAccount, vo.getFrozenBalIncrAmt(), balLastChangeTime);
+		}
+		
+		if(vo.getFrozenBalDecrAmt() !=null && vo.getFrozenBalDecrAmt().longValue()!=0l){	//判断冻结金额减少金额是否为空
+			 creditAccountService.updateFrozenBalDecr(creditAccount, vo.getFrozenBalDecrAmt(), balLastChangeTime);
+		}
+		//更新成功后数据库中version已经增加
+		creditAccount.setVersion(creditAccount.getVersion()+1);
+	}
+	
+	public void batchValidateParas(List<RealTimeAccountingVo> list){
+		if(list==null || list.size()==0){
+			LOGGER.error("调用实时账务接口失败，传入参数为空");
+			throw new BusinessUncheckedException(ErrorCode002Constants.PARAS_CHECK_NOT_PASS, "格式校验未通过");
+		}
+		
+		LOGGER.info("交易系统请求账务参数信息："+JSON.toJSONString(list));
+		
+		for(int i =0 ;i <list.size();i++){
+			/**加验证可用余额增加金额、可用金额减少金额、冻结金额增加金额、冻结金额减少金额  四个中有且只能有一个*/
+			List<Long> amountList = new ArrayList<Long>();
+			if(list.get(i).getAvlBalDecrAmt() != null){
+				amountList.add(list.get(i).getAvlBalDecrAmt());
+			}
+			
+			if(list.get(i).getAvlBalIncrAmt() != null){
+				amountList.add(list.get(i).getAvlBalIncrAmt());
+			}
+			
+			if(list.get(i).getFrozenBalDecrAmt() != null){
+				amountList.add(list.get(i).getFrozenBalDecrAmt());
+			}
+			
+			if(list.get(i).getFrozenBalIncrAmt() != null){
+				amountList.add(list.get(i).getFrozenBalIncrAmt());
+			}
+			
+			if(amountList.size() != 1){
+				LOGGER.error("所属业务交易请求编号:" + list.get(i).getTradeStepNo() + ";参数错误信息：请求参数中的四个金额中有且只能有一个");
+				throw new BusinessUncheckedException(ErrorCode002Constants.PARAS_CHECK_NOT_PASS,"所属业务交易请求编号："+list.get(i).getTradeStepNo() +"格式校验未通过;参数错误信息:请求参数中的四个金额中有且只能有一个");
+			}
+			
+			
+			String parasErrorInfo = ValidatorUtil.validateResult(list.get(i),RealTimeAccountingVo.class);
+			if(parasErrorInfo!=null && !parasErrorInfo.trim().equals("")){
+				LOGGER.error("所属业务交易请求编号:" + list.get(i).getTradeStepNo() + ";参数错误信息" + parasErrorInfo);
+				throw new BusinessUncheckedException(ErrorCode002Constants.PARAS_CHECK_NOT_PASS,"所属业务交易请求编号："+list.get(i).getTradeStepNo() +"格式校验未通过;参数错误信息:" + parasErrorInfo);
+			}
+		}
+	}
+	
+}

@@ -1,0 +1,1214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liantuo.trade.orm.mapper.TradeLedgerMapper" >
+  <resultMap id="BaseResultMap" type="com.liantuo.trade.orm.pojo.TradeLedger" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="ledger_no" property="ledgerNo" jdbcType="VARCHAR" />
+    <result column="gmt_created" property="gmtCreated" jdbcType="TIMESTAMP" />
+    <result column="gmt_effective" property="gmtEffective" jdbcType="TIMESTAMP" />
+    <result column="gmt_failed" property="gmtFailed" jdbcType="TIMESTAMP" />
+    <result column="core_merchant_no" property="coreMerchantNo" jdbcType="VARCHAR" />
+    <result column="fund_pool_no" property="fundPoolNo" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_1" property="merchantExtendField1" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_2" property="merchantExtendField2" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_3" property="merchantExtendField3" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_4" property="merchantExtendField4" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_5" property="merchantExtendField5" jdbcType="VARCHAR" />
+    <result column="trade_type" property="tradeType" jdbcType="VARCHAR" />
+    <result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+    <result column="gmt_trade_created" property="gmtTradeCreated" jdbcType="TIMESTAMP" />
+    <result column="create_req_type" property="createReqType" jdbcType="VARCHAR" />
+    <result column="create_req_no" property="createReqNo" jdbcType="VARCHAR" />
+    <result column="effective_req_type" property="effectiveReqType" jdbcType="VARCHAR" />
+    <result column="effective_req_no" property="effectiveReqNo" jdbcType="VARCHAR" />
+    <result column="fail_req_type" property="failReqType" jdbcType="VARCHAR" />
+    <result column="fail_req_no" property="failReqNo" jdbcType="VARCHAR" />
+    <result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR" />
+    <result column="out_trade_no_ext" property="outTradeNoExt" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="clear_channel" property="clearChannel" jdbcType="VARCHAR" />
+    <result column="clear_channel_attr_1" property="clearChannelAttr1" jdbcType="VARCHAR" />
+    <result column="clear_channel_attr_2" property="clearChannelAttr2" jdbcType="VARCHAR" />
+    <result column="clear_channel_attr_3" property="clearChannelAttr3" jdbcType="VARCHAR" />
+    <result column="clear_channel_attr_4" property="clearChannelAttr4" jdbcType="VARCHAR" />
+    <result column="clear_channel_attr_5" property="clearChannelAttr5" jdbcType="VARCHAR" />
+    <result column="clear_channel_attr_6" property="clearChannelAttr6" jdbcType="VARCHAR" />
+    <result column="payment_amount" property="paymentAmount" jdbcType="BIGINT" />
+    <result column="receive_amount" property="receiveAmount" jdbcType="BIGINT" />
+    <result column="gmt_success_clear_channel" property="gmtSuccessClearChannel" jdbcType="TIMESTAMP" />
+    <result column="third_trade_no" property="thirdTradeNo" jdbcType="VARCHAR" />
+    <result column="payment_trade_no" property="paymentTradeNo" jdbcType="VARCHAR" />
+    <result column="extend_field_1" property="extendField1" jdbcType="VARCHAR" />
+    <result column="extend_field_2" property="extendField2" jdbcType="VARCHAR" />
+    <result column="extend_field_3" property="extendField3" jdbcType="VARCHAR" />
+    <result column="extend_field_4" property="extendField4" jdbcType="VARCHAR" />
+    <result column="extend_field_5" property="extendField5" jdbcType="VARCHAR" />
+    <result column="extend_field_6" property="extendField6" jdbcType="VARCHAR" />
+    <result column="extend_field_7" property="extendField7" jdbcType="VARCHAR" />
+    <result column="extend_field_8" property="extendField8" jdbcType="VARCHAR" />
+    <result column="extend_field_9" property="extendField9" jdbcType="VARCHAR" />
+    <result column="extend_field_10" property="extendField10" jdbcType="VARCHAR" />
+    <result column="extend_field_11" property="extendField11" jdbcType="VARCHAR" />
+    <result column="extend_field_12" property="extendField12" jdbcType="VARCHAR" />
+    <result column="extend_field_13" property="extendField13" jdbcType="VARCHAR" />
+    <result column="extend_field_14" property="extendField14" jdbcType="VARCHAR" />
+    <result column="extend_field_15" property="extendField15" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, ledger_no, gmt_created, gmt_effective, gmt_failed, core_merchant_no, fund_pool_no, 
+    merchant_extend_field_1, merchant_extend_field_2, merchant_extend_field_3, merchant_extend_field_4, 
+    merchant_extend_field_5, trade_type, trade_no, gmt_trade_created, create_req_type, 
+    create_req_no, effective_req_type, effective_req_no, fail_req_type, fail_req_no, 
+    out_trade_no, out_trade_no_ext, status, clear_channel, clear_channel_attr_1, clear_channel_attr_2, 
+    clear_channel_attr_3, clear_channel_attr_4, clear_channel_attr_5, clear_channel_attr_6, 
+    payment_amount, receive_amount, gmt_success_clear_channel, third_trade_no, payment_trade_no, 
+    extend_field_1, extend_field_2, extend_field_3, extend_field_4, extend_field_5, extend_field_6, 
+    extend_field_7, extend_field_8, extend_field_9, extend_field_10, extend_field_11, 
+    extend_field_12, extend_field_13, extend_field_14, extend_field_15
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.liantuo.trade.orm.pojo.TradeLedgerExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from trade_ledger
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <!--  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from trade_ledger
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <insert id="insert" parameterType="com.liantuo.trade.orm.pojo.TradeLedger" >
+    insert into trade_ledger (id, ledger_no, gmt_created, 
+      gmt_effective, gmt_failed, core_merchant_no, 
+      fund_pool_no, merchant_extend_field_1, merchant_extend_field_2, 
+      merchant_extend_field_3, merchant_extend_field_4, 
+      merchant_extend_field_5, trade_type, trade_no, 
+      gmt_trade_created, create_req_type, create_req_no, 
+      effective_req_type, effective_req_no, fail_req_type, 
+      fail_req_no, out_trade_no, out_trade_no_ext, 
+      status, clear_channel, clear_channel_attr_1, 
+      clear_channel_attr_2, clear_channel_attr_3, clear_channel_attr_4, 
+      clear_channel_attr_5, clear_channel_attr_6, payment_amount, 
+      receive_amount, gmt_success_clear_channel, 
+      third_trade_no, payment_trade_no, extend_field_1, 
+      extend_field_2, extend_field_3, extend_field_4, 
+      extend_field_5, extend_field_6, extend_field_7, 
+      extend_field_8, extend_field_9, extend_field_10
+      )
+    values (#{id,jdbcType=BIGINT}, #{ledgerNo,jdbcType=VARCHAR}, NOW(), 
+      #{gmtEffective,jdbcType=TIMESTAMP}, #{gmtFailed,jdbcType=TIMESTAMP}, #{coreMerchantNo,jdbcType=VARCHAR}, 
+      #{fundPoolNo,jdbcType=VARCHAR}, #{merchantExtendField1,jdbcType=VARCHAR}, #{merchantExtendField2,jdbcType=VARCHAR}, 
+      #{merchantExtendField3,jdbcType=VARCHAR}, #{merchantExtendField4,jdbcType=VARCHAR}, 
+      #{merchantExtendField5,jdbcType=VARCHAR}, #{tradeType,jdbcType=VARCHAR}, #{tradeNo,jdbcType=VARCHAR}, 
+      #{gmtTradeCreated,jdbcType=TIMESTAMP}, #{createReqType,jdbcType=VARCHAR}, #{createReqNo,jdbcType=VARCHAR}, 
+      #{effectiveReqType,jdbcType=VARCHAR}, #{effectiveReqNo,jdbcType=VARCHAR}, #{failReqType,jdbcType=VARCHAR}, 
+      #{failReqNo,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, #{outTradeNoExt,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{clearChannel,jdbcType=VARCHAR}, #{clearChannelAttr1,jdbcType=VARCHAR}, 
+      #{clearChannelAttr2,jdbcType=VARCHAR}, #{clearChannelAttr3,jdbcType=VARCHAR}, #{clearChannelAttr4,jdbcType=VARCHAR}, 
+      #{clearChannelAttr5,jdbcType=VARCHAR}, #{clearChannelAttr6,jdbcType=VARCHAR}, #{paymentAmount,jdbcType=BIGINT}, 
+      #{receiveAmount,jdbcType=BIGINT}, #{gmtSuccessClearChannel,jdbcType=TIMESTAMP}, 
+      #{thirdTradeNo,jdbcType=VARCHAR}, #{paymentTradeNo,jdbcType=VARCHAR}, #{extendField1,jdbcType=VARCHAR}, 
+      #{extendField2,jdbcType=VARCHAR}, #{extendField3,jdbcType=VARCHAR}, #{extendField4,jdbcType=VARCHAR}, 
+      #{extendField5,jdbcType=VARCHAR}, #{extendField6,jdbcType=VARCHAR}, #{extendField7,jdbcType=VARCHAR}, 
+      #{extendField8,jdbcType=VARCHAR}, #{extendField9,jdbcType=VARCHAR}, #{extendField10,jdbcType=VARCHAR}
+      )
+  </insert>-->
+  <insert id="insertSelective" parameterType="com.liantuo.trade.orm.pojo.TradeLedger" >
+    insert into trade_ledger
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="ledgerNo != null" >
+        ledger_no,
+      </if>
+        gmt_created,
+        gmt_effective,
+      <if test="gmtFailed != null" >
+        gmt_failed,
+      </if>
+      <if test="coreMerchantNo != null" >
+        core_merchant_no,
+      </if>
+      <if test="fundPoolNo != null" >
+        fund_pool_no,
+      </if>
+      <if test="merchantExtendField1 != null" >
+        merchant_extend_field_1,
+      </if>
+      <if test="merchantExtendField2 != null" >
+        merchant_extend_field_2,
+      </if>
+      <if test="merchantExtendField3 != null" >
+        merchant_extend_field_3,
+      </if>
+      <if test="merchantExtendField4 != null" >
+        merchant_extend_field_4,
+      </if>
+      <if test="merchantExtendField5 != null" >
+        merchant_extend_field_5,
+      </if>
+      <if test="tradeType != null" >
+        trade_type,
+      </if>
+      <if test="tradeNo != null" >
+        trade_no,
+      </if>
+      <if test="gmtTradeCreated != null" >
+        gmt_trade_created,
+      </if>
+      <if test="createReqType != null" >
+        create_req_type,
+      </if>
+      <if test="createReqNo != null" >
+        create_req_no,
+      </if>
+      <if test="effectiveReqType != null" >
+        effective_req_type,
+      </if>
+      <if test="effectiveReqNo != null" >
+        effective_req_no,
+      </if>
+      <if test="failReqType != null" >
+        fail_req_type,
+      </if>
+      <if test="failReqNo != null" >
+        fail_req_no,
+      </if>
+      <if test="outTradeNo != null" >
+        out_trade_no,
+      </if>
+      <if test="outTradeNoExt != null" >
+        out_trade_no_ext,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="clearChannel != null" >
+        clear_channel,
+      </if>
+      <if test="clearChannelAttr1 != null" >
+        clear_channel_attr_1,
+      </if>
+      <if test="clearChannelAttr2 != null" >
+        clear_channel_attr_2,
+      </if>
+      <if test="clearChannelAttr3 != null" >
+        clear_channel_attr_3,
+      </if>
+      <if test="clearChannelAttr4 != null" >
+        clear_channel_attr_4,
+      </if>
+      <if test="clearChannelAttr5 != null" >
+        clear_channel_attr_5,
+      </if>
+      <if test="clearChannelAttr6 != null" >
+        clear_channel_attr_6,
+      </if>
+      <if test="paymentAmount != null" >
+        payment_amount,
+      </if>
+      <if test="receiveAmount != null" >
+        receive_amount,
+      </if>
+      <if test="gmtSuccessClearChannel != null" >
+        gmt_success_clear_channel,
+      </if>
+      <if test="thirdTradeNo != null" >
+        third_trade_no,
+      </if>
+      <if test="paymentTradeNo != null" >
+        payment_trade_no,
+      </if>
+      <if test="extendField1 != null" >
+        extend_field_1,
+      </if>
+      <if test="extendField2 != null" >
+        extend_field_2,
+      </if>
+      <if test="extendField3 != null" >
+        extend_field_3,
+      </if>
+      <if test="extendField4 != null" >
+        extend_field_4,
+      </if>
+      <if test="extendField5 != null" >
+        extend_field_5,
+      </if>
+      <if test="extendField6 != null" >
+        extend_field_6,
+      </if>
+      <if test="extendField7 != null" >
+        extend_field_7,
+      </if>
+      <if test="extendField8 != null" >
+        extend_field_8,
+      </if>
+      <if test="extendField9 != null" >
+        extend_field_9,
+      </if>
+      <if test="extendField10 != null" >
+        extend_field_10,
+      </if>
+      <if test="extendField11 != null" >
+        extend_field_11,
+
+      </if>
+      <if test="extendField12 != null" >
+        extend_field_12,
+
+      </if>
+
+
+      <if test="extendField13 != null" >
+        extend_field_13,
+
+      </if>
+      <if test="extendField14 != null" >
+        extend_field_14,
+
+      </if>
+      <if test="extendField15 != null" >
+        extend_field_15,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="ledgerNo != null" >
+        #{ledgerNo,jdbcType=VARCHAR},
+      </if>
+        NOW(),
+        NOW(),
+      <if test="gmtFailed != null" >
+        #{gmtFailed,jdbcType=TIMESTAMP},
+      </if>
+      <if test="coreMerchantNo != null" >
+        #{coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fundPoolNo != null" >
+        #{fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField1 != null" >
+        #{merchantExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField2 != null" >
+        #{merchantExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField3 != null" >
+        #{merchantExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField4 != null" >
+        #{merchantExtendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField5 != null" >
+        #{merchantExtendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeType != null" >
+        #{tradeType,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeNo != null" >
+        #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtTradeCreated != null" >
+        #{gmtTradeCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createReqType != null" >
+        #{createReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="createReqNo != null" >
+        #{createReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="effectiveReqType != null" >
+        #{effectiveReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="effectiveReqNo != null" >
+        #{effectiveReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="failReqType != null" >
+        #{failReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="failReqNo != null" >
+        #{failReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null" >
+        #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNoExt != null" >
+        #{outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannel != null" >
+        #{clearChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannelAttr1 != null" >
+        #{clearChannelAttr1,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannelAttr2 != null" >
+        #{clearChannelAttr2,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannelAttr3 != null" >
+        #{clearChannelAttr3,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannelAttr4 != null" >
+        #{clearChannelAttr4,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannelAttr5 != null" >
+        #{clearChannelAttr5,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannelAttr6 != null" >
+        #{clearChannelAttr6,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentAmount != null" >
+        #{paymentAmount,jdbcType=BIGINT},
+      </if>
+      <if test="receiveAmount != null" >
+        #{receiveAmount,jdbcType=BIGINT},
+      </if>
+      <if test="gmtSuccessClearChannel != null" >
+        #{gmtSuccessClearChannel,jdbcType=TIMESTAMP},
+      </if>
+      <if test="thirdTradeNo != null" >
+        #{thirdTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentTradeNo != null" >
+        #{paymentTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField1 != null" >
+        #{extendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField2 != null" >
+        #{extendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField3 != null" >
+        #{extendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField4 != null" >
+        #{extendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField5 != null" >
+        #{extendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField6 != null" >
+        #{extendField6,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField7 != null" >
+        #{extendField7,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField8 != null" >
+        #{extendField8,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField9 != null" >
+        #{extendField9,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField10 != null" >
+        #{extendField10,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField11 != null" >
+        #{extendField11,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField12 != null" >
+        #{extendField12,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField13 != null" >
+        #{extendField13,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField14 != null" >
+        #{extendField14,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField15 != null" >
+        #{extendField15,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <insert id="insertSelectiveBlank" parameterType="com.liantuo.trade.orm.pojo.TradeLedger" >
+    insert into trade_ledger
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="ledgerNo != null" >
+        ledger_no,
+      </if>
+      gmt_created,
+      <if test="gmtEffective != null" >
+        gmt_effective,
+      </if>
+      <if test="gmtFailed != null" >
+        gmt_failed,
+      </if>
+      <if test="coreMerchantNo != null" >
+        core_merchant_no,
+      </if>
+      <if test="fundPoolNo != null" >
+        fund_pool_no,
+      </if>
+      <if test="merchantExtendField1 != null" >
+        merchant_extend_field_1,
+      </if>
+      <if test="merchantExtendField2 != null" >
+        merchant_extend_field_2,
+      </if>
+      <if test="merchantExtendField3 != null" >
+        merchant_extend_field_3,
+      </if>
+      <if test="merchantExtendField4 != null" >
+        merchant_extend_field_4,
+      </if>
+      <if test="merchantExtendField5 != null" >
+        merchant_extend_field_5,
+      </if>
+      <if test="tradeType != null" >
+        trade_type,
+      </if>
+      <if test="tradeNo != null" >
+        trade_no,
+      </if>
+      <if test="gmtTradeCreated != null" >
+        gmt_trade_created,
+      </if>
+      <if test="createReqType != null" >
+        create_req_type,
+      </if>
+      <if test="createReqNo != null" >
+        create_req_no,
+      </if>
+      <if test="effectiveReqType != null" >
+        effective_req_type,
+      </if>
+      <if test="effectiveReqNo != null" >
+        effective_req_no,
+      </if>
+      <if test="failReqType != null" >
+        fail_req_type,
+      </if>
+      <if test="failReqNo != null" >
+        fail_req_no,
+      </if>
+      <if test="outTradeNo != null" >
+        out_trade_no,
+      </if>
+      <if test="outTradeNoExt != null" >
+        out_trade_no_ext,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="clearChannel != null" >
+        clear_channel,
+      </if>
+      <if test="clearChannelAttr1 != null" >
+        clear_channel_attr_1,
+      </if>
+      <if test="clearChannelAttr2 != null" >
+        clear_channel_attr_2,
+      </if>
+      <if test="clearChannelAttr3 != null" >
+        clear_channel_attr_3,
+      </if>
+      <if test="clearChannelAttr4 != null" >
+        clear_channel_attr_4,
+      </if>
+      <if test="clearChannelAttr5 != null" >
+        clear_channel_attr_5,
+      </if>
+      <if test="clearChannelAttr6 != null" >
+        clear_channel_attr_6,
+      </if>
+      <if test="paymentAmount != null" >
+        payment_amount,
+      </if>
+      <if test="receiveAmount != null" >
+        receive_amount,
+      </if>
+      <if test="gmtSuccessClearChannel != null" >
+        gmt_success_clear_channel,
+      </if>
+      <if test="thirdTradeNo != null" >
+        third_trade_no,
+      </if>
+      <if test="paymentTradeNo != null" >
+        payment_trade_no,
+      </if>
+      <if test="extendField1 != null" >
+        extend_field_1,
+      </if>
+      <if test="extendField2 != null" >
+        extend_field_2,
+      </if>
+      <if test="extendField3 != null" >
+        extend_field_3,
+      </if>
+      <if test="extendField4 != null" >
+        extend_field_4,
+      </if>
+      <if test="extendField5 != null" >
+        extend_field_5,
+      </if>
+      <if test="extendField6 != null" >
+        extend_field_6,
+      </if>
+      <if test="extendField7 != null" >
+        extend_field_7,
+      </if>
+      <if test="extendField8 != null" >
+        extend_field_8,
+      </if>
+      <if test="extendField9 != null" >
+        extend_field_9,
+      </if>
+      <if test="extendField10 != null" >
+        extend_field_10,
+      </if>
+       <if test="extendField11 != null" >
+        extend_field_11,
+
+      </if>
+      <if test="extendField12 != null" >
+        extend_field_12,
+
+      </if>
+
+
+      <if test="extendField13 != null" >
+        extend_field_13,
+
+      </if>
+      <if test="extendField14 != null" >
+        extend_field_14,
+
+      </if>
+      <if test="extendField15 != null" >
+        extend_field_15,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="ledgerNo != null" >
+        #{ledgerNo,jdbcType=VARCHAR},
+      </if>
+      NOW(),
+      <if test="gmtEffective != null" >
+        #{gmtEffective,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtFailed != null" >
+        #{gmtFailed,jdbcType=TIMESTAMP},
+      </if>
+      <if test="coreMerchantNo != null" >
+        #{coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fundPoolNo != null" >
+        #{fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField1 != null" >
+        #{merchantExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField2 != null" >
+        #{merchantExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField3 != null" >
+        #{merchantExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField4 != null" >
+        #{merchantExtendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField5 != null" >
+        #{merchantExtendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeType != null" >
+        #{tradeType,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeNo != null" >
+        #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtTradeCreated != null" >
+        #{gmtTradeCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createReqType != null" >
+        #{createReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="createReqNo != null" >
+        #{createReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="effectiveReqType != null" >
+        #{effectiveReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="effectiveReqNo != null" >
+        #{effectiveReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="failReqType != null" >
+        #{failReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="failReqNo != null" >
+        #{failReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null" >
+        #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNoExt != null" >
+        #{outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannel != null" >
+        #{clearChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannelAttr1 != null" >
+        #{clearChannelAttr1,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannelAttr2 != null" >
+        #{clearChannelAttr2,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannelAttr3 != null" >
+        #{clearChannelAttr3,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannelAttr4 != null" >
+        #{clearChannelAttr4,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannelAttr5 != null" >
+        #{clearChannelAttr5,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannelAttr6 != null" >
+        #{clearChannelAttr6,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentAmount != null" >
+        #{paymentAmount,jdbcType=BIGINT},
+      </if>
+      <if test="receiveAmount != null" >
+        #{receiveAmount,jdbcType=BIGINT},
+      </if>
+      <if test="gmtSuccessClearChannel != null" >
+        #{gmtSuccessClearChannel,jdbcType=TIMESTAMP},
+      </if>
+      <if test="thirdTradeNo != null" >
+        #{thirdTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentTradeNo != null" >
+        #{paymentTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField1 != null" >
+        #{extendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField2 != null" >
+        #{extendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField3 != null" >
+        #{extendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField4 != null" >
+        #{extendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField5 != null" >
+        #{extendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField6 != null" >
+        #{extendField6,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField7 != null" >
+        #{extendField7,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField8 != null" >
+        #{extendField8,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField9 != null" >
+        #{extendField9,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField10 != null" >
+        #{extendField10,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField11 != null" >
+        #{extendField11,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField12 != null" >
+        #{extendField12,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField13 != null" >
+        #{extendField13,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField14 != null" >
+        #{extendField14,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField15 != null" >
+        #{extendField15,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <!--  <update id="updateByExampleSelective" parameterType="map" >
+    update trade_ledger
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.ledgerNo != null" >
+        ledger_no = #{record.ledgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gmtCreated != null" >
+        gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.gmtEffective != null" >
+        gmt_effective = #{record.gmtEffective,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.gmtFailed != null" >
+        gmt_failed = #{record.gmtFailed,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.coreMerchantNo != null" >
+        core_merchant_no = #{record.coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fundPoolNo != null" >
+        fund_pool_no = #{record.fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField1 != null" >
+        merchant_extend_field_1 = #{record.merchantExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField2 != null" >
+        merchant_extend_field_2 = #{record.merchantExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField3 != null" >
+        merchant_extend_field_3 = #{record.merchantExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField4 != null" >
+        merchant_extend_field_4 = #{record.merchantExtendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField5 != null" >
+        merchant_extend_field_5 = #{record.merchantExtendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tradeType != null" >
+        trade_type = #{record.tradeType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tradeNo != null" >
+        trade_no = #{record.tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gmtTradeCreated != null" >
+        gmt_trade_created = #{record.gmtTradeCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createReqType != null" >
+        create_req_type = #{record.createReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createReqNo != null" >
+        create_req_no = #{record.createReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.effectiveReqType != null" >
+        effective_req_type = #{record.effectiveReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.effectiveReqNo != null" >
+        effective_req_no = #{record.effectiveReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.failReqType != null" >
+        fail_req_type = #{record.failReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.failReqNo != null" >
+        fail_req_no = #{record.failReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.outTradeNo != null" >
+        out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.outTradeNoExt != null" >
+        out_trade_no_ext = #{record.outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=VARCHAR},
+      </if>
+      <if test="record.clearChannel != null" >
+        clear_channel = #{record.clearChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.clearChannelAttr1 != null" >
+        clear_channel_attr_1 = #{record.clearChannelAttr1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.clearChannelAttr2 != null" >
+        clear_channel_attr_2 = #{record.clearChannelAttr2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.clearChannelAttr3 != null" >
+        clear_channel_attr_3 = #{record.clearChannelAttr3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.clearChannelAttr4 != null" >
+        clear_channel_attr_4 = #{record.clearChannelAttr4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.clearChannelAttr5 != null" >
+        clear_channel_attr_5 = #{record.clearChannelAttr5,jdbcType=VARCHAR},
+      </if>
+      <if test="record.clearChannelAttr6 != null" >
+        clear_channel_attr_6 = #{record.clearChannelAttr6,jdbcType=VARCHAR},
+      </if>
+      <if test="record.paymentAmount != null" >
+        payment_amount = #{record.paymentAmount,jdbcType=BIGINT},
+      </if>
+      <if test="record.receiveAmount != null" >
+        receive_amount = #{record.receiveAmount,jdbcType=BIGINT},
+      </if>
+      <if test="record.gmtSuccessClearChannel != null" >
+        gmt_success_clear_channel = #{record.gmtSuccessClearChannel,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.thirdTradeNo != null" >
+        third_trade_no = #{record.thirdTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.paymentTradeNo != null" >
+        payment_trade_no = #{record.paymentTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extendField1 != null" >
+        extend_field_1 = #{record.extendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extendField2 != null" >
+        extend_field_2 = #{record.extendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extendField3 != null" >
+        extend_field_3 = #{record.extendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extendField4 != null" >
+        extend_field_4 = #{record.extendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extendField5 != null" >
+        extend_field_5 = #{record.extendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extendField6 != null" >
+        extend_field_6 = #{record.extendField6,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extendField7 != null" >
+        extend_field_7 = #{record.extendField7,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extendField8 != null" >
+        extend_field_8 = #{record.extendField8,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extendField9 != null" >
+        extend_field_9 = #{record.extendField9,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extendField10 != null" >
+        extend_field_10 = #{record.extendField10,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update trade_ledger
+    set id = #{record.id,jdbcType=BIGINT},
+      ledger_no = #{record.ledgerNo,jdbcType=VARCHAR},
+      gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP},
+      gmt_effective = #{record.gmtEffective,jdbcType=TIMESTAMP},
+      gmt_failed = #{record.gmtFailed,jdbcType=TIMESTAMP},
+      core_merchant_no = #{record.coreMerchantNo,jdbcType=VARCHAR},
+      fund_pool_no = #{record.fundPoolNo,jdbcType=VARCHAR},
+      merchant_extend_field_1 = #{record.merchantExtendField1,jdbcType=VARCHAR},
+      merchant_extend_field_2 = #{record.merchantExtendField2,jdbcType=VARCHAR},
+      merchant_extend_field_3 = #{record.merchantExtendField3,jdbcType=VARCHAR},
+      merchant_extend_field_4 = #{record.merchantExtendField4,jdbcType=VARCHAR},
+      merchant_extend_field_5 = #{record.merchantExtendField5,jdbcType=VARCHAR},
+      trade_type = #{record.tradeType,jdbcType=VARCHAR},
+      trade_no = #{record.tradeNo,jdbcType=VARCHAR},
+      gmt_trade_created = #{record.gmtTradeCreated,jdbcType=TIMESTAMP},
+      create_req_type = #{record.createReqType,jdbcType=VARCHAR},
+      create_req_no = #{record.createReqNo,jdbcType=VARCHAR},
+      effective_req_type = #{record.effectiveReqType,jdbcType=VARCHAR},
+      effective_req_no = #{record.effectiveReqNo,jdbcType=VARCHAR},
+      fail_req_type = #{record.failReqType,jdbcType=VARCHAR},
+      fail_req_no = #{record.failReqNo,jdbcType=VARCHAR},
+      out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
+      out_trade_no_ext = #{record.outTradeNoExt,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=VARCHAR},
+      clear_channel = #{record.clearChannel,jdbcType=VARCHAR},
+      clear_channel_attr_1 = #{record.clearChannelAttr1,jdbcType=VARCHAR},
+      clear_channel_attr_2 = #{record.clearChannelAttr2,jdbcType=VARCHAR},
+      clear_channel_attr_3 = #{record.clearChannelAttr3,jdbcType=VARCHAR},
+      clear_channel_attr_4 = #{record.clearChannelAttr4,jdbcType=VARCHAR},
+      clear_channel_attr_5 = #{record.clearChannelAttr5,jdbcType=VARCHAR},
+      clear_channel_attr_6 = #{record.clearChannelAttr6,jdbcType=VARCHAR},
+      payment_amount = #{record.paymentAmount,jdbcType=BIGINT},
+      receive_amount = #{record.receiveAmount,jdbcType=BIGINT},
+      gmt_success_clear_channel = #{record.gmtSuccessClearChannel,jdbcType=TIMESTAMP},
+      third_trade_no = #{record.thirdTradeNo,jdbcType=VARCHAR},
+      payment_trade_no = #{record.paymentTradeNo,jdbcType=VARCHAR},
+      extend_field_1 = #{record.extendField1,jdbcType=VARCHAR},
+      extend_field_2 = #{record.extendField2,jdbcType=VARCHAR},
+      extend_field_3 = #{record.extendField3,jdbcType=VARCHAR},
+      extend_field_4 = #{record.extendField4,jdbcType=VARCHAR},
+      extend_field_5 = #{record.extendField5,jdbcType=VARCHAR},
+      extend_field_6 = #{record.extendField6,jdbcType=VARCHAR},
+      extend_field_7 = #{record.extendField7,jdbcType=VARCHAR},
+      extend_field_8 = #{record.extendField8,jdbcType=VARCHAR},
+      extend_field_9 = #{record.extendField9,jdbcType=VARCHAR},
+      extend_field_10 = #{record.extendField10,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>-->
+  <update id="updateByPrimaryKeySelective" parameterType="com.liantuo.trade.orm.pojo.TradeLedger" >
+    update trade_ledger
+    <set >
+      <if test="ledgerNo != null" >
+        ledger_no = #{ledgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreated != null" >
+        gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtEffective != null" >
+        gmt_effective = #{gmtEffective,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtFailed != null" >
+        gmt_failed = #{gmtFailed,jdbcType=TIMESTAMP},
+      </if>
+      <if test="coreMerchantNo != null" >
+        core_merchant_no = #{coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fundPoolNo != null" >
+        fund_pool_no = #{fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField1 != null" >
+        merchant_extend_field_1 = #{merchantExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField2 != null" >
+        merchant_extend_field_2 = #{merchantExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField3 != null" >
+        merchant_extend_field_3 = #{merchantExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField4 != null" >
+        merchant_extend_field_4 = #{merchantExtendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField5 != null" >
+        merchant_extend_field_5 = #{merchantExtendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeType != null" >
+        trade_type = #{tradeType,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeNo != null" >
+        trade_no = #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtTradeCreated != null" >
+        gmt_trade_created = #{gmtTradeCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createReqType != null" >
+        create_req_type = #{createReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="createReqNo != null" >
+        create_req_no = #{createReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="effectiveReqType != null" >
+        effective_req_type = #{effectiveReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="effectiveReqNo != null" >
+        effective_req_no = #{effectiveReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="failReqType != null" >
+        fail_req_type = #{failReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="failReqNo != null" >
+        fail_req_no = #{failReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null" >
+        out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNoExt != null" >
+        out_trade_no_ext = #{outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannel != null" >
+        clear_channel = #{clearChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannelAttr1 != null" >
+        clear_channel_attr_1 = #{clearChannelAttr1,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannelAttr2 != null" >
+        clear_channel_attr_2 = #{clearChannelAttr2,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannelAttr3 != null" >
+        clear_channel_attr_3 = #{clearChannelAttr3,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannelAttr4 != null" >
+        clear_channel_attr_4 = #{clearChannelAttr4,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannelAttr5 != null" >
+        clear_channel_attr_5 = #{clearChannelAttr5,jdbcType=VARCHAR},
+      </if>
+      <if test="clearChannelAttr6 != null" >
+        clear_channel_attr_6 = #{clearChannelAttr6,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentAmount != null" >
+        payment_amount = #{paymentAmount,jdbcType=BIGINT},
+      </if>
+      <if test="receiveAmount != null" >
+        receive_amount = #{receiveAmount,jdbcType=BIGINT},
+      </if>
+      <if test="gmtSuccessClearChannel != null" >
+        gmt_success_clear_channel = #{gmtSuccessClearChannel,jdbcType=TIMESTAMP},
+      </if>
+      <if test="thirdTradeNo != null" >
+        third_trade_no = #{thirdTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentTradeNo != null" >
+        payment_trade_no = #{paymentTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField1 != null" >
+        extend_field_1 = #{extendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField2 != null" >
+        extend_field_2 = #{extendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField3 != null" >
+        extend_field_3 = #{extendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField4 != null" >
+        extend_field_4 = #{extendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField5 != null" >
+        extend_field_5 = #{extendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField6 != null" >
+        extend_field_6 = #{extendField6,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField7 != null" >
+        extend_field_7 = #{extendField7,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField8 != null" >
+        extend_field_8 = #{extendField8,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField9 != null" >
+        extend_field_9 = #{extendField9,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField10 != null" >
+        extend_field_10 = #{extendField10,jdbcType=VARCHAR},
+      </if>
+       <if test="extendField11 != null" >
+        extend_field_11 = #{extendField11,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField12 != null" >
+        extend_field_12 = #{extendField12,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField13 != null" >
+        extend_field_13 = #{extendField13,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField14 != null" >
+        extend_field_14 = #{extendField14,jdbcType=VARCHAR},
+      </if>
+      <if test="extendField15 != null" >
+        extend_field_15 = #{extendField15,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <!--  <update id="updateByPrimaryKey" parameterType="com.liantuo.trade.orm.pojo.TradeLedger" >
+    update trade_ledger
+    set ledger_no = #{ledgerNo,jdbcType=VARCHAR},
+      gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      gmt_effective = #{gmtEffective,jdbcType=TIMESTAMP},
+      gmt_failed = #{gmtFailed,jdbcType=TIMESTAMP},
+      core_merchant_no = #{coreMerchantNo,jdbcType=VARCHAR},
+      fund_pool_no = #{fundPoolNo,jdbcType=VARCHAR},
+      merchant_extend_field_1 = #{merchantExtendField1,jdbcType=VARCHAR},
+      merchant_extend_field_2 = #{merchantExtendField2,jdbcType=VARCHAR},
+      merchant_extend_field_3 = #{merchantExtendField3,jdbcType=VARCHAR},
+      merchant_extend_field_4 = #{merchantExtendField4,jdbcType=VARCHAR},
+      merchant_extend_field_5 = #{merchantExtendField5,jdbcType=VARCHAR},
+      trade_type = #{tradeType,jdbcType=VARCHAR},
+      trade_no = #{tradeNo,jdbcType=VARCHAR},
+      gmt_trade_created = #{gmtTradeCreated,jdbcType=TIMESTAMP},
+      create_req_type = #{createReqType,jdbcType=VARCHAR},
+      create_req_no = #{createReqNo,jdbcType=VARCHAR},
+      effective_req_type = #{effectiveReqType,jdbcType=VARCHAR},
+      effective_req_no = #{effectiveReqNo,jdbcType=VARCHAR},
+      fail_req_type = #{failReqType,jdbcType=VARCHAR},
+      fail_req_no = #{failReqNo,jdbcType=VARCHAR},
+      out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      out_trade_no_ext = #{outTradeNoExt,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      clear_channel = #{clearChannel,jdbcType=VARCHAR},
+      clear_channel_attr_1 = #{clearChannelAttr1,jdbcType=VARCHAR},
+      clear_channel_attr_2 = #{clearChannelAttr2,jdbcType=VARCHAR},
+      clear_channel_attr_3 = #{clearChannelAttr3,jdbcType=VARCHAR},
+      clear_channel_attr_4 = #{clearChannelAttr4,jdbcType=VARCHAR},
+      clear_channel_attr_5 = #{clearChannelAttr5,jdbcType=VARCHAR},
+      clear_channel_attr_6 = #{clearChannelAttr6,jdbcType=VARCHAR},
+      payment_amount = #{paymentAmount,jdbcType=BIGINT},
+      receive_amount = #{receiveAmount,jdbcType=BIGINT},
+      gmt_success_clear_channel = #{gmtSuccessClearChannel,jdbcType=TIMESTAMP},
+      third_trade_no = #{thirdTradeNo,jdbcType=VARCHAR},
+      payment_trade_no = #{paymentTradeNo,jdbcType=VARCHAR},
+      extend_field_1 = #{extendField1,jdbcType=VARCHAR},
+      extend_field_2 = #{extendField2,jdbcType=VARCHAR},
+      extend_field_3 = #{extendField3,jdbcType=VARCHAR},
+      extend_field_4 = #{extendField4,jdbcType=VARCHAR},
+      extend_field_5 = #{extendField5,jdbcType=VARCHAR},
+      extend_field_6 = #{extendField6,jdbcType=VARCHAR},
+      extend_field_7 = #{extendField7,jdbcType=VARCHAR},
+      extend_field_8 = #{extendField8,jdbcType=VARCHAR},
+      extend_field_9 = #{extendField9,jdbcType=VARCHAR},
+      extend_field_10 = #{extendField10,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>-->
+</mapper>

@@ -1,0 +1,326 @@
+package com.liantuo.deposit.advanceaccount.bus.service.impl;
+
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.liantuo.deposit.advanceaccount.bus.service.CreditAccountTradeHistoryService;
+import com.liantuo.deposit.advanceaccount.bus.vo.AccountingRecord;
+import com.liantuo.deposit.advanceaccount.bus.vo.RealTimeAccountingVo;
+import com.liantuo.deposit.advanceaccount.orm.mapper.CreditAccountMapper;
+import com.liantuo.deposit.advanceaccount.orm.mapper.CreditAccountTradeHistoryMapper;
+import com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccount;
+import com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccountTradeHistory;
+import com.liantuo.deposit.advanceaccount.web.vo.req.SingleAccountHisPageQueryReqVo;
+import com.liantuo.deposit.advanceaccount.web.vo.req.SingleAccountHisQueryReqVo;
+import com.liantuo.deposit.advanceaccount.web.vo.rsp.SingleAccountAccountRecord;
+import com.liantuo.deposit.advanceaccount.web.vo.rsp.SingleAccountAccountingRecord;
+import com.liantuo.deposit.advanceaccount.web.vo.rsp.SingleAccountHisPageQueryRspVo;
+import com.liantuo.deposit.common.constants.CreditAccountTradeHistoryConstants;
+import com.liantuo.deposit.common.constants.ErrorCodeConstants;
+import com.liantuo.deposit.common.constants.errorcode.ErrorCode003Constants;
+import com.liantuo.trade.common.util.amount.AmountUtils;
+import com.liantuo.trade.exception.AmountConvertException;
+import com.liantuo.trade.exception.BusinessUncheckedException;
+import com.liantuo.trade.seqno.IdFactory;
+
+@Service
+public class CreditAccountTradeHistoryServiceImpl implements
+		CreditAccountTradeHistoryService {
+	
+	@Resource(name = "idFactoryDepositRecordNum")
+    private IdFactory idFactory;
+	private static final Logger LOGGER = LoggerFactory.getLogger(CreditAccountTradeHistoryServiceImpl.class);
+	@Autowired
+	private CreditAccountMapper creditAccountMapper;
+	@Autowired
+	private CreditAccountTradeHistoryMapper creditAccountTradeHistoryMapper;
+
+	@Override
+	public AccountingRecord insertCaTradeHistory(RealTimeAccountingVo vo,CreditAccount creditAccount
+			,Date balLastChangeTime) throws BusinessUncheckedException {
+		LOGGER.info("记账务历史记录开始,所属业务交易请求编号:"+vo.getTradeStepNo());
+		AccountingRecord accountingRecord ;
+		CreditAccountTradeHistory creditAccountTradeHistory = new CreditAccountTradeHistory();
+		
+		try {
+			
+			creditAccountTradeHistory.setDepositRecordNo(generateDepostiRecordNo());//生成账务历史编号(提取公共方法)
+			creditAccountTradeHistory.setAccountNo(vo.getAccountNo());//账户编号
+			creditAccountTradeHistory.setCoreMerchantNo(vo.getCoreMerchantNo());//核心商户编号
+			creditAccountTradeHistory.setPoolNo(creditAccount.getPoolNo());//资金池编号
+			creditAccountTradeHistory.setVersion(creditAccount.getVersion());//账户变动版本号
+			creditAccountTradeHistory.setGmtCreated(balLastChangeTime);//账户变动日期时间 
+			if(vo.getReservedFields1()!=null){
+				creditAccountTradeHistory.setReservedFields1(vo.getReservedFields1());//用户账务历史保留字段1
+			}
+			
+			if(vo.getReservedFields2()!=null){
+				creditAccountTradeHistory.setReservedFields2(vo.getReservedFields2());
+			}
+			
+			if(vo.getReservedFields3()!=null){
+				creditAccountTradeHistory.setReservedFields3(vo.getReservedFields3());
+			}
+			
+			if(vo.getReservedFields4()!=null){
+				creditAccountTradeHistory.setReservedFields4(vo.getReservedFields4());
+			}
+			
+			if(vo.getReservedFields5()!=null){
+				creditAccountTradeHistory.setReservedFields5(vo.getReservedFields5());
+			}
+			
+			creditAccountTradeHistory.setTradeCode(vo.getTradeCode());//所属业务交易类型
+			creditAccountTradeHistory.setTradeNo(vo.getTradeNo());//所属业务交易编号
+			creditAccountTradeHistory.setFrozenTradeCode(vo.getFrozenTradeCode());//所属业务冻结交易类型
+			creditAccountTradeHistory.setFrozenTradeNo(vo.getFrozenTradeNo());//所属业务冻结交易编号
+			creditAccountTradeHistory.setTradeGmtCreated(vo.getTradeGmtCreated());//所属业务交易创建日期
+			creditAccountTradeHistory.setTradeReqCode(vo.getTradeReqCode());//所属业务交易请求类型
+			creditAccountTradeHistory.setTradeStepNo(vo.getTradeStepNo());//所属业务交易请求编号
+			creditAccountTradeHistory.setSequenceNo(vo.getSequenceNo());//交易发起方业务系统订单号
+			creditAccountTradeHistory.setRmk(vo.getRmk());
+			
+			if(vo.getAvlBalIncrAmt()!=null ){//判断可用余额增加金额是否为空
+				creditAccountTradeHistory.setAvlBalIncrAmt(vo.getAvlBalIncrAmt());
+				creditAccountTradeHistory.setAvlBalDecrAmt(Long.valueOf(0));
+				creditAccountTradeHistory.setFrozenBalDecrAmt(Long.valueOf(0));
+				creditAccountTradeHistory.setFrozenBalIncrAmt(Long.valueOf(0));
+				creditAccountTradeHistory.setAvailibleBalance(AmountUtils.bizAmountConvertToLong(creditAccount.getAvailableBalance().toString()));
+				creditAccountTradeHistory.setFrozenBalance(AmountUtils.bizAmountConvertToLong(creditAccount.getFreezenBalance().toString()));
+				creditAccountTradeHistory.setApplicantAgencyId(CreditAccountTradeHistoryConstants.SUB_ACCOUNT_TYPE_AVL);//子账户类型
+			}
+			
+			if(vo.getAvlBalDecrAmt()!=null ){
+				creditAccountTradeHistory.setAvlBalDecrAmt(vo.getAvlBalDecrAmt());
+				creditAccountTradeHistory.setAvlBalIncrAmt(Long.valueOf(0));
+				creditAccountTradeHistory.setFrozenBalDecrAmt(Long.valueOf(0));
+				creditAccountTradeHistory.setFrozenBalIncrAmt(Long.valueOf(0));
+				creditAccountTradeHistory.setAvailibleBalance(AmountUtils.bizAmountConvertToLong(creditAccount.getAvailableBalance().toString()));
+				creditAccountTradeHistory.setFrozenBalance(AmountUtils.bizAmountConvertToLong(creditAccount.getFreezenBalance().toString()));
+				creditAccountTradeHistory.setApplicantAgencyId(CreditAccountTradeHistoryConstants.SUB_ACCOUNT_TYPE_AVL);//子账户类型
+			}
+			
+			if(vo.getFrozenBalIncrAmt()!=null ){
+				creditAccountTradeHistory.setFrozenBalIncrAmt(vo.getFrozenBalIncrAmt());
+				creditAccountTradeHistory.setAvlBalIncrAmt(Long.valueOf(0));
+				creditAccountTradeHistory.setAvlBalDecrAmt(Long.valueOf(0));
+				creditAccountTradeHistory.setFrozenBalDecrAmt(Long.valueOf(0));
+				creditAccountTradeHistory.setFrozenBalance(AmountUtils.bizAmountConvertToLong(creditAccount.getFreezenBalance().toString()));
+				creditAccountTradeHistory.setAvailibleBalance(AmountUtils.bizAmountConvertToLong(creditAccount.getAvailableBalance().toString()));
+				creditAccountTradeHistory.setApplicantAgencyId(CreditAccountTradeHistoryConstants.SUB_ACCOUNT_TYPE_FROZEEN);//子账户类型
+			}
+			
+			if(vo.getFrozenBalDecrAmt()!=null ){
+				creditAccountTradeHistory.setFrozenBalDecrAmt(vo.getFrozenBalDecrAmt());
+				creditAccountTradeHistory.setFrozenBalIncrAmt(Long.valueOf(0));
+				creditAccountTradeHistory.setAvlBalIncrAmt(Long.valueOf(0));
+				creditAccountTradeHistory.setAvlBalDecrAmt(Long.valueOf(0));
+				creditAccountTradeHistory.setFrozenBalance(AmountUtils.bizAmountConvertToLong(creditAccount.getFreezenBalance().toString()));
+				creditAccountTradeHistory.setAvailibleBalance(AmountUtils.bizAmountConvertToLong(creditAccount.getAvailableBalance().toString()));
+				creditAccountTradeHistory.setApplicantAgencyId(CreditAccountTradeHistoryConstants.SUB_ACCOUNT_TYPE_FROZEEN);//子账户类型
+			}
+			
+			creditAccountTradeHistory.setMerchantNo(creditAccount.getMerchantNo());
+//			creditAccountTradeHistory.setSysTime(new Date());// 修改为插入数据库时间
+			creditAccountTradeHistory.setDataFlag(CreditAccountTradeHistoryConstants.DATA_FLAG_NEWEST);
+			
+			creditAccountTradeHistory = this.insertOldCaTradeHistory(creditAccountTradeHistory, creditAccount,vo);//维护老版账务流水记录
+			
+			if(creditAccountTradeHistoryMapper.insert(creditAccountTradeHistory)>0){
+				LOGGER.info("记账务流水记录成功,所属业务交易请求编号:"+creditAccountTradeHistory.getTradeStepNo());
+			}else {
+				LOGGER.info("记录账务流水记录失败，所属业务交易请求编号:"+creditAccountTradeHistory.getTradeStepNo());
+				throw new BusinessUncheckedException(ErrorCodeConstants.SYSTEM_EXCEPTION, "系统异常");
+				
+			}
+			accountingRecord = this.generateAccountingRecord(creditAccount, creditAccountTradeHistory);//生成交易系统需要的账务历史
+		} catch (AmountConvertException e) {
+			LOGGER.error("金额转换异常，账户"+vo.getAccountNo());
+			throw new BusinessUncheckedException(ErrorCodeConstants.SYSTEM_EXCEPTION, "系统异常");
+		} catch (NumberFormatException e) {
+			LOGGER.error(e.getMessage());
+			throw new BusinessUncheckedException(ErrorCodeConstants.SYSTEM_EXCEPTION, "系统异常");
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+			throw new BusinessUncheckedException(ErrorCodeConstants.SYSTEM_EXCEPTION, "系统异常");
+		}
+		
+		return accountingRecord;
+	}
+
+	@Override
+	public CreditAccountTradeHistory insertOldCaTradeHistory(
+			CreditAccountTradeHistory creditAccountTradeHistory,CreditAccount creditAccount,RealTimeAccountingVo vo) throws NumberFormatException, AmountConvertException {
+		LOGGER.info("维护老版账务流水记录开始，所属业务交易请求编号:"+creditAccountTradeHistory.getTradeStepNo());
+		creditAccountTradeHistory.setCreditAccountId(creditAccount.getId());
+		
+		if(creditAccountTradeHistory.getAvlBalIncrAmt() !=null && creditAccountTradeHistory.getAvlBalIncrAmt()!=0){
+			creditAccountTradeHistory.setIncome(Double.valueOf(AmountUtils.longConvertToBizAmount(creditAccountTradeHistory.getAvlBalIncrAmt())));
+		}else if(creditAccountTradeHistory.getFrozenBalIncrAmt() !=null &&creditAccountTradeHistory.getFrozenBalIncrAmt()!=0){
+			creditAccountTradeHistory.setIncome(Double.valueOf(AmountUtils.longConvertToBizAmount(creditAccountTradeHistory.getFrozenBalIncrAmt())));	
+		}else {
+			creditAccountTradeHistory.setIncome(0.0);
+		}
+		
+		if(creditAccountTradeHistory.getAvlBalDecrAmt() !=null &&creditAccountTradeHistory.getAvlBalDecrAmt()!=0){
+			creditAccountTradeHistory.setPayout(Double.valueOf(AmountUtils.longConvertToBizAmount(creditAccountTradeHistory.getAvlBalDecrAmt())));
+		}else if(creditAccountTradeHistory.getFrozenBalDecrAmt() !=null &&creditAccountTradeHistory.getFrozenBalDecrAmt()!=0){
+			creditAccountTradeHistory.setPayout(Double.valueOf(AmountUtils.longConvertToBizAmount(creditAccountTradeHistory.getFrozenBalDecrAmt())));	
+		}else {
+			creditAccountTradeHistory.setPayout(0.0);
+		}
+		
+		creditAccountTradeHistory.setBalance(creditAccount.getTotalBalance());
+		creditAccountTradeHistory.setCreditLine(0.0);//授信余额
+		creditAccountTradeHistory.setTradeId(0);//交易记录
+		creditAccountTradeHistory.setCreatorNo(CreditAccountTradeHistoryConstants.CREATOR_NO);//创建人编号
+		creditAccountTradeHistory.setOwnerCodeName(creditAccount.getMerchantNo());//账户所属商户代码
+		creditAccountTradeHistory.setSuperiorOpenId(creditAccount.getSuperiorOpenId());//上级预存款id（从账户取）
+		creditAccountTradeHistory.setTradeType(
+				CreditAccountTradeHistoryConstants.TRADE_REQ_CODE_DIPOSIT_TRADE_TYPE.get(vo.getTradeReqCode()));//账务类型
+		creditAccountTradeHistory.setCreatedCn(CreditAccountTradeHistoryConstants.CREATOR_NO);
+		return creditAccountTradeHistory;
+	}
+	
+	public AccountingRecord generateAccountingRecord(CreditAccount creditAccount,CreditAccountTradeHistory creditAccountTradeHistory)throws Exception{
+		AccountingRecord accountingRecord = new AccountingRecord();
+		
+		accountingRecord.setDepositRecordNo(creditAccountTradeHistory.getDepositRecordNo());
+		accountingRecord.setAccountNo(creditAccountTradeHistory.getAccountNo());
+		accountingRecord.setCoreMerchantNo(creditAccount.getCoreMerchantNo());
+		accountingRecord.setPoolNo(creditAccount.getPoolNo());
+		accountingRecord.setVersion(creditAccount.getVersion());
+		if(creditAccountTradeHistory.getReservedFields1()!=null){
+			accountingRecord.setReservedFields1(creditAccountTradeHistory.getReservedFields1());
+		}
+		
+		if(creditAccountTradeHistory.getReservedFields2()!=null){
+			accountingRecord.setReservedFields2(creditAccountTradeHistory.getReservedFields2());
+		}
+		
+		if(creditAccountTradeHistory.getReservedFields3()!=null){
+			accountingRecord.setReservedFields3(creditAccountTradeHistory.getReservedFields3());
+		}
+		
+		if(creditAccountTradeHistory.getReservedFields4()!=null){
+			accountingRecord.setReservedFields4(creditAccountTradeHistory.getReservedFields4());
+		}
+		
+		if(creditAccountTradeHistory.getReservedFields5()!=null){
+			accountingRecord.setReservedFields5(creditAccountTradeHistory.getReservedFields5());
+		}
+		
+		accountingRecord.setTradeCode(creditAccountTradeHistory.getTradeCode());
+		accountingRecord.setTradeNo(creditAccountTradeHistory.getTradeNo());
+		accountingRecord.setTradeGmtCreated(creditAccountTradeHistory.getTradeGmtCreated());
+		accountingRecord.setTradeReqCode(creditAccountTradeHistory.getTradeReqCode());
+		accountingRecord.setTradeStepNo(creditAccountTradeHistory.getTradeStepNo());
+		accountingRecord.setSequenceNo(creditAccountTradeHistory.getSequenceNo());
+		accountingRecord.setRmk(creditAccountTradeHistory.getRmk());
+		
+		if(creditAccountTradeHistory.getAvlBalIncrAmt()!= null && creditAccountTradeHistory.getAvlBalIncrAmt()!=0){
+			accountingRecord.setAvlBalIncrAmt(creditAccountTradeHistory.getAvlBalIncrAmt());
+			accountingRecord.setAvlBal(AmountUtils.bizAmountConvertToLong(creditAccount.getAvailableBalance().toString())+creditAccountTradeHistory.getAvlBalIncrAmt());
+		}
+		
+		if(creditAccountTradeHistory.getAvlBalDecrAmt()!=null && creditAccountTradeHistory.getAvlBalDecrAmt()!=0){
+			accountingRecord.setAvlBalDecrAmt(creditAccountTradeHistory.getAvlBalDecrAmt());
+			accountingRecord.setAvlBal(AmountUtils.bizAmountConvertToLong(creditAccount.getAvailableBalance().toString())-creditAccountTradeHistory.getAvlBalDecrAmt());
+		}
+		
+		if(creditAccountTradeHistory.getFrozenBalIncrAmt()!=null && creditAccountTradeHistory.getFrozenBalIncrAmt()!=0){
+			accountingRecord.setFrozenBalIncrAmt(creditAccountTradeHistory.getFrozenBalIncrAmt());
+			accountingRecord.setFrozenBal(AmountUtils.bizAmountConvertToLong(creditAccount.getFreezenBalance().toString())+creditAccountTradeHistory.getFrozenBalIncrAmt());
+		}
+		
+		if(creditAccountTradeHistory.getFrozenBalDecrAmt() !=null && creditAccountTradeHistory.getFrozenBalDecrAmt()!=0){
+			accountingRecord.setFrozenBalDecrAmt(creditAccountTradeHistory.getFrozenBalDecrAmt());
+			accountingRecord.setFrozenBal(AmountUtils.bizAmountConvertToLong(creditAccount.getFreezenBalance().toString())-creditAccountTradeHistory.getFrozenBalDecrAmt());
+		}
+		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		CreditAccountTradeHistory vo = creditAccountTradeHistoryMapper.selectByPrimaryKey(creditAccountTradeHistory.getId());
+		accountingRecord.setSysTime(Timestamp.valueOf(sdf.format(vo.getSysTime())));
+		accountingRecord.setGmtCreated(vo.getGmtCreated());
+		accountingRecord.setDataFlag(CreditAccountTradeHistoryConstants.DATA_FLAG_NEWEST);
+		accountingRecord.setMerchantNo(creditAccount.getMerchantNo());
+		return accountingRecord;
+	}
+
+	@Override
+	public SingleAccountHisPageQueryRspVo singleAccountHisPageQuery(
+			SingleAccountHisPageQueryReqVo vo) {
+		SingleAccountHisPageQueryRspVo rspVo = new SingleAccountHisPageQueryRspVo();
+		
+		CreditAccount creditAccount = creditAccountMapper.selectByAccountNo(vo.getAccountNo());
+		if(creditAccount == null){
+			throw new BusinessUncheckedException(ErrorCodeConstants.ACCOUNT_NOT_EXIST, vo.getAccountNo()+"账户不存在");
+		}
+		
+		if(!creditAccount.getCoreMerchantNo().equals(vo.getCoreMerchantNo())){
+			throw new BusinessUncheckedException(ErrorCodeConstants.CORE_MERCHANT_NO_NOT_CORRECT, vo.getAccountNo()+"账户表中的核心商户和参数中的核心商户不符");
+		}
+		
+		vo.setCreditAccountId(creditAccount.getId());
+		
+		/**结果总条数*/
+		Integer totalResult = creditAccountTradeHistoryMapper.selectCountSingleAccountHis(vo);
+		if(totalResult>0){
+			/**账务历史明细*/
+			List<SingleAccountAccountingRecord> list = creditAccountTradeHistoryMapper.selectSingleAccountHisPageQuery(vo);
+			if(list!=null && list.size()!=0){
+				rspVo.setList(list);
+			}
+		}
+		rspVo.setTotalResult(totalResult.toString());
+		return rspVo;
+	}
+	
+	public String generateDepostiRecordNo(){
+		return idFactory.generate().toString();
+	}
+
+	@Override
+	public com.liantuo.deposit.advanceaccount.web.inner.vo.rsp.SingleAccountHisPageQueryRspVo innerSingleCAHisPageQuery(
+			com.liantuo.deposit.advanceaccount.web.inner.vo.req.SingleAccountHisPageQueryReqVo vo) {
+		com.liantuo.deposit.advanceaccount.web.inner.vo.rsp.SingleAccountHisPageQueryRspVo rspVo = new com.liantuo.deposit.advanceaccount.web.inner.vo.rsp.SingleAccountHisPageQueryRspVo();
+		
+		CreditAccount creditAccount = creditAccountMapper.selectByAccountNo(vo.getAccountNo());
+		if(creditAccount == null){
+			throw new BusinessUncheckedException(ErrorCode003Constants.INNER_ACCOUNT_NOT_EXIST, vo.getAccountNo()+"账户不存在");
+		}
+		vo.setCreditAccountId(creditAccount.getId());
+		
+		/**结果总条数*/
+		Integer totalResult = creditAccountTradeHistoryMapper.selectCountSingleInnerCAHis(vo);
+		if(totalResult>0){
+			/**账务历史明细*/
+			List<com.liantuo.deposit.advanceaccount.web.inner.vo.rsp.SingleAccountAccountingRecord> list = creditAccountTradeHistoryMapper.selectSingleInnerCAHisPageQuery(vo);
+			if(list!=null && list.size()!=0){
+				rspVo.setList(list);
+			}
+		}
+		rspVo.setTotalResult(totalResult.toString());
+		return rspVo;
+	}
+
+	@Override
+	public List<SingleAccountAccountRecord> singleAccountHisPageQueryStand(
+			SingleAccountHisQueryReqVo req) {
+		return creditAccountTradeHistoryMapper.singleAccountHisPageQuery(req);
+	}
+
+	@Override
+	public Integer countSingleAccountHisQuery(SingleAccountHisQueryReqVo req) {
+		return creditAccountTradeHistoryMapper.countSingleAccountHisQuery(req);
+	}
+}

@@ -1,0 +1,28 @@
+package com.liantuo.deposit.pool.processor.v1.vo;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSON;
+import com.liantuo.deposit.common.constants.errorcode.ErrorCode005Constants;
+
+public class CreatePoolReqVOTest {
+
+	@Test
+	public void testValidatePartnerIdIsNull() {
+		CreatePoolReqVO req=new CreatePoolReqVO("123456", "123456", "123456789012345670", "123456");
+
+		CreatePoolRspVO rsp=(CreatePoolRspVO) req.validate();
+		assertNotNull(rsp);
+		LOGGER.info(JSON.toJSONString(rsp));
+		assertEquals("success 错误", "F",rsp.getSuccess());
+		assertEquals("retCode 错误", ErrorCode005Constants.POOL_OPEN_CHECK_NOT_PASS,rsp.getRetCode());
+		assertEquals("retInfo 错误", "格式校验未通过:partner_id format error；",rsp.getRetInfo());
+	}
+
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(CreatePoolReqVOTest.class);
+}

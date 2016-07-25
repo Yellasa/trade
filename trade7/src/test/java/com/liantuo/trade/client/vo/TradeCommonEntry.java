@@ -1,0 +1,155 @@
+package com.liantuo.trade.client.vo;
+
+import javax.validation.Valid;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.NotBlank;
+
+import com.liantuo.trade.client.trade.packet.body.TradeRequestBody;
+import com.liantuo.trade.common.constants.TradeConstants;
+import com.liantuo.trade.common.validate.Format;
+import com.liantuo.trade.common.validate.Required;
+
+/**
+ * 该类：交易公共输入类，用于搭配任意其他附加类一起做校验，适用于交易0.7以及以后版本，其用法如下
+ * EX.
+ * 		TradeCommonEntry<Yttest> body = new TradeCommonEntry<Yttest>();
+ 		//其它附加类 有自己需要验证的属性
+		Yttest y = new Yttest();
+		y.setMytest("12");
+		body.setPay_channel("ZF0003_01_001");
+		body.setSubject("x");
+		body.setPay_transaction_id("123_");
+		body.setTotal_amount("1.23");
+		body.setOther_attachment_group(y);
+		
+		TradeRequest<TradeCommonEntry> tradeRquest = new TradeRequest<TradeCommonEntry>();
+		tradeRquest.setBody(body);
+		tradeRquest.setHead(head);
+ * 
+ * @author yangting
+ *2016年7月4日 上午11:28:42
+ * @param <T> 其他附加组必填
+ */
+public class TradeCommonEntry<T> extends TradeRequestBody{
+	
+	@NotBlank(message = "pay_channel is required", groups = {Required.class})
+    @Pattern(message = "pay_channel format error", regexp = "[\\da-zA-Z_]{1,16}", groups = Format.class)
+	//支付渠道编号
+	private String pay_channel;
+	
+	@NotBlank(message = "pay_transaction_id is required", groups = {Required.class})
+    @Pattern(message = "pay_transaction_id format error", regexp = "[\\da-zA-Z_]{1,15}", groups = Format.class)
+	//支付渠道身份编号
+	private String pay_transaction_id;
+	
+	@NotBlank(message = "total_amount is required", groups = {Required.class})
+    @DecimalMin(message = "total_amount format error", groups = {Format.class}, value = "0.01")
+    @Digits(message = "total_amount format error", groups = {Format.class}, integer = TradeConstants.DIGIT_AMOUNT_LENGTH, fraction = 2)
+	//订单金额
+	private String total_amount;
+	
+	@NotBlank(message = "subject is required", groups = {Required.class})
+    @Pattern(message = "subject format error", regexp = ".{1,64}", groups = Format.class)
+	//商品标题
+	private String subject;
+	
+    @Pattern(message = "body format error", regexp = ".{0,64}", groups = Format.class)
+	//商品描述
+	private String body;
+    
+    @Pattern(message = "merchant_extend_field_1 format error", regexp = ".{0,1024}", groups = Format.class)
+    //业务台账客户保留字段1
+    private String merchant_extend_field_1;
+    
+    @Pattern(message = "merchant_extend_field_2 format error", regexp = ".{0,1024}", groups = Format.class)
+    //业务台账客户保留字段2
+    private String merchant_extend_field_2;
+    
+    @Pattern(message = "merchant_extend_field_3 format error", regexp = ".{0,1024}", groups = Format.class)
+    //业务台账客户保留字段3
+    private String merchant_extend_field_3;
+    
+    @NotBlank(message = "other_attachment_group is required", groups = {Required.class})
+    @Valid
+    //其它附加组
+    private T other_attachment_group;
+
+	public String getPay_channel() {
+		return pay_channel;
+	}
+
+	public void setPay_channel(String pay_channel) {
+		this.pay_channel = pay_channel;
+	}
+
+	public String getPay_transaction_id() {
+		return pay_transaction_id;
+	}
+
+	public void setPay_transaction_id(String pay_transaction_id) {
+		this.pay_transaction_id = pay_transaction_id;
+	}
+
+	public String getTotal_amount() {
+		return total_amount;
+	}
+
+	public void setTotal_amount(String total_amount) {
+		this.total_amount = total_amount;
+	}
+
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+
+	public String getBody() {
+		return body;
+	}
+
+	public void setBody(String body) {
+		this.body = body;
+	}
+
+	public String getMerchant_extend_field_1() {
+		return merchant_extend_field_1;
+	}
+
+	public void setMerchant_extend_field_1(String merchant_extend_field_1) {
+		this.merchant_extend_field_1 = merchant_extend_field_1;
+	}
+
+	public String getMerchant_extend_field_2() {
+		return merchant_extend_field_2;
+	}
+
+	public void setMerchant_extend_field_2(String merchant_extend_field_2) {
+		this.merchant_extend_field_2 = merchant_extend_field_2;
+	}
+
+	public String getMerchant_extend_field_3() {
+		return merchant_extend_field_3;
+	}
+
+	public void setMerchant_extend_field_3(String merchant_extend_field_3) {
+		this.merchant_extend_field_3 = merchant_extend_field_3;
+	}
+
+	public T getOther_attachment_group() {
+		return other_attachment_group;
+	}
+
+	public void setOther_attachment_group(T other_attachment_group) {
+		this.other_attachment_group = other_attachment_group;
+	}
+
+    
+    
+}
+

@@ -1,0 +1,156 @@
+package com.liantuo.deposit.advanceaccount.web.controller;
+
+
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.ebill.framework.res.JsonUtil;
+import com.ebill.framework.validator.ValidatorUtil;
+import com.liantuo.deposit.advanceaccount.bus.service.CreditAccountService;
+import com.liantuo.deposit.advanceaccount.bus.service.CreditAccountTradeHistoryService;
+import com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccount;
+import com.liantuo.deposit.advanceaccount.web.vo.req.CreditAccountPageQueryReqVo;
+import com.liantuo.deposit.advanceaccount.web.vo.req.CreditAccountUpdateReqVo;
+import com.liantuo.deposit.advanceaccount.web.vo.rsp.CreditAccountUpdateRspVo;
+import com.liantuo.deposit.advanceaccount.web.vo.rsp.CreditAccountUpdateVo;
+import com.liantuo.deposit.common.constants.ErrorCodeConstants;
+import com.liantuo.deposit.common.constants.RspConstants;
+import com.liantuo.deposit.common.constants.errorcode.ErrorCode020Constants;
+import com.liantuo.trade.exception.BusinessUncheckedException;
+
+/**
+ * @类名: CreditAccountUpdateController
+ * @类说明: 
+ * @版本号 V1.0
+ * @版权 Copyright © 2013-2016 合肥联拓金融信息服务有限公司
+ * @创建人: shb
+ * @创建时间: 2016年3月23日 下午15:49:32
+ *
+ * 修改日期    修改者     版本      修改原因说明<br>
+ * -----------------------------------------------------------------------------------<br>
+ *                       <br>
+ * -----------------------------------------------------------------------------------<br>
+ */
+
+@Controller
+@RequestMapping("/creditAccountUpdate")
+public class CreditAccountUpdateController{
+	
+	private static final Logger Logger = LoggerFactory.getLogger(CreditAccountUpdateController.class);
+    @Autowired
+    private CreditAccountService creditAccountService;
+    @Autowired
+    private CreditAccountTradeHistoryService historyService;
+	 
+    /**
+     * 
+    * @Title: accountUpdate 
+    * @Description: 预存款账户信息修改
+    * @param @param request
+    * @param @param response
+    * @param @param req
+    * @return void
+    * @throws 
+    * @author shihb
+    * @date 2016-4-27 上午10:49:47
+     */
+	@SuppressWarnings("deprecation")
+	@RequestMapping( value="/accountUpdate.in" , method=RequestMethod.POST)
+	public void accountUpdate(HttpServletRequest request,HttpServletResponse response,CreditAccountUpdateReqVo req){
+		CreditAccountUpdateRspVo rspVo = new CreditAccountUpdateRspVo();
+		String success = RspConstants.SUCCESS_F;
+		String retCode = "";
+		String retInfo = "";
+		try {
+			Logger.info("预存款账户信息修改接口请求参数是"+JsonUtil.object2String(req));
+			String parasErrorInfo = ValidatorUtil.validateResult(req,CreditAccountPageQueryReqVo.class);
+			if(parasErrorInfo!=null && !parasErrorInfo.trim().equals("")){
+				Logger.error("参数错误信息" + parasErrorInfo);
+				throw new BusinessUncheckedException(ErrorCode020Constants.ACCOUNT_UPDATE_DATA_FORMATE_ERR,"格式校验未通过："+ parasErrorInfo);
+			}
+			
+			CreditAccount accountVo = creditAccountService.selectByAccountNo(req.getAccountNo());
+			if(null== accountVo){
+				throw new BusinessUncheckedException(ErrorCode020Constants.ACCOUNT_UPDATE_DATA_NOT_MATCH,"账户编号不属于该核心商户编号");
+			}else if (null==accountVo.getCoreMerchantNo()){
+				throw new BusinessUncheckedException(ErrorCode020Constants.ACCOUNT_UPDATE_DATA_NOT_MATCH,"账户编号不属于该核心商户编号");
+			}else if(!req.getCoreMerchantNo().equals(accountVo.getCoreMerchantNo())){
+				throw new BusinessUncheckedException(ErrorCode020Constants.ACCOUNT_UPDATE_DATA_NOT_MATCH,"账户编号不属于该核心商户编号");
+			}
+			
+			if("".equals(req.getStatus()) || null == req.getStatus()){
+				accountVo.setStatus(null);
+			}else{
+				if(!"1".equals(req.getStatus()) && !"2".equals(req.getStatus())  ){
+					throw new BusinessUncheckedException(ErrorCode020Constants.ACCOUNT_UPDATE_STATUS_ERR,"输入账户状态不正确");
+				}
+				accountVo.setStatus(Integer.valueOf(req.getStatus()));
+			}
+			if("".equals(req.getAccountType()) || null ==req.getAccountType()){
+				accountVo.setAccountType(null);
+			}else{
+				accountVo.setAccountType(Integer.valueOf(req.getAccountType()));
+			}
+			accountVo.setSuperType(req.getAccountName());
+			accountVo.setSysTime(new Date());
+			creditAccountService.updateAccount(accountVo);
+			CreditAccount vo = creditAccountService.masterSelectByPrimaryKey(accountVo.getId());
+			CreditAccountUpdateVo account =generatVO(vo);
+			rspVo.setAccount(account);
+			success = RspConstants.SUCCESS_S;
+			retCode = RspConstants.SUCCESS_S;
+			retInfo = "";
+		}catch(BusinessUncheckedException e){
+			Logger.error(e.getMessage(),e);
+			success = RspConstants.SUCCESS_F;
+			retCode = e.getErrorCode();
+			retInfo = e.getMessage();
+		
+		} catch (Exception e) {
+			Logger.error(e.getMessage(), e);
+			success = RspConstants.SUCCESS_F;
+			retCode = ErrorCodeConstants.SYSTEM_EXCEPTION;
+			retInfo = e.getMessage();
+		}
+		
+		/**组织返回*/
+		try {
+			if(rspVo == null){
+				rspVo = new CreditAccountUpdateRspVo();
+			}
+			rspVo.setResult(success, retCode, retInfo);
+			response.getWriter().print(JsonUtil.object2String(rspVo));
+		} catch (Exception e) {
+			Logger.error(e.getMessage(), e);
+		}
+		
+	}
+
+	private CreditAccountUpdateVo generatVO(CreditAccount vo) {
+		CreditAccountUpdateVo rspVo = new CreditAccountUpdateVo();
+	    rspVo.setAccountNo(vo.getAccountNo());
+		rspVo.setCoreMerchantNo(vo.getCoreMerchantNo());
+		rspVo.setPoolNo(vo.getPoolNo());
+		rspVo.setMerchantNo(vo.getMerchantNo());
+		rspVo.setAccountName(vo.getSuperType());
+		rspVo.setBalLastChangeTime(vo.getBalLastChangeTime());
+		rspVo.setVersion(String.valueOf(vo.getVersion()));
+		rspVo.setStatus(String.valueOf(vo.getStatus()));
+		rspVo.setAvailableBalance(vo.getAvailableBalance().toString());
+		rspVo.setFreezenBalance(vo.getFreezenBalance().toString());
+		rspVo.setSysTime(vo.getSysTime());
+		rspVo.setTotalBalance(vo.getTotalBalance().toString());
+		rspVo.setAccountType(String.valueOf(vo.getAccountType()));
+		rspVo.setGmtCreated(vo.getGmtCreated());
+		return rspVo;
+	}
+}

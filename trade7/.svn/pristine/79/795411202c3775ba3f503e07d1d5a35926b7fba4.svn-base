@@ -1,0 +1,28 @@
+package com.liantuo.trade.client.trade.packet.body;
+
+import java.io.Serializable;
+
+import javax.validation.Valid;
+
+import com.liantuo.payment.client.pay.head.PaymentHead;
+
+public class TradeNotifyRequestBody implements Serializable {
+	private static final long serialVersionUID = 5099532708133757702L;
+	@Valid
+	protected TradeRequestBody body;
+	@Valid
+	private PaymentHead zf_head = new PaymentHead();
+	public TradeRequestBody getBody() {
+		return body;
+	}
+	public void setBody(TradeRequestBody body) {
+		this.body = body;
+	}
+	public PaymentHead getZf_head() {
+		return zf_head;
+	}
+	public void setZf_head(PaymentHead zf_head) {
+		this.zf_head = zf_head;
+	}
+	
+}

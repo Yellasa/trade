@@ -1,0 +1,114 @@
+package com.liantuo.trade.unittest.jy0006;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+
+import com.liantuo.spring.WebContextTestExecutionListener;
+import com.liantuo.trade.bus.process.impl.single_payment.asyn_service.impl.AlipayAsynTradePrecreateService;
+import com.liantuo.trade.bus.service.SinglePaymentService;
+import com.liantuo.trade.client.trade.TradeClient;
+import com.liantuo.trade.client.trade.packet.TradeRequest;
+import com.liantuo.trade.client.trade.packet.TradeResponse;
+import com.liantuo.trade.client.trade.packet.body.single_recharge.TradePacketReqBodyQueryAndCheck;
+import com.liantuo.trade.client.trade.packet.head.TradePacketHead;
+import com.liantuo.trade.common.util.json.ObjectJsonUtil;
+import com.liantuo.trade.orm.pojo.TradeProfitLossLedger;
+import com.liantuo.trade.orm.pojo.TradeSinglePayment;
+import com.liantuo.trade.orm.pojo.TradeSinglePaymentExample;
+import com.liantuo.trade.orm.pojo.TradeSinglePaymentExample.Criteria;
+import com.liantuo.trade.spring.SpringUtils;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {
+      "classpath:config/spring/applicationContext-*.xml"
+})
+@TestExecutionListeners({
+      WebContextTestExecutionListener.class,
+      DependencyInjectionTestExecutionListener.class,
+      DirtiesContextTestExecutionListener.class})
+public class TradeClient616And6110 {
+	
+	@Resource(name="singlePaymentServiceImpl")
+    private SinglePaymentService singlePaymentService;
+	
+	@Resource(name="singlePaymentBasicServiceImpl")
+	private SinglePaymentService singleBasciPaymentService;
+	
+	@Test
+	public void test0006001003(){
+//		Assert.isNull(singlePaymentService);
+		TradeSinglePayment item = singlePaymentService.queryByTradeNo("00060011606291516506120000008400");
+		String json = item.getExtendProfitLoss();
+		try {
+			System.out.println(json);
+			List<TradeProfitLossLedger> otherProfitLossLedgerList = ObjectJsonUtil.json2ArrayList(json, TradeProfitLossLedger.class);
+			for (TradeProfitLossLedger subitem : otherProfitLossLedgerList) {
+				System.out.println(subitem.getLedgerNo());
+			}
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void test613Process(){
+		TradeRequest<TradePacketReqBodyQueryAndCheck> bizReq = new TradeRequest<TradePacketReqBodyQueryAndCheck>();
+		TradePacketReqBodyQueryAndCheck body = new TradePacketReqBodyQueryAndCheck();
+		TradePacketHead head = initHead();
+		body.setTrade_no("00060011606270915149130000007400");
+		bizReq.setHead(head);
+		bizReq.setBody(body);
+		TradeResponse response = TradeClient.excute(bizReq);
+		if (null != response) {
+			System.err.println(response.marshal());
+		}
+	}
+	
+	@Test 
+	public void test6110Process(){
+		TradeSinglePaymentExample example = new TradeSinglePaymentExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andCloseStatusEqualTo("1");
+		List<TradeSinglePayment> list = singleBasciPaymentService.queryByExample(example);
+		System.out.println(list.size());
+	}
+
+	private TradePacketHead initHead() {
+		TradePacketHead head = new TradePacketHead();
+		head.setRequest_time(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS").format(Calendar.getInstance().getTime()));
+		head.setRequest_code("0006_001_003");
+		head.setVersion("1.0");
+		head.setSign("f644f5387aaeadae26bf45bf6d4759c2");
+		head.setPartner_id("10012426000150917");
+		//核心商户编号	来自输入
+		head.setCore_merchant_no("CC_C3878185775");
+		//资金池编号	来自输入
+		head.setFund_pool_no("PN01000000000010429");
+		return head;
+	}
+
+	@Test
+	public void getBean(){
+//		AlipayAsynTradePrecreateService bean = 
+//				(AlipayAsynTradePrecreateService)SpringUtils.getBean("alipayAsynTradePrecreateService");
+		System.out.println(singleBasciPaymentService);
+	}
+}

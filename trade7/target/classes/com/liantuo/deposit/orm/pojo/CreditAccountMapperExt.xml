@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liantuo.deposit.advanceaccount.orm.mapper.CreditAccountMapper" >
+ <insert id="insert" parameterType="com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccount" useGeneratedKeys="true" keyProperty="id">
+    insert into credit_account (version, account_no,
+      status,  total_balance,bal_last_change_time,sys_time,
+      available_balance, freezen_balance, password,
+      credit_type, fee_rate,core_merchant_no,merchant_no,
+      account_type,pool_no, gmt_created, gmt_modified,
+      credit_line,balance_n_flag,super_type
+      )
+    values (#{version,jdbcType=BIGINT}, #{accountNo,jdbcType=VARCHAR},
+      #{status,jdbcType=INTEGER}, #{totalBalance,jdbcType=DOUBLE},#{balLastChangeTime,jdbcType=TIMESTAMP},
+      #{sysTime,jdbcType=TIMESTAMP},#{availableBalance,jdbcType=DOUBLE},  #{freezenBalance,jdbcType=DOUBLE},
+      #{password,jdbcType=VARCHAR},#{creditType,jdbcType=INTEGER},
+      #{feeRate,jdbcType=DOUBLE},#{coreMerchantNo,jdbcType=VARCHAR},
+      #{merchantNo,jdbcType=VARCHAR}, #{accountType,jdbcType=INTEGER},
+      #{poolNo,jdbcType=VARCHAR},#{gmtCreated,jdbcType=TIMESTAMP},#{gmtModified,jdbcType=TIMESTAMP},
+      #{creditLine,jdbcType=DOUBLE},#{balanceNFlag,jdbcType=CHAR},#{superType,jdbcType=VARCHAR}
+      )
+  </insert>
+</mapper>

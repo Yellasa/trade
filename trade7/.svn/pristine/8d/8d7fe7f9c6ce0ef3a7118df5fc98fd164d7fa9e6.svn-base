@@ -1,0 +1,338 @@
+package com.liantuo.trade.bus.process.impl.freeze_pay_refuce.v1_1;
+
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import com.liantuo.trade.bus.process.TradeCreateSingleTxNoPaymentInterface;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
+
+import com.liantuo.deposit.advanceaccount.bus.vo.RealTimeAccountingRsp;
+import com.liantuo.trade.bus.service.BizAccountService;
+import com.liantuo.trade.bus.service.ExceptionService;
+import com.liantuo.trade.bus.service.LegderService;
+import com.liantuo.trade.bus.template.impl.v1_1.create.ATradeCreateSingleTxNoPaymentTemp;
+import com.liantuo.trade.bus.vo.RealTimeAccountVO;
+import com.liantuo.trade.client.trade.packet.TradeRequest;
+import com.liantuo.trade.client.trade.packet.body.TradePacketReqBodyRefundOfflineSettle;
+import com.liantuo.trade.common.constants.TradeConstants;
+import com.liantuo.trade.common.util.amount.AmountUtils;
+import com.liantuo.trade.common.util.date.DateUtil;
+import com.liantuo.trade.common.util.trade.TradeUtilCommon;
+import com.liantuo.trade.common.validate.TradeValidationUtil;
+import com.liantuo.trade.exception.BusinessException;
+import com.liantuo.trade.orm.pojo.TradeLedger;
+import com.liantuo.trade.orm.pojo.TradePayment;
+import com.liantuo.trade.orm.pojo.TradePaymentExample;
+import com.liantuo.trade.orm.pojo.TradeRefund;
+import com.liantuo.trade.orm.pojo.TradeRefundExample;
+import com.liantuo.trade.orm.pojo.TradeRefundLog;
+import com.liantuo.trade.orm.service.TradePaymentService;
+import com.liantuo.trade.orm.service.TradeRefundLogService;
+import com.liantuo.trade.orm.service.TradeRefundService;
+import com.liantuo.trade.seqno.IdFactory;
+import com.liantuo.trade.spring.annotation.JobFlow;
+
+/**
+ * 0001_002_001
+ */
+@JobFlow(value = "0001_002_001", version = "1.1", template = ATradeCreateSingleTxNoPaymentTemp.class)
+public class GenRefundOfflineSettleProcess implements TradeCreateSingleTxNoPaymentInterface<TradePacketReqBodyRefundOfflineSettle> {
+    private static final Log LOGGER = LogFactory.getLog(GenRefundOfflineSettleProcess.class);
+    @Resource(name = "tradePaymentService")
+    private TradePaymentService tradePaymentService;
+    
+    @Resource
+    private TradeRefundService tradeRefundService;
+
+    @Resource
+    private TradeRefundLogService tradeRefundLogService;
+
+    @Resource(name="legderServiceImpl")
+    private LegderService legderService;
+    
+    @Resource(name = "idFactoryTradeRefundTradeNo")
+    private IdFactory idFactoryTradeRefundTradeNo;
+
+    @SuppressWarnings("rawtypes")
+    @Resource(name = "bizAccountServiceImpl")
+    private BizAccountService accountService;
+    @Autowired
+	private ExceptionService exceptionService;
+    private TradePayment payment; // 存放原交易数据 
+    private String reqNo;
+    
+    private TradeRefund refund; // 存放退回交易数据
+//    private TradeRefund tradeDetails;
+    private List<RealTimeAccountingRsp> realTimeAccountingRsps; // 存放账务结果数据
+    
+    @Override
+    public void formatValidate(TradeRequest<TradePacketReqBodyRefundOfflineSettle> tradeRquest) throws Exception {
+        String msg = TradeValidationUtil.validateRequest(tradeRquest);
+        if(!StringUtils.isEmpty(msg)){
+            throw exceptionService.buildBusinessException("JY00010020011100100", msg);
+        }
+    }
+
+    @Override
+	public void bizValidate(TradeRequest<TradePacketReqBodyRefundOfflineSettle> tradeRquest) throws Exception {
+        // 校验【交易发起方发起请求编号】是否已存在
+        checkDuplicate(tradeRquest);
+        
+        // 校验原交易编号
+        validateOriginalTrade(tradeRquest);
+        
+        if(!TradeConstants.TRADE_STATUS_UNFREEZE_OFFLINESETTLE.equals(payment.getStatus())){
+            // 校验交易状态
+            throw exceptionService.buildBusinessException("JY00010020011100500");
+        }
+    }
+    
+    private void checkDuplicate(TradeRequest<TradePacketReqBodyRefundOfflineSettle> tradeRquest) {
+        TradeRefundExample example = new TradeRefundExample();
+        example.createCriteria()
+                .andFundPoolNoEqualTo(tradeRquest.getHead().getFund_pool_no())
+                .andOutTradeNoExtEqualTo(tradeRquest.getBody().getOut_trade_no_ext());
+        List<TradeRefund> result = tradeRefundService.queryTradeRefund(example);
+        if (!CollectionUtils.isEmpty(result)) {
+            // 请求编号已存在
+            throw exceptionService.buildBusinessException("JY00010020011100300");
+        }
+    }
+
+    private void validateOriginalTrade(TradeRequest<TradePacketReqBodyRefundOfflineSettle> tradeRquest) {
+        TradePaymentExample example = new TradePaymentExample();
+        example.createCriteria().andTradeNoEqualTo(tradeRquest.getBody().getOriginal_trade_no())
+                .andFundPoolNoEqualTo(tradeRquest.getHead().getFund_pool_no())
+                .andCoreMerchantNoEqualTo(tradeRquest.getHead().getCore_merchant_no());
+        List<TradePayment> list = (List<TradePayment>) tradePaymentService.queryExample(example);
+        if (CollectionUtils.isEmpty(list)) {
+            // 原交易不存在
+            throw exceptionService.buildBusinessException("JY00010020011100400");
+        } else {
+            payment = list.get(0);
+        }
+    }
+
+    @Override
+	public void tradeCreate(TradeRequest<TradePacketReqBodyRefundOfflineSettle> req) throws Exception {
+        try {
+            TradeRefund tr = new TradeRefund();
+            tr.setTradeNo(TradeUtilCommon.getServiceCode(req.getHead().getRequest_code())+idFactoryTradeRefundTradeNo.generate().toString()); // 创建交易编号
+            tr.setCoreMerchantNo(req.getHead().getCore_merchant_no()); // 核心商户编号
+            tr.setFundPoolNo(req.getHead().getFund_pool_no()); // 所属主体资金池编号
+
+            tr.setMerchantExtendField1(req.getBody().getMerchant_extend_field_1());
+            tr.setMerchantExtendField2(req.getBody().getMerchant_extend_field_2());
+            tr.setMerchantExtendField3(req.getBody().getMerchant_extend_field_3());
+            tr.setMerchantExtendField4(req.getBody().getMerchant_extend_field_4());
+            tr.setMerchantExtendField5(req.getBody().getMerchant_extend_field_5());
+
+            tr.setOutTradeNo(req.getBody().getOut_trade_no()); // 交易发起方业务系统订单号
+            tr.setOutTradeNoExt(req.getBody().getOut_trade_no_ext()); // 交易发起方发起请求ID
+
+            Date now = new Date();
+            tr.setGmtCreated(now); // 交易创建日期时间
+            tr.setGmtLatestModified(now); // 最后变更日期时间
+
+            tr.setLatestTradeReqType(TradeConstants.TRADE_TYPE_REFUND_NO_PWD_OFFLINE_SETTLE); // 最后变更交易请求类型----本次请求类型
+            tr.setLatestReqNo(reqNo); // 最后变更交易请求编号---本次请求编号
+
+            tr.setCloseStatus(TradeConstants.TRADE_CLOSE_STATUS_INIT); // 交易结束状态----未结束
+
+            tr.setOriginalTradeNo(req.getBody().getOriginal_trade_no()); // 原交易编号
+            tr.setRefundAccountNo(payment.getPaymentAccountNo()); // 退回CA账户编号----来自原交易【付出CA账户编号】
+            tr.setRefundMerchantNo(payment.getPaymentMerchantNo()); // 退回成员商户编号----来自原交易【付出CA账户编号】
+            
+            tr.setStatus(TradeConstants.TRADE_STATUS_INIT); // 交易状态交易状态（00创建 01 CA退款成功 ）
+            tr.setClearChannel(payment.getClearChannel()); // 付款渠道编号------来自原交易【付款渠道编号】
+
+            tr.setGmtSuccessClearChannel(DateUtil.formatDateTime(req.getBody().getGmt_refund_clear_channel())); // 付款渠道退回日期时间 ---- 来自输入
+            tr.setClearOrderNo(req.getBody().getThird_trade_no()); // 付款渠道订单号 -- 来自输入
+            tr.setClearRefundAmount(AmountUtils.bizAmountConvertToLong(req.getBody().getClear_refund_amount())); // 付款渠道退回金额 ---- 来自输入
+
+            // tr.setGmtRefundSuccess(); // 退回成功日期时间（账务返回成功日志）--空
+            // tr.setReceiveAccountNo(""); // 原收款CA账户编号--空
+            // tr.setReceiveMerchantNo(""); // 原收款成员商户编号--空
+            tr.setVersion(TradeConstants.DEFAULT_LOCK_VRESION); // 版本号----乐观锁
+            
+            tradeRefundService.insertTradeRefund(tr);
+            this.refund = tr;
+            
+            updateTradeChgHis();//创建交易历史
+        } catch (Exception e) {
+            LOGGER.error(" ->> 交易创建异常", e);
+            throw exceptionService.buildBusinessException("JY000000000000301");
+        }
+    }
+    
+    private void updateTradeChgHis() {
+    	TradeRefundLog his = new TradeRefundLog();
+    	//为了插入version的变更所以需要重新查询交易
+        TradeRefund traderefund = tradeRefundService.queryTradeRefund(refund.getId());
+        BeanUtils.copyProperties(traderefund, his);
+        his.setId(null);
+        tradeRefundLogService.insertTradeRefund(his);
+        this.refund=traderefund;
+    }
+    
+    @Override
+    public void transaction(TradeRequest<TradePacketReqBodyRefundOfflineSettle> tradeRquest) throws Exception {
+        try {
+            // 生效外部收付款台账
+            createLedger(tradeRquest);
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            LOGGER.error(" ->> 生效外部收付款台账异常", e);
+            throw exceptionService.buildBusinessException("JY000000000000501");
+        }
+        
+        try {
+            // 账务操作
+            realAccount(tradeRquest);
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            LOGGER.error(" ->> 账务操作异常", e);
+            throw exceptionService.buildBusinessException("JY000000000000401");
+        }
+        
+        try {
+            // 更新状态
+            updateTradeSuccess(tradeRquest);
+            // 修改交易历史
+            updateTradeChgHis();
+        } catch (Exception e) {
+            LOGGER.error(" ->> 更新交易状态异常", e);
+            throw exceptionService.buildBusinessException("JY000000000000801");
+        }
+    }
+
+    private void createLedger(TradeRequest<TradePacketReqBodyRefundOfflineSettle> req) {
+        TradeLedger ledger = new TradeLedger();
+        ledger.setCoreMerchantNo(refund.getCoreMerchantNo());//核心商户编号
+        ledger.setFundPoolNo(refund.getFundPoolNo());//资金池编号
+        
+        ledger.setMerchantExtendField1("");//业务台账客户保留字段1
+        ledger.setMerchantExtendField2("");
+        ledger.setMerchantExtendField3("");
+        ledger.setMerchantExtendField4("");
+        ledger.setMerchantExtendField5("");
+        
+        ledger.setTradeType(TradeUtilCommon.getTradeType(req.getHead().getRequest_code())); // 所属业务交易类型（例：0001_001）
+        ledger.setTradeNo(refund.getTradeNo()); // 交易编号
+        ledger.setGmtTradeCreated(refund.getGmtCreated()); // 所属业务交易创建日期
+
+        ledger.setEffectiveReqType(req.getHead().getRequest_code()); //生效交易请求类型
+        ledger.setEffectiveReqNo(reqNo); //生效交易请求编号
+        
+        if(!StringUtils.isEmpty(payment.getOutTradeNo())){
+            ledger.setOutTradeNo(req.getBody().getOut_trade_no()); // 交易发起方业务系统订单号
+        }
+        ledger.setOutTradeNoExt(req.getBody().getOut_trade_no_ext()); // 交易发起方发起请求ID
+        ledger.setClearChannel(payment.getClearChannel()); // 收付款渠道编号（请求业务参数）
+        if (!StringUtils.isEmpty(req.getBody().getClear_channel_attr_1())) {
+            ledger.setClearChannelAttr1(req.getBody().getClear_channel_attr_1());//收付款属性1
+        }
+        if (!StringUtils.isEmpty(req.getBody().getClear_channel_attr_2())) {
+            ledger.setClearChannelAttr2(req.getBody().getClear_channel_attr_2());
+        }
+        if (!StringUtils.isEmpty(req.getBody().getClear_channel_attr_3())) {
+            ledger.setClearChannelAttr3(req.getBody().getClear_channel_attr_3());
+        }
+        if (!StringUtils.isEmpty(req.getBody().getClear_channel_attr_4())) {
+            ledger.setClearChannelAttr4(req.getBody().getClear_channel_attr_4());
+        }
+        if (!StringUtils.isEmpty(req.getBody().getClear_channel_attr_5())) {
+            ledger.setClearChannelAttr5(req.getBody().getClear_channel_attr_5());
+        }
+        if (!StringUtils.isEmpty(req.getBody().getClear_channel_attr_6())) {
+            ledger.setClearChannelAttr6(req.getBody().getClear_channel_attr_6());
+        }
+       
+        ledger.setReceiveAmount(AmountUtils.bizAmountConvertToLong(req.getBody().getClear_refund_amount()));//收款金额
+        ledger.setGmtSuccessClearChannel(DateUtil.formatDateTime(req.getBody().getGmt_refund_clear_channel()));//付款渠道退回日期时间
+        ledger.setThirdTradeNo(req.getBody().getThird_trade_no());//收付款渠道订单号
+        ledger.setPaymentTradeNo(""); // 支付中心交易号
+        
+        legderService.createEffectiveLegder(ledger);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void realAccount(TradeRequest<TradePacketReqBodyRefundOfflineSettle> tradeRquest) {
+        RealTimeAccountVO accountvo = new RealTimeAccountVO();
+        
+        accountvo.setReceiveAccountNo(refund.getRefundAccountNo()); // 目标账户编号    来自交易【退回CA账户编号】
+        accountvo.setCoreMerchantNo(refund.getCoreMerchantNo()); //核心商户编号
+        accountvo.setPoolNo(refund.getFundPoolNo());//资金池编号
+        
+        accountvo.setTradeCode(TradeUtilCommon.getTradeType(tradeRquest.getHead().getRequest_code()));//交易类型0001_002
+        accountvo.setTradeNo(refund.getTradeNo());//本交易编号
+        accountvo.setTradeGmtCreated(refund.getGmtCreated());//本交易创建时间
+        
+        accountvo.setTradeReqCode(tradeRquest.getHead().getRequest_code()); // 交易请求类型0001_002_001
+        accountvo.setTradeStepNo(reqNo); // 交易请求编号
+        if(!StringUtils.isEmpty(tradeRquest.getBody().getOut_trade_no())){
+            accountvo.setSequenceNo(tradeRquest.getBody().getOut_trade_no()); // 本交易业务系统订单号
+        }
+        accountvo.setRefundAmount(refund.getClearRefundAmount()); // 可用余额增加金额 来自输入【付款渠道退回金额】
+    
+        accountvo.setAvl_bal_incr_field_1(tradeRquest.getBody().getAvl_bal_incr_field_1());//可用余额增加客户账务历史1
+        accountvo.setAvl_bal_incr_field_2(tradeRquest.getBody().getAvl_bal_incr_field_2());//可用余额增加客户账务历史2
+        accountvo.setAvl_bal_incr_field_3(tradeRquest.getBody().getAvl_bal_incr_field_3());//可用余额增加客户账务历史3
+        
+        long start = System.currentTimeMillis();
+        realTimeAccountingRsps = accountService.refundOffline(accountvo);
+        LOGGER.info(" ->>> 账务执行时间：" + (System.currentTimeMillis() - start));
+        
+        for (Iterator<RealTimeAccountingRsp> it = realTimeAccountingRsps.iterator(); it.hasNext(); ) {
+            RealTimeAccountingRsp rsp = it.next();
+            if ("F".equals(rsp.getSuccess())) {
+                throw new BusinessException(rsp.getRetCode(), rsp.getErrMessage());
+            }
+        }
+        
+    }
+    
+    @Override
+	public void tradeUpdateForFail(TradeRequest<TradePacketReqBodyRefundOfflineSettle> tradeRquest) throws Exception {
+        refund.setLatestTradeReqType(tradeRquest.getHead().getRequest_code()); // 最后变更交易请求类型----本次请求类型
+        refund.setLatestReqNo(reqNo); // 最后变更交易请求编号---本次请求编号
+        refund.setCloseStatus(TradeConstants.TRADE_CLOSE_STATUS_END);  // 交易结束状态----结束
+        refund.setStatus(TradeConstants.TRADE_STATUS_INIT_FAILED); // 交易状态交易状态【创建】变为【创建失败】
+        tradeRefundService.updateTradeRefund(refund);
+        // 修改交易历史
+        updateTradeChgHis();
+    }
+    
+    private void updateTradeSuccess(TradeRequest<TradePacketReqBodyRefundOfflineSettle> tradeRquest) {
+        refund.setLatestTradeReqType(tradeRquest.getHead().getRequest_code()); // 最后变更交易请求类型----本次请求类型
+        refund.setLatestReqNo(reqNo); // 最后变更交易请求编号---本次请求编号
+        refund.setCloseStatus(TradeConstants.TRADE_CLOSE_STATUS_END);  // 交易结束状态----结束
+        refund.setGmtRefundSuccess(realTimeAccountingRsps.get(0).getAccountingRecord().getGmtCreated()); // 退回成功日期时间（账务返回成功日志）
+        refund.setStatus(TradeConstants.TRADE_STATUS_REFUND); // 交易状态交易状态（00创建 01CA退款成功 ）
+        tradeRefundService.updateTradeRefund(refund);
+        
+    }
+
+	@Override
+	public void setReqNo(String reqNo) {
+		this.reqNo = reqNo;
+		
+	}
+
+	@Override
+	public Object getTradeDetails() {
+		// TODO Auto-generated method stub
+		return refund;
+	}
+    
+}

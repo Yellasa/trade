@@ -1,0 +1,106 @@
+package com.liantuo.deposit.pool.processor.v1;
+
+import java.util.Date;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Component;
+
+import com.liantuo.deposit.advanceaccount.orm.pojo.Pool;
+import com.liantuo.deposit.advanceaccount.web.vo.queryvo.PoolQueryVo;
+import com.liantuo.deposit.advanceaccount.web.vo.rsp.PoolRspVo;
+import com.liantuo.deposit.common.constants.RspConstants;
+import com.liantuo.deposit.common.constants.errorcode.ErrorCode005Constants;
+import com.liantuo.deposit.pool.bus.service.PoolService;
+import com.liantuo.deposit.pool.processor.v1.vo.CreatePoolReqVO;
+import com.liantuo.deposit.pool.processor.v1.vo.CreatePoolRspVO;
+import com.liantuo.deposit.processor.impl.BaseProcessorTemplate;
+import com.liantuo.deposit.web.vo.DepRsp;
+import com.liantuo.trade.seqno.StepSequenceFactoryForSpdb;
+
+@Component(value="dep_0_005_1.0")
+public class CreatePoolProcessor extends BaseProcessorTemplate<CreatePoolReqVO> {
+
+	/* (non-Javadoc)
+	 * @see com.liantuo.deposit.processor.impl.BaseProcessorTemplate#bizValidate(com.liantuo.deposit.web.vo.DepReq)
+	 */
+	@Override
+	protected DepRsp bizValidate(CreatePoolReqVO req) {
+		DepRsp rsp = null;
+		PoolQueryVo poolQueryVo = new PoolQueryVo();
+		poolQueryVo.setCoreMerchantNo(req.getCoreMerchantNo());
+		poolQueryVo.setPoolName(req.getPoolName());
+		PoolRspVo vo = poolService.findByMerchantNoAndPoolName(poolQueryVo);
+		if (null != vo) {
+			rsp = new CreatePoolRspVO();
+			rsp.fail(ErrorCode005Constants.POOL_OPEN_NAME_REPEAT, "资金池名称重复");
+		}
+		return rsp;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.liantuo.deposit.processor.impl.BaseProcessorTemplate#convert(java.util.Map)
+	 */
+	@Override
+	protected CreatePoolReqVO convert(Map<String, String> param) {
+		if (param == null) {
+			return null;
+		}
+		CreatePoolReqVO vo = new CreatePoolReqVO(param.get("coreMerchantNo"),
+				param.get("poolName"), param.get("partnerId"), param.get("rmk"));
+		return vo;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.liantuo.deposit.processor.impl.BaseProcessorTemplate#bizProcess(com.liantuo.deposit.web.vo.DepReq)
+	 */
+	@Override
+	protected DepRsp bizProcess(CreatePoolReqVO req) {
+		CreatePoolRspVO rsp = new CreatePoolRspVO();
+
+		Pool record = initPool(req);
+
+		record = poolService.createPool(record);
+
+		PoolRspVo pool = new PoolRspVo();
+		pool.setCoreMerchantNo(record.getMerchantNo());
+		pool.setGmtCreated(record.getGmtCreated());
+		pool.setPoolName(record.getPoolName());
+		pool.setStatus(record.getStatus());
+		pool.setRmk(record.getRmk());
+
+		rsp.setPool(pool);
+		rsp.setSuccess(RspConstants.SUCCESS_S);
+
+		return rsp;
+	}
+
+	
+	
+	/**
+	 * @param req
+	 * @return
+	 */
+	private Pool initPool(CreatePoolReqVO req) {
+		Pool record = new Pool();
+		record.setPoolNo(idFactoryPoolNo.generate().toString());
+		record.setMerchantNo(req.getCoreMerchantNo());
+		record.setGmtCreated(new Date());
+		record.setCreatorCn(req.getCoreMerchantNo());
+		record.setCreatorNo(req.getCoreMerchantNo());
+		record.setPoolName(req.getPoolName());
+		record.setGmtModified(new Date());
+		record.setRmk(req.getRmk());
+		record.setStatus("1");
+		record.setModifierCn(req.getCoreMerchantNo());
+		record.setModifierNo(req.getCoreMerchantNo());
+		return record;
+	}
+
+	@Resource
+	private PoolService poolService;
+	@Resource(name = "idFactoryPoolNo")
+	private StepSequenceFactoryForSpdb idFactoryPoolNo;
+
+}

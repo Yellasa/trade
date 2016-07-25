@@ -1,0 +1,32 @@
+package com.liantuo.trade.bus.process;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import com.liantuo.trade.client.trade.packet.TradeRequest;
+import com.liantuo.trade.client.trade.packet.body.TradeRequestBody;
+import com.liantuo.trade.exception.BusinessException;
+import com.liantuo.trade.exception.FormatCheckedException;
+import com.liantuo.trade.spring.annotation.FixException;
+
+public interface TradeModSingleTxHasPaymentInterface<B extends TradeRequestBody> {
+
+	/**
+	 * 
+	 * 事务处理
+	 */
+	@Transactional(rollbackFor=Exception.class)
+	public void transaction(TradeRequest<B> tradeRquest) throws Exception;
+
+	public void formatValidate(TradeRequest<B> tradeRquest) throws Exception;
+
+	/**
+	 * 查询【付出CA账户编号】所属商户编号，若查询不到，则返回【失败】，异常原因【付出CA账户编号无所属成员商户编号】
+	 */
+	public void bizValidate(TradeRequest<B> tradeRquest) throws Exception;
+
+	public void setReqNo(String reqNo);
+	
+	public Object getTradeDetails();
+	
+	public void createTradeFailRecode(TradeRequest<B> tradeRquest)  throws Exception;
+}

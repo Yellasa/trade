@@ -1,0 +1,164 @@
+package com.liantuo.trade.client.trade.packet.body;
+
+import javax.validation.constraints.Pattern;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.dozer.Mapping;
+import org.hibernate.validator.constraints.NotBlank;
+
+import com.liantuo.trade.common.validate.Format;
+import com.liantuo.trade.common.validate.Required;
+@XmlRootElement
+public class TradeNotifyRequestPacket {
+
+	//用户请求IP
+	private String ip;
+    //用户请求数据
+    private String requestXML;
+    
+  //交易编号
+    @NotBlank(message = "trade_no is required", groups = {Required.class})
+    @Pattern(message = "trade_no format error", regexp = "[\\d|a-z-A-Z|_]{8,64}", groups = Format.class)
+    @Mapping("zf_head.trade_no")
+    private String trade_no;
+  //核心商户编号
+    @NotBlank(message = "core_merchant_no is required", groups = {Required.class})
+    @Pattern(message = "core_merchant_no content not match", regexp = "[\\d|a-z-A-Z|_]{2,32}", groups = Format.class)
+    @Mapping("zf_head.core_merchant_no")
+    private String core_merchant_no;
+
+    //外部收付款台账ID
+    @NotBlank(message = "ledger_no is required", groups = {Required.class})
+    @Pattern(message = "ledger_no content not match", regexp = "[\\d|a-z-A-Z|_]{1,64}", groups = Format.class)
+    @Mapping("zf_head.ledger_no")
+	private String ledger_no;
+    //交易请求编号
+    @NotBlank(message = "trade_req_no is required", groups = {Required.class})
+    @Pattern(message = "trade_req_no content not match", regexp = "[\\d|a-z-A-Z|_]{8,64}", groups = Format.class)
+    @Mapping("zf_head.trade_req_no")
+	private String trade_req_no;
+    //交易发起方业务系统订单号
+    @Pattern(message = "out_trade_no content not match", regexp = "[\\d|a-z-A-Z|_]{8,64}", groups = Format.class)
+    @Mapping("zf_head.out_trade_no")
+	private String out_trade_no;
+    //版本号
+    @NotBlank(message = "version is required", groups = {Required.class})
+    @Mapping("zf_head.version")
+	private String version;
+    //渠道编号
+    @NotBlank(message = "pay_channel is required", groups = {Required.class})
+    @Pattern(message = "pay_channel content not match", regexp = "[\\d|a-z-A-Z|_]{1,16}", groups = Format.class)
+    @Mapping("zf_head.pay_channel")
+	private String pay_channel;
+    //渠道身份编号
+    @NotBlank(message = "pay_transaction_id is required", groups = {Required.class})
+    @Pattern(message = "pay_transaction_id content not match", regexp = "[\\d|a-z-A-Z|_]{1,16}", groups = Format.class)
+    @Mapping("zf_head.pay_transaction_id")
+	private String pay_transaction_id;
+
+    //支付中心请求编号
+	@NotBlank(message = "payment_req_no is required", groups = {Required.class})
+	@Pattern(message = "payment_req_no format error", regexp = "[\\d|a-z-A-Z|_]{8,64}", groups = Format.class)
+	@Mapping("zf_head.payment_req_no")
+    private String payment_req_no;
+	
+	@Pattern(message = "app_auth_token format error", regexp = ".{0,40}", groups = Format.class)
+	@Mapping("zf_head.app_auth_token")
+	private String app_auth_token;
+	
+	public String getPayment_req_no() {
+		return payment_req_no;
+	}
+
+	public void setPayment_req_no(String paymentReqNo) {
+		payment_req_no = paymentReqNo;
+	}
+    
+	public String getLedger_no() {
+		return ledger_no;
+	}
+	public void setLedger_no(String ledgerNo) {
+		ledger_no = ledgerNo;
+	}
+	public String getTrade_req_no() {
+		return trade_req_no;
+	}
+	public void setTrade_req_no(String tradeReqNo) {
+		trade_req_no = tradeReqNo;
+	}
+	public String getOut_trade_no() {
+		return out_trade_no;
+	}
+	public void setOut_trade_no(String outTradeNo) {
+		out_trade_no = outTradeNo;
+	}
+	public String getVersion() {
+		return version;
+	}
+	public void setVersion(String version) {
+		this.version = version;
+	}
+	public String getPay_channel() {
+		return pay_channel;
+	}
+	public void setPay_channel(String payChannel) {
+		pay_channel = payChannel;
+	}
+	public String getPay_transaction_id() {
+		return pay_transaction_id;
+	}
+	public void setPay_transaction_id(String payTransactionId) {
+		pay_transaction_id = payTransactionId;
+	}
+	
+	public String getTrade_no() {
+		return trade_no;
+	}
+	public void setTrade_no(String tradeNo) {
+		trade_no = tradeNo;
+	}
+	
+	public String getCore_merchant_no() {
+		return core_merchant_no;
+	}
+
+	public void setCore_merchant_no(String coreMerchantNo) {
+		core_merchant_no = coreMerchantNo;
+	}
+
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public String getRequestXML() {
+		return requestXML;
+	}
+
+	public void setRequestXML(String requestXML) {
+		this.requestXML = requestXML;
+	}
+    
+	
+	
+	public String getApp_auth_token() {
+		return app_auth_token;
+	}
+
+	public void setApp_auth_token(String app_auth_token) {
+		this.app_auth_token = app_auth_token;
+	}
+
+	@Override
+	public String toString() {
+	    return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+	}
+
+	
+
+}

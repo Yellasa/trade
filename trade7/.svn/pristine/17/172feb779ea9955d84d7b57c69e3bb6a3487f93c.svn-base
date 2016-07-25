@@ -1,0 +1,48 @@
+package com.liantuo.deposit.advanceaccount.bus.service;
+
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.junit.Test;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+
+import com.liantuo.deposit.advanceaccount.bus.service.AdvanceAccountService;
+import com.liantuo.deposit.advanceaccount.bus.vo.RealTimeAccountingRsp;
+import com.liantuo.deposit.advanceaccount.bus.vo.RealTimeAccountingVo;
+
+@ContextConfiguration(locations = {"classpath:config/spring/applicationContext-myBatis.xml", "classpath:config/spring/applicationContext-common.xml"})
+public class AdvanceAccountServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
+
+    @Resource(name = "advanceAccountServiceImpl")
+    private AdvanceAccountService advanceAccountService;
+
+
+    @Test
+    public void testRealTimeAccounting() {
+
+        List<RealTimeAccountingVo> list = new ArrayList<RealTimeAccountingVo>();
+        RealTimeAccountingVo vo = new RealTimeAccountingVo();
+        vo.setAccountNo("CA15120810096156");
+        vo.setCoreMerchantNo("liantuo");
+        vo.setPoolNo("PN01000000000000761");
+        vo.setReservedFields1("预留1");
+        vo.setReservedFields2("预留2");
+        vo.setTradeCode("123");
+        vo.setTradeNo("456");
+        vo.setTradeGmtCreated(new Date());
+        vo.setRmk("备注");
+        vo.setTradeReqCode("535345345");
+        vo.setTradeStepNo("4645645645");
+        vo.setSequenceNo("234234234234234");
+        /*vo.setAvlBalDecrAmt(43234);*/
+        list.add(vo);
+
+        /*List<RealTimeAccountingRsp> reslist = advanceAccountService.RealTimeAccounting(list);*/
+    }
+
+}

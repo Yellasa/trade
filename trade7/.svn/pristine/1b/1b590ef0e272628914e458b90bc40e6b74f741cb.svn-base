@@ -1,0 +1,69 @@
+package com.liantuo.deposit.advanceaccount.bus.service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.junit.Test;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+
+import com.alibaba.fastjson.JSON;
+import com.liantuo.deposit.advanceaccount.bus.service.AdvanceAccountService;
+import com.liantuo.deposit.advanceaccount.bus.vo.RealTimeAccountingRsp;
+import com.liantuo.deposit.advanceaccount.bus.vo.RealTimeAccountingVo;
+
+@ContextConfiguration(locations = { "classpath:config/spring/applicationContext-myBatis.xml","classpath:config/spring/applicationContext-common.xml",
+		"classpath:config/spring/applicationContext-template.xml",
+		"classpath:config/spring/applicationContext-mq-producter.xml"})
+@TransactionConfiguration(defaultRollback = false)
+public class AdvanceAccountServiceTest extends
+		AbstractTransactionalJUnit4SpringContextTests {
+
+	@Resource(name = "advanceAccountServiceImpl")
+	private AdvanceAccountService advanceAccountService;
+
+	@Test
+	public void testRealTimeAccounting() {
+		List<RealTimeAccountingVo> list = new ArrayList<RealTimeAccountingVo>();
+		RealTimeAccountingVo vo = new RealTimeAccountingVo();
+		vo.setAccountNo("CA15120810096156");
+		vo.setCoreMerchantNo("liantuo");
+		vo.setPoolNo("PN01000000000000761");
+		vo.setReservedFields1("预留1");
+		vo.setReservedFields2("预留2");
+		vo.setTradeCode("123");
+		vo.setTradeNo("456323131232");
+		vo.setTradeGmtCreated(new Date());
+		vo.setRmk("备注");
+		vo.setTradeReqCode("0002_001_001");
+		vo.setTradeStepNo("46456456451232132");
+		vo.setSequenceNo("234234234234234");
+		vo.setAvlBalDecrAmt(1000000L);
+		list.add(vo);
+		RealTimeAccountingVo vo1 = new RealTimeAccountingVo();
+		vo1.setAccountNo("CA15120810096156");
+		vo1.setCoreMerchantNo("liantuo");
+		vo1.setPoolNo("PN01000000000000761");
+		vo1.setReservedFields1("预留1");
+		vo1.setReservedFields2("预留2");
+		vo1.setTradeCode("123");
+		vo1.setTradeNo("45623212321321");
+		vo1.setTradeGmtCreated(new Date());
+		vo1.setRmk("备注");
+		vo1.setTradeReqCode("0002_001_001");
+		vo1.setTradeStepNo("4645645645123213434");
+		vo1.setSequenceNo("234234234234234");
+		vo1.setAvlBalDecrAmt(1000000L);
+		list.add(vo1);
+
+		List<RealTimeAccountingRsp> reslist = advanceAccountService
+				.realTimeAccounting(list);
+		
+		System.out.println(JSON.toJSONString(list));
+	}
+
+}

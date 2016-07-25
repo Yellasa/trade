@@ -1,0 +1,66 @@
+package com.liantuo.trade.bus.service;
+
+import com.liantuo.trade.common.message.MessageBundleService;
+import com.liantuo.trade.exception.BusinessException;
+import com.liantuo.trade.exception.BusinessPaymentException;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import java.lang.reflect.Constructor;
+
+/**
+ * 公共消息资源服务
+ */
+@Component
+public class ExceptionService {
+	@Resource(name = "messageBundleServiceImpl")
+	private MessageBundleService messageBundleService;
+	
+	protected String getInternalFailureCode(String key) {
+		return this.messageBundleService.getCode(key);
+	}
+
+	protected String getInternalFailureMessage(String key, Object... objs) {
+		//MessageFormat.format(messageBundleService.getMessage(key),objs);
+		return this.messageBundleService.getMessage(key, objs);
+	}
+	public <S extends BusinessException> S buildBusinessException(
+			String errorKey, Class<S> clazz, Object... param) {
+		String errorCode = getInternalFailureCode(errorKey);
+		String errorMessage = getInternalFailureMessage(errorKey, param);
+		try {
+			Constructor<S> c = clazz.getConstructor(String.class);
+			S instance;
+			if(c == null){
+				instance = (S) c.newInstance();
+			}else{
+				instance = (S) c.newInstance(errorCode + ":" +errorMessage);
+			}
+			instance.setErrorCode(errorCode);
+			instance.setErrorMessage(errorMessage);
+			return instance;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	public BusinessException buildBusinessException(
+			String errorKey, Object... param) {
+		String errorCode = getInternalFailureCode(errorKey);
+		String errorMessage = getInternalFailureMessage(errorKey, param);
+		BusinessException instance = new BusinessException(errorCode + ":" +errorMessage);
+		instance.setErrorCode(errorCode);
+		instance.setErrorMessage(errorMessage);
+		return instance;
+	}
+	public BusinessPaymentException buildPaymentBusinessException(
+			String errorKey, Object... param) {
+		String errorCode = getInternalFailureCode(errorKey);
+		String errorMessage = getInternalFailureMessage(errorKey, param);
+		BusinessPaymentException instance = new BusinessPaymentException(errorCode + ":" +errorMessage);
+		instance.setBusErrorCode(errorCode);
+		instance.setBusErrorMessage(errorMessage);
+		return instance;
+	}
+}

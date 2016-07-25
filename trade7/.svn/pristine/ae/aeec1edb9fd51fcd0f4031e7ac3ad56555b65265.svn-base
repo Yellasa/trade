@@ -1,0 +1,654 @@
+package com.liantuo.trade.bus.process.impl.single_recharge.v1;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.alibaba.druid.util.StringUtils;
+import com.liantuo.deposit.advanceaccount.bus.vo.RealTimeAccountingRsp;
+import com.liantuo.deposit.advanceaccount.bus.vo.RealTimeAccountingVo;
+import com.liantuo.payment.client.pay.PaymentClientV3;
+import com.liantuo.payment.client.pay.PaymentResponse;
+import com.liantuo.payment.client.pay.alipay.vo1.req.AlipayBatchQueryRequest;
+import com.liantuo.payment.client.pay.alipay.vo1.rsp.AlipayBatchQueryReponse;
+import com.liantuo.payment.client.pay.head.PaymentHead;
+import com.liantuo.trade.bus.process.ATradeQueryPayStatusInterface;
+import com.liantuo.trade.bus.process.TradeState;
+import com.liantuo.trade.bus.service.BizAccountService;
+import com.liantuo.trade.bus.service.ExceptionService;
+import com.liantuo.trade.bus.service.impl.LegderServiceImpl;
+import com.liantuo.trade.bus.service.impl.ProfitLossLedgerServiceImpl;
+import com.liantuo.trade.bus.service.impl.RechargeServiceImpl;
+import com.liantuo.trade.bus.template.impl.v1_1.ATradeQueryPayStatus;
+import com.liantuo.trade.bus.vo.RealTimeAccountVO;
+import com.liantuo.trade.client.trade.packet.TradeRequest;
+import com.liantuo.trade.client.trade.packet.body.single_recharge.TradePacketReqBodyQueryAndCheck;
+import com.liantuo.trade.common.constants.TradeConstants;
+import com.liantuo.trade.common.util.amount.AmountUtils;
+import com.liantuo.trade.common.util.date.DateUtil;
+import com.liantuo.trade.common.util.trade.TradeUtilCommon;
+import com.liantuo.trade.common.util.xml.ObjectXmlUtil;
+import com.liantuo.trade.common.validate.TradeValidationUtil;
+import com.liantuo.trade.exception.AmountConvertException;
+import com.liantuo.trade.exception.BusinessException;
+import com.liantuo.trade.exception.BusinessPaymentException;
+import com.liantuo.trade.orm.pojo.TradeLedger;
+import com.liantuo.trade.orm.pojo.TradeLedgerExample;
+import com.liantuo.trade.orm.pojo.TradeProfitLossLedger;
+import com.liantuo.trade.orm.pojo.TradeRecharge;
+import com.liantuo.trade.orm.pojo.TradeRechargeExample;
+import com.liantuo.trade.orm.pojo.TradeRechargeExample.Criteria;
+import com.liantuo.trade.orm.service.impl.TradeLedgerServiceImpl;
+import com.liantuo.trade.spring.annotation.JobFlow;
+
+/**
+ * 付款状态监测
+ */
+@JobFlow(value = "0005_001_006", version = "1.0", template = ATradeQueryPayStatus.class)
+public class SingleRechargeOnlineAlipayPwdBatchPayQueryProcess implements ATradeQueryPayStatusInterface<TradePacketReqBodyQueryAndCheck> {
+
+    private static final String EFFECTIVE_REQ_TYPE = "0005_001_006";
+    private static final String TRADE_TYPE = "0005_001";
+    private final Logger logger = LoggerFactory.getLogger(SingleRechargeOnlineAlipayPwdBatchPayQueryProcess.class);
+    @Autowired
+    private ExceptionService exceptionService;
+    //	@Autowired
+//	private TradeRechargeService tradeRechargeServiceImpl;
+    @Resource(name = "rechargeServiceImpl")
+    private RechargeServiceImpl tradeRechargeServiceImpl;
+    private TradeRecharge _recharge;//根据用户输入查询出来的充值交易记录
+    private AlipayBatchQueryReponse obj;//请求支付返回的对象
+    //封装的空白台账service
+    @Resource(name = "legderServiceImpl")
+    private LegderServiceImpl legderServiceImpl;
+    //原空白台账service
+    @Resource(name = "tradeLedgerService")
+    private TradeLedgerServiceImpl tradeLedgerServiceImpl;
+    //损益台账service
+    @Resource(name = "profitLossLedgerServiceImpl")
+    private ProfitLossLedgerServiceImpl profitLossLedgerServiceImpl;
+
+    @Resource(name = "bizAccountServiceImpl")
+    private BizAccountService bizAccountService;
+
+    private TradeLedger tradeLedger;//空白台账 填充请求支付中心的付款账号属性
+    private String recharge_ledger_no;//补差台账编号
+    private String fee_ledger_no;//手续费台账编号
+    private String req_no;//本次请求交易编号
+    private boolean isCreateRehargeLedger;//是否创建充值补差台账记录
+    private boolean isCreateHandlingChargeLedger;//是否创建手续费台账记录
+    private String alipay_handler_date;//充值付款成功日期 来自支付
+    private String thirdTradeNo;//支付宝流水号
+    private AlipayBatchQueryRequest query_request;//请求支付中心对象
+
+    @Override
+    public boolean validate(TradeRequest<TradePacketReqBodyQueryAndCheck> tradeRquest) throws Exception {
+        //1 格式校验
+        formatValidate(tradeRquest);
+        //2 业务校验
+        bizValidate(tradeRquest);
+        //3 分析交易状态
+        /*
+         * 需要对_recharge 对象做分析判断 是否需要调用支付中心
+		 * 当交易数据中交易状态不为【等待支付】时，返回结果【成功】，返回当前交易数据
+			当交易数据中交易状态为【等待支付】时，根据【交易编号】查询交易数据，组织请求数据调用支付中心对应查询接口
+		 */
+        return _recharge.getStatus().equals(TradeConstants.TRADE_RECHARGE_WAIT_PAY);
+    }
+
+    private void formatValidate(TradeRequest<TradePacketReqBodyQueryAndCheck> tradeRquest) throws Exception {
+        String msg = TradeValidationUtil.validateRequest(tradeRquest);
+        if (!StringUtils.isEmpty(msg)) {
+            throw exceptionService.buildBusinessException("JY00050010061000100", msg);
+        }
+    }
+
+    private void bizValidate(TradeRequest<TradePacketReqBodyQueryAndCheck> tradeRquest) throws Exception {
+        String trade_no = tradeRquest.getBody().getTrade_no();
+        String core_merchant_no = tradeRquest.getHead().getCore_merchant_no();
+        String fund_pool_no = tradeRquest.getHead().getFund_pool_no();
+        String out_trade_no_ext = tradeRquest.getBody().getOut_trade_no_ext();
+        if(StringUtils.isEmpty(trade_no)&&StringUtils.isEmpty(out_trade_no_ext)){
+        	throw exceptionService.buildBusinessException("JY00050010061000300");
+        }
+        TradeRechargeExample tradeRechargeExample = new TradeRechargeExample();
+        Criteria criteria = tradeRechargeExample.createCriteria();
+        criteria.andCoreMerchantNoEqualTo(core_merchant_no)
+                .andFundPoolNoEqualTo(fund_pool_no);
+        if(!StringUtils.isEmpty(trade_no)){
+        	criteria.andTradeNoEqualTo(trade_no);
+        }
+        if(StringUtils.isEmpty(trade_no)&&!StringUtils.isEmpty(out_trade_no_ext)){
+        	criteria.andOutTradeNoExtEqualTo(out_trade_no_ext);
+        }
+        List<TradeRecharge> recharge_list = tradeRechargeServiceImpl.queryByExample(tradeRechargeExample);
+        TradeRecharge recharge = null;
+        if (recharge_list != null && recharge_list.size() > 0) {
+            recharge = recharge_list.get(0);
+        }
+        if (null == recharge) {
+            throw exceptionService.buildBusinessException("JY00050010061000300");
+        }
+        //请求组别校验
+        String requestGroup = recharge.getRequestGroup();
+        if (!StringUtils.isEmpty(requestGroup)) {
+            if (!TradeConstants.REQUEST_GROUP_OF_HASCODE.equals(requestGroup)) {
+                throw exceptionService.buildBusinessException("JY00050010061000400");
+            }
+        }
+        this._recharge = recharge;
+    }
+
+    @Override
+    public PaymentResponse requestPayment() throws Exception {
+        obj = PaymentClientV3.alipayBatchQuery(query_request, AlipayBatchQueryReponse.class);
+        return obj;
+    }
+
+    @Override
+    public TradeState parseObj(PaymentResponse responseObj) throws Exception {
+        //校验数据的关键信息是否与交易发起信息一致并校验返回中有且仅有一条【付款结果详细数据】(单笔）并且判断是否支付成功
+        AlipayBatchQueryReponse response = (AlipayBatchQueryReponse) responseObj;
+        return validateParameters(response);
+//		return TradeState.SUCCESS;
+    }
+
+    /**
+     * 校验数据的关键信息是否与交易发起信息一致
+     * 批次号 流水号 付款金额
+     * 并校验返回中有且仅有一条【付款结果详细数据】(单笔)
+     * 付款成功  	支付中心返回的支付宝数据中，【成功标识】=T，【批次状态】=S，【付款结果详细数据】参数【明细状态】为S时
+     * 付款失败	1)支付中心返回的支付宝数据中，【成功标识】=T，【批次状态】=S，【付款结果详细数据】参数【明细状态】为F时
+     *
+     * @param responseObj
+     */
+    private TradeState validateParameters(AlipayBatchQueryReponse responseObj) throws Exception {
+    	 String ret_code = responseObj.getZf_head().getRet_code();//支付中心成功标识
+         String err_code = responseObj.getZf_head().getErr_code();
+         String err_code_des = responseObj.getZf_head().getErr_code_des();
+    	 if ("F".equals(ret_code) && !StringUtils.isEmpty(err_code)) {
+    		 if("NO_RECORD".equals(err_code)){
+    			 throw exceptionService.buildBusinessException(err_code);
+    		 }
+             throw new BusinessException(err_code, err_code_des);
+         }
+        String is_success = responseObj.getIs_success();
+        String batch_success = responseObj.getBatch_status();
+        String res_data = responseObj.getRes_data();
+        String[] arr_res_data = res_data.split("\\|");
+        if (arr_res_data != null) {
+            if (arr_res_data.length > 1) {
+                throw exceptionService.buildBusinessException("JY00050010061000900");
+            }
+            String[] alipay_detail_result_data = arr_res_data[0].split("\\^");
+            String flow_no = alipay_detail_result_data[0];
+            String pay_money = alipay_detail_result_data[3];
+            String detail_status = alipay_detail_result_data[4];
+            String batch_no = alipay_detail_result_data[7];
+            long pay_money_long = strParseToLong(pay_money);
+            if (!flow_no.equals(_recharge.getSerialNumber()) || !batch_no.equals(_recharge.getBatchNo()) || pay_money_long != _recharge.getPayAmount()) {
+                throw exceptionService.buildBusinessException("JY00050010061001000");
+            }
+            this.alipay_handler_date = alipay_detail_result_data[6];// 充值付款成功日期
+            // 来自支付
+            this.thirdTradeNo = flow_no;// 支付宝流水号
+            if ("T".equals(is_success) && "S".equals(batch_success) && "S".equals(detail_status)) {
+                return TradeState.SUCCESS;
+            } else if ("T".equals(is_success) && "S".equals(batch_success) && "F".equals(detail_status) || ("T".equals(is_success) && "F".equals(batch_success))) {
+                return TradeState.FAILURE;
+//            } else if ("T".equals(is_success) && "S".equals(batch_success) && ("P".equals(detail_status) || "T".equals(is_success) && ("W".equals(batch_success) || "T".equals(is_success) && "P".equals(detail_status)))) {
+            } else if ("T".equals(is_success) && ("W".equals(batch_success)||"P".equals(batch_success))||("P".equals(detail_status)||"W".equals(detail_status))) {
+            	throw exceptionService.buildBusinessException("JY00050010061001300");
+//            	return TradeState.PROCESSING;
+            }
+        }
+        return TradeState.FAILURE;
+    }
+
+    @Override
+    public void transactionReceipt(TradeRequest<TradePacketReqBodyQueryAndCheck> tradeRquest) throws Exception {
+        // 1 空白台账生效
+        TradeLedgerExample example = new TradeLedgerExample();
+        com.liantuo.trade.orm.pojo.TradeLedgerExample.Criteria criteria = example.createCriteria();
+        criteria.andTradeNoEqualTo(tradeRquest.getBody().getTrade_no());
+        List<TradeLedger> list = tradeLedgerServiceImpl.selectByExample(example);
+        if (null != list && list.size() > 0) {
+            TradeLedger tradeLedger = list.get(0);//获得之前创建的空白台账
+            this.tradeLedger = tradeLedger;
+            try {
+                // TODO
+                Date handler_date = DateUtil.format(alipay_handler_date, DateUtil.YYYYMMDD);
+//				Date handler_date = DateUtil.format("20160101", DateUtil.YYYYMMDD);
+                tradeLedger.setGmtSuccessClearChannel(handler_date);//外部收付款成功日期
+                tradeLedger.setEffectiveReqType(TradeConstants.TRADE_ALIPAY_ONLINE_QUERY);
+                tradeLedger.setEffectiveReqNo(req_no);
+                tradeLedger.setThirdTradeNo(thirdTradeNo);//收款渠道订单号
+                tradeLedger.setPaymentTradeNo(obj.getZf_head().getPayment_req_no());//支付中心记录号
+                legderServiceImpl.updateBlankLegderEffective(tradeLedger);//使之生效
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw exceptionService.buildBusinessException("TZ000100401");
+            }
+        }
+        // 2 修改交易记录 等待入账
+        try {
+            updateTradeStatus();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw exceptionService.buildBusinessException("JY00050010061001100");
+        }
+    }
+
+    private void updateTradeStatus() throws Exception {
+        TradeRecharge newTradeRecharge = new TradeRecharge();
+        BeanUtils.copyProperties(this._recharge, newTradeRecharge);
+        newTradeRecharge.setLatestReqNo(req_no);
+        newTradeRecharge.setLatestTradeReqType(TradeConstants.TRADE_ALIPAY_ONLINE_QUERY);
+        newTradeRecharge.setRechargeLedgerNo(this.tradeLedger.getLedgerNo());
+        newTradeRecharge.setThirdTradeNo(thirdTradeNo);//充值付款渠道编号 来自支付
+        //TODO
+        Date handler_date = DateUtil.format(alipay_handler_date, DateUtil.YYYYMMDD);
+//		Date handler_date = DateUtil.format("20160101", DateUtil.YYYYMMDD);
+        newTradeRecharge.setGmtSuccessClearChannel(handler_date);//外部付款成功日期 来自支付
+        this._recharge = tradeRechargeServiceImpl.updateForEnterOfWait(newTradeRecharge);
+    }
+
+    private void updateTradeStatus4Ledger() throws Exception {
+        try {
+            TradeRecharge newTradeRecharge = new TradeRecharge();
+            BeanUtils.copyProperties(this._recharge, newTradeRecharge);
+            newTradeRecharge.setLatestReqNo(req_no);
+            newTradeRecharge.setLatestTradeReqType(TradeConstants.TRADE_ALIPAY_ONLINE_QUERY);
+            String supplyWay = newTradeRecharge.getSupplyWay();//补差付出方式
+            String feeWay = newTradeRecharge.getFeeWay();//手续费接收方式
+            if (!StringUtils.isEmpty(supplyWay) && TradeConstants.SUPPLY_WAY_LEDGER.equals(supplyWay)) {
+                newTradeRecharge.setSupplyLedgerNo(recharge_ledger_no);
+            }
+            if (!StringUtils.isEmpty(feeWay) && TradeConstants.FEE_WAY_LEDGER.equals(feeWay)) {
+                newTradeRecharge.setFeeLedgerNo(fee_ledger_no);
+            }
+            this._recharge = tradeRechargeServiceImpl.updateTradeSuccess(newTradeRecharge);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw exceptionService.buildPaymentBusinessException("JY000000000000801");
+        }
+    }
+
+    @Override
+    public void transactionEntry(TradeRequest<TradePacketReqBodyQueryAndCheck> tradeRquest) throws Exception {
+        setFlag();
+        //1 创建补差损益台账   若【充值补差付出方式】为【台账】且【充值补差金额】不为空
+        creatProfitLedger(1);
+        //2 账务操作
+        handlerRealAcount(tradeRquest);
+        //3 创建手续费损益台账
+        creatProfitLedger(2);
+        //4 修改交易记录
+        updateTradeStatus4Ledger();
+    }
+
+    private void handlerRealAcount(TradeRequest<TradePacketReqBodyQueryAndCheck> tradeRquest) {
+        List<RealTimeAccountingVo> request_list = new ArrayList<RealTimeAccountingVo>();
+        //1 充值补差出账
+        RealTimeAccountingVo realAcountSetp1 = realAcountSetp1(tradeRquest);
+        if (realAcountSetp1 != null) {
+            request_list.add(realAcountSetp1);
+        }
+        //2 充值入账
+        RealTimeAccountingVo realAcountSetp2 = realAcountSetp2(tradeRquest);
+        if (realAcountSetp2 != null) {
+            request_list.add(realAcountSetp2);
+        }
+        //3 手续费扣除
+        RealTimeAccountingVo realAcountSetp3 = realAcountSetp3(tradeRquest);
+        if (realAcountSetp3 != null) {
+            request_list.add(realAcountSetp3);
+        }
+        //4 手续费入账
+        RealTimeAccountingVo realAcountSetp4 = realAcountStep4(tradeRquest);
+        if (realAcountSetp4 != null) {
+            request_list.add(realAcountSetp4);
+        }
+
+        try {
+            List<RealTimeAccountingRsp> list = this.bizAccountService.senderRequestToAccount(request_list);
+            RealTimeAccountingRsp rsp;
+            for (RealTimeAccountingRsp aList : list) {
+                rsp = aList;
+                if ("F".equals(rsp.getSuccess())) {
+//					throw new BusinessPaymentException(rsp.getRetCode(), rsp.getErrMessage());
+                    throw exceptionService.buildPaymentBusinessException(rsp.getRetCode(), rsp.getErrMessage());
+                }
+            }
+        } catch (BusinessPaymentException e) {
+            logger.error(tradeRquest.getHead().getRequest_code(), e);
+//			throw new BusinessPaymentException(e.getErrorCode(), e.getErrorMessage());
+            throw exceptionService.buildPaymentBusinessException(e.getBusErrorCode(), e.getBusErrorMessage());
+        } catch (Exception e) {
+            throw exceptionService.buildPaymentBusinessException("JY000000000000401");
+        }
+    }
+
+    private RealTimeAccountingVo realAcountSetp1(TradeRequest<TradePacketReqBodyQueryAndCheck> tradeRquest) {
+        String type = _recharge.getSupplyWay();
+        Long money = _recharge.getSupplyAmount();
+        if (!StringUtils.isEmpty(type) && TradeConstants.SUPPLY_WAY_CA.equals(type) && money != null && money > 0) {
+            RealTimeAccountVO accountvo = new RealTimeAccountVO();
+            accountvo.setCoreMerchantNo(_recharge.getCoreMerchantNo()); // 核心商户编号
+            accountvo.setAccountNo(_recharge.getSupplyPayAccountNo());
+            accountvo.setPoolNo(_recharge.getFundPoolNo()); // 资金池编号
+            accountvo.setReservedFields1(_recharge.getSupplyPayAccountExtendField1());
+            accountvo.setReservedFields2(_recharge.getSupplyPayAccountExtendField2());
+            accountvo.setReservedFields3(_recharge.getSupplyPayAccountExtendField3());
+
+            // accountvo.setRmk("备注");
+            accountvo.setSequenceNo(_recharge.getOutTradeNo()); // 本交易业务系统订单号
+            accountvo.setTradeCode(TradeUtilCommon.getTradeType(tradeRquest.getHead().getRequest_code())); // 交易类型0005_001
+            accountvo.setTradeNo(_recharge.getTradeNo()); // 本交易编号
+            accountvo.setTradeGmtCreated(_recharge.getGmtCreated()); // 本交易创建时间
+            accountvo.setTradeReqCode(TradeConstants.TRADE_ALIPAY_ONLINE_QUERY); // 交易请求类型0005_001_006
+            accountvo.setTradeStepNo(req_no);// 交易请求编号
+            if (!StringUtils.isEmpty(_recharge.getOutTradeNo())) {
+                accountvo.setSequenceNo(_recharge.getOutTradeNo());// 本交易业务系统订单号
+            }
+            accountvo.setAmount(money);
+            return bizAccountService.avlBalDecrWrapper(accountvo);
+        }
+        return null;
+
+    }
+
+    /**
+     * 充值入账
+     *
+     * @param tradeRquest
+     * @return
+     */
+    private RealTimeAccountingVo realAcountSetp2(TradeRequest<TradePacketReqBodyQueryAndCheck> tradeRquest) {
+        RealTimeAccountVO accountvo = new RealTimeAccountVO();
+        accountvo.setCoreMerchantNo(_recharge.getCoreMerchantNo()); // 核心商户编号
+        accountvo.setAccountNo(_recharge.getRechargeAccountNo());
+        accountvo.setPoolNo(_recharge.getFundPoolNo()); // 资金池编号
+        accountvo.setReservedFields1(_recharge.getRechargeAccountExtendField1());
+        accountvo.setReservedFields2(_recharge.getRechargeAccountExtendField2());
+        accountvo.setReservedFields3(_recharge.getRechargeAccountExtendField3());
+
+        accountvo.setSequenceNo(_recharge.getOutTradeNo()); // 本交易业务系统订单号
+        accountvo.setTradeCode(TradeUtilCommon.getTradeType(tradeRquest.getHead().getRequest_code())); // 交易类型0005_001
+        accountvo.setTradeNo(_recharge.getTradeNo()); // 本交易编号
+        accountvo.setTradeGmtCreated(_recharge.getGmtCreated()); // 本交易创建时间
+        accountvo.setTradeReqCode(TradeConstants.TRADE_ALIPAY_ONLINE_QUERY); // 交易请求类型0005_001_006
+        accountvo.setTradeStepNo(req_no);// 交易请求编号
+        if (!StringUtils.isEmpty(_recharge.getOutTradeNo())) {
+            accountvo.setSequenceNo(_recharge.getOutTradeNo());// 本交易业务系统订单号
+        }
+
+        Long money = _recharge.getRechargeAmount();//充值金额
+        accountvo.setAmount(money);
+        return bizAccountService.avlBalIncrWrapper(accountvo);
+
+    }
+
+    private RealTimeAccountingVo realAcountSetp3(TradeRequest<TradePacketReqBodyQueryAndCheck> tradeRquest) {
+        Long feeAmount = _recharge.getFeeAmount();//充值手续费
+        if (null != feeAmount && feeAmount > 0) {
+            RealTimeAccountVO accountvo = new RealTimeAccountVO();
+            accountvo.setCoreMerchantNo(_recharge.getCoreMerchantNo()); // 核心商户编号
+            accountvo.setAccountNo(_recharge.getRechargeAccountNo());
+            accountvo.setPoolNo(_recharge.getFundPoolNo()); // 资金池编号
+            accountvo.setReservedFields1(_recharge.getFeePayAccountExtendField1());
+            accountvo.setReservedFields2(_recharge.getFeePayAccountExtendField2());
+            accountvo.setReservedFields3(_recharge.getFeePayAccountExtendField3());
+
+            accountvo.setSequenceNo(_recharge.getOutTradeNo()); // 本交易业务系统订单号
+            accountvo.setTradeCode(TradeUtilCommon.getTradeType(tradeRquest.getHead().getRequest_code())); // 交易类型0007_001
+            accountvo.setTradeNo(_recharge.getTradeNo()); // 本交易编号
+            accountvo.setTradeGmtCreated(_recharge.getGmtCreated()); // 本交易创建时间
+            accountvo.setTradeReqCode(TradeConstants.TRADE_ALIPAY_ONLINE_QUERY); // 交易请求类型0005_001_006
+            accountvo.setTradeStepNo(req_no);// 交易请求编号
+            if (!StringUtils.isEmpty(_recharge.getOutTradeNo())) {
+                accountvo.setSequenceNo(_recharge.getOutTradeNo());// 本交易业务系统订单号
+            }
+
+            accountvo.setAmount(feeAmount);
+            return bizAccountService.avlBalDecrWrapper(accountvo);
+        }
+        return null;
+
+    }
+
+    private RealTimeAccountingVo realAcountStep4(TradeRequest<TradePacketReqBodyQueryAndCheck> tradeRquest) {
+        String type = _recharge.getFeeWay();//充值手续费接收方式
+        Long feeAmount = _recharge.getFeeAmount();//充值手续费
+        if (!StringUtils.isEmpty(type) && TradeConstants.SUPPLY_WAY_CA.equals(type) && feeAmount != null && feeAmount > 0) {
+            RealTimeAccountVO accountvo = new RealTimeAccountVO();
+            accountvo.setCoreMerchantNo(_recharge.getCoreMerchantNo()); // 核心商户编号
+            accountvo.setAccountNo(_recharge.getFeeReceiveAccountNo());//充值手续费收款账号
+            accountvo.setPoolNo(_recharge.getFundPoolNo()); // 资金池编号
+            accountvo.setReservedFields1(_recharge.getFeeReceiveAccountExtendField1());
+            accountvo.setReservedFields2(_recharge.getFeeReceiveAccountExtendField2());
+            accountvo.setReservedFields3(_recharge.getFeeReceiveAccountExtendField3());
+
+            accountvo.setSequenceNo(_recharge.getOutTradeNo()); // 本交易业务系统订单号
+            accountvo.setTradeCode(TradeUtilCommon.getTradeType(tradeRquest.getHead().getRequest_code())); // 交易类型0005_001
+            accountvo.setTradeNo(_recharge.getTradeNo()); // 本交易编号
+            accountvo.setTradeGmtCreated(_recharge.getGmtCreated()); // 本交易创建时间
+            accountvo.setTradeReqCode(TradeConstants.TRADE_ALIPAY_ONLINE_QUERY); // 交易请求类型0005_001_006
+            accountvo.setTradeStepNo(req_no);// 交易请求编号
+            if (!StringUtils.isEmpty(_recharge.getOutTradeNo())) {
+                accountvo.setSequenceNo(_recharge.getOutTradeNo());// 本交易业务系统订单号
+            }
+            accountvo.setAmount(feeAmount);
+            return bizAccountService.avlBalIncrWrapper(accountvo);
+        }
+        return null;
+    }
+
+    private void creatProfitLedger(int type) {
+        Long supplyAmount = _recharge.getSupplyAmount();//充值补差金额
+        Long feeAmount = _recharge.getFeeAmount();//手续费金额
+        TradeProfitLossLedger ledger = new TradeProfitLossLedger();
+        ledger.setGmtTradeCreated(_recharge.getGmtCreated());
+        ledger.setCoreMerchantNo(_recharge.getCoreMerchantNo());
+        ledger.setFundPoolNo(_recharge.getFundPoolNo());
+        ledger.setTradeType(TRADE_TYPE);
+        ledger.setTradeNo(_recharge.getTradeNo());
+        ledger.setEffectiveReqNo(req_no);
+        ledger.setEffectiveReqType(EFFECTIVE_REQ_TYPE);
+        ledger.setOutTradeNoExt(_recharge.getOutTradeNoExt());
+        ledger.setOutTradeNo(_recharge.getOutTradeNo());
+        String supplyLedgerType = _recharge.getSupplyLedgerType();//充值补差类别
+        String feeLedgerType = _recharge.getFeeLedgerType();//手续费类别
+        if (isCreateRehargeLedger && type == 1) {
+            this.isCreateRehargeLedger = false;
+            ledger.setMerchantExtendField1(_recharge.getSupplyLedgerExtendField1());
+            ledger.setMerchantExtendField2(_recharge.getSupplyLedgerExtendField2());
+            ledger.setMerchantExtendField3(_recharge.getSupplyLedgerExtendField3());
+            ledger.setProfitLossAttr1(_recharge.getSupplyProfitLossAttr1());
+            ledger.setProfitLossAttr2(_recharge.getSupplyProfitLossAttr2());
+            ledger.setProfitLossAttr3(_recharge.getSupplyProfitLossAttr3());
+            ledger.setProfitLossAttr4(_recharge.getSupplyProfitLossAttr4());
+            ledger.setProfitLossAttr5(_recharge.getSupplyProfitLossAttr5());
+            ledger.setProfitLossAttr6(_recharge.getSupplyProfitLossAttr6());
+            ledger.setProfitLossAttr7(_recharge.getSupplyProfitLossAttr7());
+            ledger.setProfitLossAttr8(_recharge.getSupplyProfitLossAttr8());
+            ledger.setProfitLossAttr9(_recharge.getSupplyProfitLossAttr9());
+            ledger.setProfitLossAttr10(_recharge.getSupplyProfitLossAttr10());
+            if (supplyLedgerType.equals(TradeConstants.SUPPLY_LEDGER_TYPE_INCOME_DEC)) {
+                ledger.setIncomeDecr(supplyAmount);
+            } else if (supplyLedgerType.equals(TradeConstants.SUPPLY_LEDGER_TYPE_COSET_INC)) {
+                ledger.setCostIncr(supplyAmount);
+            }
+            try {
+                this.recharge_ledger_no = profitLossLedgerServiceImpl.createEffectiveProfitLossLedger(ledger);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw exceptionService.buildPaymentBusinessException("TZ000200101");
+            }
+        }
+        if (isCreateHandlingChargeLedger && type == 2) {
+            this.isCreateHandlingChargeLedger = false;
+            ledger.setMerchantExtendField1(_recharge.getFeeLedgerExtendField1());
+            ledger.setMerchantExtendField2(_recharge.getFeeLedgerExtendField2());
+            ledger.setMerchantExtendField3(_recharge.getFeeLedgerExtendField3());
+            ledger.setProfitLossAttr1(_recharge.getFeeProfitLossAttr1());
+            ledger.setProfitLossAttr2(_recharge.getFeeProfitLossAttr2());
+            ledger.setProfitLossAttr3(_recharge.getFeeProfitLossAttr3());
+            ledger.setProfitLossAttr4(_recharge.getFeeProfitLossAttr4());
+            ledger.setProfitLossAttr5(_recharge.getFeeProfitLossAttr5());
+            ledger.setProfitLossAttr6(_recharge.getFeeProfitLossAttr6());
+            ledger.setProfitLossAttr7(_recharge.getFeeProfitLossAttr7());
+            ledger.setProfitLossAttr8(_recharge.getFeeProfitLossAttr8());
+            ledger.setProfitLossAttr9(_recharge.getFeeProfitLossAttr9());
+            ledger.setProfitLossAttr10(_recharge.getFeeProfitLossAttr10());
+            if (TradeConstants.HANDING_LEDGER_TYPE_INCOME_INC.equals(feeLedgerType)) {
+                ledger.setIncomeIncr(feeAmount);
+            } else if (TradeConstants.HANDING_LEDGER_TYPE_COSET_DEC.equals(feeLedgerType)) {
+                ledger.setCostDecr(feeAmount);
+            }
+            try {
+                this.fee_ledger_no = profitLossLedgerServiceImpl.createEffectiveProfitLossLedger(ledger);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw exceptionService.buildPaymentBusinessException("TZ000200101");
+            }
+        }
+    }
+
+    @Override
+    public void transactionFailure(TradeRequest<TradePacketReqBodyQueryAndCheck> tradeRquest) throws Exception {
+        //1 空白台账失效
+        try {
+            TradeLedger ledger = getTradeLedger(_recharge.getTradeNo());
+            ledger.setLedgerNo(_recharge.getRechargeLedgerNo());
+            ledger.setFailReqType(TradeConstants.TRADE_ALIPAY_ONLINE_QUERY);
+            ledger.setExtendField10(obj.getZf_head().getErr_code());//来自支付中心错误码
+            ledger.setFailReqNo(req_no);
+            ledger.setThirdTradeNo(thirdTradeNo);
+            ledger.setPaymentTradeNo(obj.getZf_head().getPayment_req_no());
+            legderServiceImpl.updateBlankLegderFail(ledger);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw exceptionService.buildPaymentBusinessException("TZ000100501");
+        }
+        //2 修改交易记录
+        try {
+            updateTradeStatusFail();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw exceptionService.buildPaymentBusinessException("JY00050010061001200");
+        }
+
+    }
+
+    private TradeLedger getTradeLedger(String tradeNo) {
+        TradeLedgerExample example = new TradeLedgerExample();
+        com.liantuo.trade.orm.pojo.TradeLedgerExample.Criteria criteria = example.createCriteria();
+        criteria.andTradeNoEqualTo(tradeNo);
+        List<TradeLedger> list = tradeLedgerServiceImpl.selectByExample(example);
+        if (null != list && list.size() > 0) {
+            TradeLedger tradeLedger = list.get(0);//获得之前创建的空白台账
+            this.tradeLedger = tradeLedger;
+            return tradeLedger;
+        }
+        return null;
+    }
+
+    private void updateTradeStatusFail() throws Exception {
+        TradeRecharge newTradeRecharge = new TradeRecharge();
+        BeanUtils.copyProperties(this._recharge, newTradeRecharge);
+        newTradeRecharge.setLatestReqNo(req_no);
+        newTradeRecharge.setLatestTradeReqType(TradeConstants.TRADE_ALIPAY_ONLINE_QUERY);
+        newTradeRecharge.setThirdTradeNo(thirdTradeNo);//充值付款渠道编号 来自支付 支付宝内部流水
+        this._recharge = tradeRechargeServiceImpl.updateTradeFail(newTradeRecharge);
+    }
+
+    @Override
+    public void setReqNo(String reqNo) {
+        this.req_no = reqNo;
+    }
+
+    @Override
+    public Object getTradeDetails() {
+        return this._recharge;
+    }
+
+    @Override
+    public String createPaymentRequest() {
+        //查询空白台账 获取付款账号
+        AlipayBatchQueryRequest request_obj = new AlipayBatchQueryRequest();
+        PaymentHead zf_head = new PaymentHead();
+        TradeLedgerExample example = new TradeLedgerExample();
+        com.liantuo.trade.orm.pojo.TradeLedgerExample.Criteria criteria = example.createCriteria();
+        criteria.andLedgerNoEqualTo(_recharge.getRechargeLedgerNo());
+        List<TradeLedger> ledger_list = tradeLedgerServiceImpl.selectByExample(example);
+        if (ledger_list == null || ledger_list.size() == 0) {
+            throw exceptionService.buildBusinessException("JY000000000000101");
+        }
+        TradeLedger tradeLedger = ledger_list.get(0);
+        String email = tradeLedger.getExtendField2();//付款账号
+        zf_head.setTrade_no(_recharge.getTradeNo());
+        zf_head.setCore_merchant_no(_recharge.getCoreMerchantNo());
+        zf_head.setLedger_no(_recharge.getRechargeLedgerNo());
+        zf_head.setTrade_req_no(req_no);
+        zf_head.setOut_trade_no(_recharge.getOutTradeNo());
+        zf_head.setVersion("1.0");
+        zf_head.setPay_channel(TradeConstants.ZF0001_01_002);
+        zf_head.setPay_transaction_id(_recharge.getTransactionId());
+        request_obj.setEmail(email);
+        request_obj.setBatch_no(_recharge.getBatchNo());
+        request_obj.setZf_head(zf_head);
+        this.query_request = request_obj;
+        return ObjectXmlUtil.marshal(query_request);
+    }
+
+    private void setFlag() {
+        String supplyWay = _recharge.getSupplyWay();//补差付出方式
+        String feeWay = _recharge.getFeeWay();//手续费接收方式
+        Long supplyAmount = _recharge.getSupplyAmount();//充值补差金额
+        Long feeAmount = _recharge.getFeeAmount();//充值手续费金额
+        if (!StringUtils.isEmpty(supplyWay) && TradeConstants.SUPPLY_WAY_LEDGER.equals(supplyWay)) {
+            if (null != supplyAmount && supplyAmount > 0) {
+                this.isCreateRehargeLedger = true;//更改充值补差创建台账标示为true
+            }
+        }
+
+        if (!StringUtils.isEmpty(feeWay) && TradeConstants.FEE_WAY_LEDGER.equals(feeWay)) {
+            if (null != feeAmount && feeAmount > 0) {
+                this.isCreateHandlingChargeLedger = true;//更改充值手续费创建台账标示为true
+            }
+        }
+    }
+
+    /**
+     * @Description: 将字符串转换为数字
+     */
+    private long strParseToLong(String str) {
+        long parseNum = 0;
+        if (!StringUtils.isEmpty(str)) {
+            try {
+                parseNum = AmountUtils.bizAmountConvertToLong(str);
+            } catch (AmountConvertException e) {
+                throw exceptionService.buildBusinessException("JY000000000000201");
+            }
+        }
+        return parseNum;
+    }
+
+    @Override
+    public String getResponseXml() {
+        return ObjectXmlUtil.marshal(obj);
+    }
+
+	@Override
+	public BusinessException getException() {
+		return null;
+	}
+}

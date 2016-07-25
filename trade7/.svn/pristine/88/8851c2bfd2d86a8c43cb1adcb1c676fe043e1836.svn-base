@@ -1,0 +1,22 @@
+package com.liantuo.deposit.pool.bus.service;
+
+import java.util.List;
+
+import com.liantuo.deposit.advanceaccount.orm.pojo.Pool;
+import com.liantuo.deposit.advanceaccount.web.inner.vo.queryvo.PoolQueryInnerVo;
+import com.liantuo.deposit.advanceaccount.web.inner.vo.rsp.PoolInnerRspVo;
+import com.liantuo.deposit.advanceaccount.web.vo.queryvo.PoolQueryVo;
+import com.liantuo.deposit.advanceaccount.web.vo.rsp.PoolRspVo;
+
+public interface PoolService {
+	 public Pool selectByPrimaryKey(Integer id);
+	 public int deleteByPrimaryKey(Integer id);
+	 public int updateByPrimaryKey(Pool record);
+	 public int insert(Pool record);
+	 public List<PoolRspVo> findPoolsQuery(PoolQueryVo poolQueryVo);
+	 public List<PoolInnerRspVo> findPoolsQueryInner(PoolQueryInnerVo poolQueryInnerVo);
+	 public PoolRspVo findByMerchantNoAndPoolName(PoolQueryVo poolQueryVo);
+	 public Pool createPool(Pool record);
+	 int findPoolsQueryAccount(PoolQueryVo poolQueryVo); 
+	 int findPoolsQueryInnerCount(PoolQueryInnerVo poolQueryVo);
+}

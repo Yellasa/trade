@@ -1,0 +1,211 @@
+package com.liantuo.trade.web.controller.local;
+
+import com.ebill.framework.res.BeanUtils;
+import com.liantuo.trade.bus.factory.JobFlowFactory;
+import com.liantuo.trade.bus.template.AbstractTradeTemplate;
+import com.liantuo.trade.client.trade.packet.TradeRequest;
+import com.liantuo.trade.client.trade.packet.TradeResponse;
+import com.liantuo.trade.client.trade.packet.head.TradePacketHead;
+import com.liantuo.trade.common.constants.TradeConstants;
+import com.liantuo.trade.common.message.MessageBundleService;
+import com.liantuo.trade.exception.BusinessException;
+import com.liantuo.trade.orm.service.TradeReqLogService;
+import com.liantuo.trade.seqno.StepSequenceFactoryForSpdb;
+import com.liantuo.trade.spring.SpringUtils;
+import com.liantuo.trade.spring.annotation.JobFlow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.JAXBException;
+
+@SuppressWarnings("unused")
+@Controller
+@RequestMapping("/api/service")
+public class TradeEntryController {
+
+    private static final Logger logger = LoggerFactory.getLogger("trade");
+    private static final String TRADE_0001_MESSAGE_PREFIX = "v11_";
+
+    @Autowired
+    private JobFlowFactory factory;
+    @Autowired
+    private HttpServletRequest request;
+
+    @Resource(name = "tradeReqLogServiceImpl")
+    private TradeReqLogService tradeRequestLogServ;
+    @Resource(name = "messageBundleServiceImpl")
+    private MessageBundleService mesgBundleServ;
+    @Resource(name = "idFactoryTradeReqLogReqNo")
+    private StepSequenceFactoryForSpdb idFactory;
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @ResponseBody
+    @RequestMapping(value = "/{request_code}/{version}", method = RequestMethod.POST)
+    public TradeResponse excuteRequest(@RequestBody String requestXML, @PathVariable("request_code") String request_code, @PathVariable("version") String version) {
+        logger.info("请求报文：\n{}", requestXML);
+        Object jobFlow;
+        TradeRequest tradeRequest;
+        TradeResponse tradeResponse = null;
+        TradePacketHead responseHead = new TradePacketHead();
+        AbstractTradeTemplate template = null;
+        try {
+            /**
+             * 通过RequestCode和Version发现@JobFlow
+             *
+             * @JobFlow支持同一个业务编号多个实现版本
+             * @See com.liantuo.trade.spring.annotation.JobFlow
+             *      如果没传Version默认使用1.0
+             */
+            jobFlow = factory.discover(request_code, version);
+
+            template = getTemplate(jobFlow);
+            template.setProcess(jobFlow);
+            template.setIp(getIpAddr());
+            tradeRequest = template.buildRequest(requestXML);
+            if (!tradeRequest.getHead().getRequest_code().equals(request_code) || !tradeRequest.getHead().getVersion().equals(version)) {
+                tradeResponse = buildSystemExceptionResponse("JY000000000000901", "请求参数与URI中参数不一致");
+                tradeResponse.setHead(tradeRequest.getHead());
+                return tradeResponse;
+            }
+            BeanUtils.copyBean2Bean(responseHead, tradeRequest.getHead());
+        } catch (NoSuchBeanDefinitionException e) {
+            e.printStackTrace();
+            tradeResponse = buildSystemExceptionResponse("trade.failure.process.not.found", version, request_code);
+            tradeResponse.setHead(responseHead);
+            return tradeResponse;
+        } catch (JAXBException e) {
+            logger.error("XML为空或格式不正确:\t" + requestXML + ",\tipaddress:\t" + getIpAddr());
+            e.printStackTrace();
+            tradeResponse = buildSystemExceptionResponse("JY000000000000901", "XML为空或格式不正确");
+            tradeResponse.setHead(responseHead);
+            return tradeResponse;
+        } catch (Exception e) {
+            if(null != template){
+                tradeResponse = template.buildSystemExceptionResponse(e);
+            }
+            tradeResponse.setHead(responseHead);
+            e.printStackTrace();
+            return buildSystemExceptionResponse("JY000000000000101");
+        }
+
+        /*
+         * 执行业务并捕获异常
+		 */
+        try {
+            tradeResponse = template.execute(tradeRequest);
+        } catch (BusinessException e) {
+            // e.printStackTrace();
+            tradeResponse = template.buildSystemExceptionResponse(e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            tradeResponse = template.buildSystemExceptionResponse(e);
+        } finally {
+            tradeResponse.setHead(responseHead);
+        }
+        return tradeResponse;
+
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @ResponseBody
+    @RequestMapping(value = "/{request_code}/{version}", method = RequestMethod.GET)
+    public TradeResponse queryRequest(@RequestParam String requestXML, @PathVariable("request_code") String request_code, @PathVariable("version") String version) {
+        logger.info("请求报文：\n{}", requestXML);
+        Object jobFlow;
+        TradeRequest tradeRequest;
+        TradeResponse tradeResponse = null;
+        TradePacketHead responseHead = new TradePacketHead();
+        AbstractTradeTemplate template = null;
+        try {
+            /**
+             * 通过RequestCode和Version发现@JobFlow
+             *
+             * @JobFlow支持同一个业务编号多个实现版本
+             * @See com.liantuo.trade.spring.annotation.JobFlow
+             *      如果没传Version默认使用1.0
+             */
+            jobFlow = factory.discover(request_code, version);
+            template = getTemplate(jobFlow);
+            template.setProcess(jobFlow);
+            template.setIp(getIpAddr());
+            tradeRequest = template.buildRequest(requestXML);
+            if (!tradeRequest.getHead().getRequest_code().equals(request_code) || !tradeRequest.getHead().getVersion().equals(version)) {
+                tradeResponse = buildSystemExceptionResponse("JY000000000000901", "请求参数与URI中参数不一致");
+                tradeResponse.setHead(tradeRequest.getHead());
+                return tradeResponse;
+            }
+            BeanUtils.copyBean2Bean(responseHead, tradeRequest.getHead());
+        } catch (NoSuchBeanDefinitionException e) {
+            e.printStackTrace();
+            tradeResponse = buildSystemExceptionResponse("trade.failure.process.not.found", version, request_code);
+            tradeResponse.setHead(responseHead);
+            return tradeResponse;
+        } catch (JAXBException e) {
+            logger.error("XML为空或格式不正确:\t" + requestXML + ",\tipaddress:\t" + getIpAddr());
+            e.printStackTrace();
+            tradeResponse = buildSystemExceptionResponse("JY000000000000901", "XML为空或格式不正确");
+            tradeResponse.setHead(responseHead);
+            return tradeResponse;
+        } catch (Exception e) {
+            e.printStackTrace();
+            tradeResponse = template.buildSystemExceptionResponse(e);
+            tradeResponse.setHead(responseHead);
+            return buildSystemExceptionResponse("JY000000000000101");
+        }
+
+        /*
+         * 执行业务并捕获异常
+		 */
+        try {
+            tradeResponse = template.execute(tradeRequest);
+        } catch (BusinessException e) {
+            tradeResponse = template.buildSystemExceptionResponse(e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            tradeResponse = template.buildSystemExceptionResponse(e);
+        } finally {
+            tradeResponse.setHead(responseHead);
+        }
+        return tradeResponse;
+    }
+
+    /**
+     * 获取调用方IP地址
+     *
+     * @return
+     */
+    private String getIpAddr() {
+        String ip = request.getHeader("x-forwarded-for");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
+    }
+
+    public TradeResponse buildSystemExceptionResponse(String errorKey, Object... param) {
+        TradeResponse rsp = new TradeResponse();
+        rsp.getBody().setIs_success(TradeConstants.TRADE_RESPONSE_STATUS_FAILURE);
+        rsp.getBody().setReturn_code(TradeConstants.TRADE_RESPONSE_STATUS_SUCCESS);
+        rsp.getBody().setErr_code(mesgBundleServ.getCode(errorKey));
+        rsp.getBody().setErr_code_des(mesgBundleServ.getMessage(errorKey, param));
+        return rsp;
+    }
+
+    private AbstractTradeTemplate getTemplate(Object jobFlow) {
+        JobFlow annotation = jobFlow.getClass().getAnnotation(JobFlow.class);
+        return (AbstractTradeTemplate) SpringUtils.getBean(annotation.template());
+    }
+
+}

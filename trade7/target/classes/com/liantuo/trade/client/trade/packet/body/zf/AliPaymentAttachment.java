@@ -1,0 +1,140 @@
+package com.liantuo.trade.client.trade.packet.body.zf;
+
+import java.util.List;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
+
+import org.dozer.Mapping;
+import org.hibernate.validator.constraints.NotBlank;
+
+import com.liantuo.trade.common.validate.Format;
+import com.liantuo.trade.common.validate.Required;
+
+/**
+ * 
+ * ClassName: AliPaymentAttachment
+ * @Description: 外部收款同步支付：ZF0001_02_001  支付宝条码支付
+ * @author zzd
+ * @date 2016-7-7
+ */
+public class AliPaymentAttachment extends Attachment  {
+	//Token	字符串40	否	
+    @Pattern(message = "app_auth_token format error", regexp = ".{0,40}", groups = Format.class)
+    @Mapping("zf_head.app_auth_token")
+	private String app_auth_token;
+    
+    //支付场景
+    @NotBlank(message = "scene is required", groups = {Required.class})
+    @Pattern(message = "scene format error", regexp = ".{0,32}", groups = Format.class)
+    private String scene;
+    
+    //支付授权码
+    @NotBlank(message = "auth_code is required", groups = {Required.class})
+    @Pattern(message = "auth_code format error", regexp = ".{0,32}", groups = Format.class)
+    private String auth_code;
+    
+	//卖方ID	字符串28	否	
+    @Pattern(message = "seller_id format error", regexp = ".{0,28}", groups = Format.class)
+	private String seller_id;
+    
+	//订单包含的商品列表信息goods_detail[]
+	private String goods_detail;
+    
+	//商户操作员编号	字符串28	否	
+    @Pattern(message = "operator_id format error", regexp = ".{0,28}", groups = Format.class)
+	private String operator_id;
+    
+	//商户门店编号	字符串32	否	
+    @Pattern(message = "store_id format error", regexp = ".{0,32}", groups = Format.class)
+	private String store_id;
+    
+	//商户机具终端编号	字符串32	否
+    @Pattern(message = "terminal_id format error", regexp = ".{0,32}", groups = Format.class)
+	private String terminal_id;
+    
+    //支付宝的店铺编号
+    @Pattern(message = "alipay_store_id format error", regexp = ".{0,32}", groups = Format.class)
+    private String alipay_store_id;
+   
+	//业务扩展参数	extend_params
+    @Valid
+    private Extend_params extend_params	;
+    
+    
+	//订单失效时间	字符串6	否 逾期将关闭交易。取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。 该参数数值不接受小数点， 如 1.5h，可转换为 90m
+    @Pattern(message = "timeout_express format error", regexp = ".{0,6}", groups = Format.class)
+    private String timeout_express;
+    
+    
+	public String getApp_auth_token() {
+		return app_auth_token;
+	}
+	public void setApp_auth_token(String app_auth_token) {
+		this.app_auth_token = app_auth_token;
+	}
+	public String getSeller_id() {
+		return seller_id;
+	}
+	public void setSeller_id(String seller_id) {
+		this.seller_id = seller_id;
+	}
+	
+	public String getOperator_id() {
+		return operator_id;
+	}
+	public void setOperator_id(String operator_id) {
+		this.operator_id = operator_id;
+	}
+	public String getStore_id() {
+		return store_id;
+	}
+	public void setStore_id(String store_id) {
+		this.store_id = store_id;
+	}
+	public String getTerminal_id() {
+		return terminal_id;
+	}
+	public void setTerminal_id(String terminal_id) {
+		this.terminal_id = terminal_id;
+	}
+	public String getTimeout_express() {
+		return timeout_express;
+	}
+	public void setTimeout_express(String timeout_express) {
+		this.timeout_express = timeout_express;
+	}
+	
+	public String getScene() {
+		return scene;
+	}
+	public void setScene(String scene) {
+		this.scene = scene;
+	}
+	public String getAuth_code() {
+		return auth_code;
+	}
+	public void setAuth_code(String authCode) {
+		auth_code = authCode;
+	}
+	public String getAlipay_store_id() {
+		return alipay_store_id;
+	}
+	public void setAlipay_store_id(String alipayStoreId) {
+		alipay_store_id = alipayStoreId;
+	}
+	public String getGoods_detail() {
+		return goods_detail;
+	}
+	public void setGoods_detail(String goodsDetail) {
+		goods_detail = goodsDetail;
+	}
+	public Extend_params getExtend_params() {
+		return extend_params;
+	}
+	public void setExtend_params(Extend_params extendParams) {
+		extend_params = extendParams;
+	}
+	
+	
+}

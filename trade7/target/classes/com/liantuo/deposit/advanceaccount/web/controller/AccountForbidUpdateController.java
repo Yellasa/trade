@@ -1,0 +1,216 @@
+package com.liantuo.deposit.advanceaccount.web.controller;
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.alibaba.fastjson.JSONArray;
+import com.ebill.framework.exception.BusinessException;
+import com.ebill.framework.res.JsonUtil;
+import com.ebill.framework.validator.ValidatorUtil;
+import com.liantuo.deposit.advanceaccount.bus.service.AccountForbidTradeService;
+import com.liantuo.deposit.advanceaccount.bus.service.CreditAccountService;
+import com.liantuo.deposit.advanceaccount.orm.pojo.AccountForbidTrade;
+import com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccount;
+import com.liantuo.deposit.advanceaccount.web.vo.req.AccountForbidQueryReqVo;
+import com.liantuo.deposit.advanceaccount.web.vo.req.AccountForbidReqVo;
+import com.liantuo.deposit.advanceaccount.web.vo.req.AccountForbidUpdateReqVo;
+import com.liantuo.deposit.advanceaccount.web.vo.rsp.AccountForbidRspVo;
+import com.liantuo.deposit.advanceaccount.web.vo.rsp.AccountForbidUpdateRspVo;
+import com.liantuo.deposit.common.constants.ErrorCode001Constants;
+import com.liantuo.deposit.common.constants.RspConstants;
+import com.liantuo.deposit.common.constants.errorcode.ErrorCode012Constants;
+import com.liantuo.deposit.pool.bus.service.PoolService;
+import com.liantuo.trade.exception.BusinessUncheckedException;
+
+/**
+ * @类名: AccountNoForbidUpdateController
+ * @类说明:
+ * @版本号 V1.0
+ * @版权 Copyright © 2013-2016 合肥联拓金融信息服务有限公司
+ * @创建人: shb
+ * @创建时间: 2016年1月8日 下午11:49:32
+ *
+ * 修改日期    修改者     版本      修改原因说明<br>
+ * -----------------------------------------------------------------------------------<br>
+ *                       <br>
+ * -----------------------------------------------------------------------------------<br>
+ */
+
+@Controller
+@RequestMapping("/accountForbidService")
+public class AccountForbidUpdateController{
+
+	private static final Logger Logger = LoggerFactory.getLogger(AccountForbidUpdateController.class);
+
+	@Resource
+	private AccountForbidTradeService accountForbidTradeService;
+	@Resource
+	private PoolService poolService;
+	@Resource
+	private CreditAccountService creditAccountService;
+
+
+	/**
+	 * @方法名: AccountNoForbidUpdateController
+	 * @方法说明: 预存款账户批量禁止结构变更
+	 * @param request
+	 * @param response
+	 * @param req
+	 * @返回类型 void
+	 * @创建人: shb
+	 * @创建时间: 2016年1月8日 下午11:56:55
+	 */
+	@RequestMapping( value="/accountForbid.in" , method=RequestMethod.POST)
+	public void accountForbidUpdate(HttpServletRequest request,HttpServletResponse response,AccountForbidUpdateReqVo req){
+		AccountForbidUpdateRspVo rspVo = null;
+		String success = RspConstants.SUCCESS_F;
+		String retCode = "";
+		String retInfo = "";
+		List<AccountForbidRspVo> returnlist = new ArrayList<AccountForbidRspVo>();
+		try {
+			
+			Logger.info("预存款账户批量禁止结构变更接口请求参数是"+JsonUtil.object2String(req));
+			String parasErrorInfo = ValidatorUtil.validateResult(req,AccountForbidQueryReqVo.class);
+			if(parasErrorInfo!=null && !parasErrorInfo.trim().equals("")){
+				Logger.error("参数错误信息" + parasErrorInfo);
+				throw new BusinessUncheckedException(ErrorCode012Constants.ACCOUNT_FORBID_CHECK_NOT_PASS,"格式校验未通过："+ parasErrorInfo);
+			}
+			List<AccountForbidReqVo> forbidList = new ArrayList<AccountForbidReqVo>();
+			JSONArray ja  = JSONArray.parseArray(req.getForbidDetail());
+			for(int i=0;i<ja.size();i++){
+				AccountForbidReqVo vo = new AccountForbidReqVo();
+				vo =JSONArray.parseObject(ja.get(i).toString(),AccountForbidReqVo.class);
+				forbidList.add(vo);
+			}
+			/*JSONArray jsonarray = JSONArray.fromObject(req.getForbidDetail()); 
+			List<AccountForbidReqVo>   forbidList = (List<AccountForbidReqVo>)JSONArray.toCollection(jsonarray, AccountForbidReqVo.class); */
+			//验证禁止明细数据中数据
+			if(forbidList.size()>100){
+				throw new BusinessException(ErrorCode012Constants.ACCOUNT_FORBID_CHECK_NOT_PASS, "输入参数不能大于100条");
+			}
+			verification(forbidList);
+
+			/**禁止明细数据中数据是否重复**/
+			long a = System.currentTimeMillis();
+			StringBuffer strBuf= new StringBuffer();
+			for(int i=0;i<forbidList.size();i++){
+				strBuf.append(forbidList.get(i).getType());
+				strBuf.append(forbidList.get(i).getForbidCode());
+				strBuf.append(forbidList.get(i).getForbidType()+";");
+				if(forbidList.get(i).getForbidCode().equals("ALL")){
+					continue;
+				}
+				if(forbidList.get(i).getForbidType().equals("01") && forbidList.get(i).getForbidCode().length()>8){
+					throw new BusinessException(ErrorCode012Constants.ACCOUNT_FORBID_DATA_NO_MATCH, "账户禁止项与账户禁止项类型不匹配");
+				}
+				if(forbidList.get(i).getForbidType().equals("02") && forbidList.get(i).getForbidCode().length()<12){
+					throw new BusinessException(ErrorCode012Constants.ACCOUNT_FORBID_DATA_NO_MATCH, "账户禁止项与账户禁止项类型不匹配");
+				}
+			}
+			String [] tmp= strBuf.toString().split(";");
+			int total = 0;
+			for(String endStr:tmp){
+				for (String tmpp = strBuf.toString(); tmpp != null && tmpp.length()>=endStr.toString().length();){
+					if(tmpp.indexOf(endStr) == 0){
+					    total ++;
+					    tmpp = tmpp.substring(endStr.length()+1);
+					}else{
+//						int length = tmpp.split(";").length;
+					    tmpp = tmpp.substring(tmpp.split(";")[0].length()+1);
+					}
+				}
+			}
+			if(total>tmp.length){
+				throw new BusinessException(ErrorCode012Constants.DATA_REPEAT, "禁止明细数据不能重复");
+			}
+			AccountForbidUpdateController.Logger.info("禁止明细数据中数据是否重复验证完成，耗时：" + (System.currentTimeMillis() - a)/ 1000+ "秒");
+			/**禁止明细数据中数据是否重复验证完成**/
+			/*PoolQueryVo poolVo = new PoolQueryVo();
+			poolVo.setCoreMerchantNo(req.getMerchantNo());
+			PoolRspVo vo = poolService.findByMerchantNoAndPoolName(poolVo );
+			if(null == vo){
+				throw new BusinessException(ErrorCodeConstants.ACCOUNT_FORBID_COREMERCHANTNO_NO_EXIST, "核心商户编号不存在");
+			}*/
+			CreditAccount accountVO = creditAccountService.selectByAccountNo(req.getAccountNo());
+			if(null == accountVO || !req.getMerchantNo().equals(accountVO.getCoreMerchantNo()) ){
+				throw new BusinessException(ErrorCode012Constants.INPUT_PARAMETER_ERROR, "账户编号不属于该核心商户编号");
+			}
+			List<AccountForbidTrade> list = accountForbidTradeService.selectByCA(req.getAccountNo());
+			accountForbidTradeService.createAccountForbid(req,list,forbidList);
+			List<AccountForbidTrade> rlist = accountForbidTradeService.masterSelectByCA(req.getAccountNo());
+			for(AccountForbidTrade voo:rlist){
+				AccountForbidRspVo returnVo = new AccountForbidRspVo();
+				returnVo.setAccountNo(voo.getAccountNo());
+				returnVo.setType(voo.getType());
+				returnVo.setForbidCode(voo.getForbidCode());
+				returnlist.add(returnVo);
+			}
+			success = RspConstants.SUCCESS_S;
+			retCode = "";
+			retInfo = "";
+		}catch(BusinessUncheckedException e){
+			AccountForbidUpdateController.Logger.error(e.getMessage(),e);
+			success = RspConstants.SUCCESS_F;
+			retCode = e.getErrorCode();
+			retInfo = e.getMessage();
+
+		}catch(BusinessException e){
+			AccountForbidUpdateController.Logger.error(e.getMessage(),e);
+			success = RspConstants.SUCCESS_F;
+			retCode = e.getErrorCode();
+			retInfo = e.getMessage();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			AccountForbidUpdateController.Logger.error(e.getMessage(), e);
+			success = RspConstants.SUCCESS_F;
+			retCode = ErrorCode001Constants.SYSTEM_EXCEPTION;
+			retInfo = e.getMessage();
+		}
+
+		/**组织返回*/
+		try {
+			if(rspVo == null){
+				rspVo = new AccountForbidUpdateRspVo();
+				rspVo.setList(returnlist);
+			}
+			rspVo.setResult(success, retCode, retInfo);
+			response.getWriter().print(JsonUtil.object2String(rspVo));
+
+		} catch (Exception e) {
+			AccountForbidUpdateController.Logger.error(e.getMessage(), e);
+		}
+
+	}
+
+
+	private void verification(List<AccountForbidReqVo> list) {
+
+		for(AccountForbidReqVo vo :list){
+			if(null == vo.getForbidCode()|| null==vo.getType() || null == vo.getForbidType()){
+				throw new BusinessUncheckedException(ErrorCode012Constants.ACCOUNT_FORBID_CHECK_NOT_PASS,"格式校验未通过:"+ "type is required,  " +
+						"forbid_code is required ,forbid_type is required");
+			}
+			// type 0 1
+			if(!vo.getType().matches("[0|1]")){
+				throw new BusinessUncheckedException(ErrorCode012Constants.ACCOUNT_FORBID_CHECK_NOT_PASS,"格式校验未通过:"+ "type format error");
+			}
+			if(!vo.getForbidType().matches("0[1-2]")){
+				throw new BusinessUncheckedException(ErrorCode012Constants.ACCOUNT_FORBID_CHECK_NOT_PASS,"格式校验未通过:"+ "forbid_type format error" );
+			}
+
+		}
+	}
+
+}

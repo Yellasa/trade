@@ -1,0 +1,119 @@
+package com.liantuo.trade.client.trade.packet;
+
+import javax.validation.constraints.Pattern;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.hibernate.validator.constraints.NotBlank;
+
+import com.liantuo.trade.client.trade.packet.body.TradeNotifyRequestPacket;
+import com.liantuo.trade.common.validate.Format;
+import com.liantuo.trade.common.validate.Required;
+import com.liantuo.trade.validator.date.DateTime;
+@XmlRootElement
+public class TradePaymentAsyNotifyPacket extends TradeNotifyRequestPacket{
+
+
+	
+    @DateTime(message = "notify_time is required", groups = {Format.class})
+	private String notify_time;
+	
+	private String notify_type;
+	
+	private String notify_id;
+	//批次号
+	@NotBlank(message = "batch_no is required", groups = {Required.class})
+	@Pattern(message = "batch_no content not match", regexp = "[\\d|a-z-A-Z|_]{8,64}", groups = Format.class)
+	private String batch_no;
+
+	//付款账号姓名
+	@NotBlank(message = "pay_user_id is required", groups = {Required.class})
+	@Pattern(message = "pay_user_id content not match", regexp = "{0}|(^2088\\d{12})", groups = Format.class)
+	private String pay_user_id;
+	//付款账号姓名
+	@NotBlank(message = "pay_user_name is required", groups = {Required.class})
+	@Pattern(message = "pay_user_name content not match", regexp = ".{1,128}", groups = Format.class)
+	private String pay_user_name;
+	//付款账号
+	@NotBlank(message = "pay_account_no is required", groups = {Required.class})
+	@Pattern(message = "pay_account_no content not match", regexp = ".{1,128}", groups = Format.class)
+	private String pay_account_no;
+	
+	private String success_details;
+	
+	private String fail_details;
+
+
+
+	public String getNotify_time() {
+		return notify_time;
+	}
+
+	public void setNotify_time(String notifyTime) {
+		notify_time = notifyTime;
+	}
+
+	public String getNotify_type() {
+		return notify_type;
+	}
+
+	public void setNotify_type(String notifyType) {
+		notify_type = notifyType;
+	}
+
+	public String getNotify_id() {
+		return notify_id;
+	}
+
+	public void setNotify_id(String notifyId) {
+		notify_id = notifyId;
+	}
+
+	public String getBatch_no() {
+		return batch_no;
+	}
+
+	public void setBatch_no(String batchNo) {
+		batch_no = batchNo;
+	}
+
+	public String getPay_user_id() {
+		return pay_user_id;
+	}
+
+	public void setPay_user_id(String payUserId) {
+		pay_user_id = payUserId;
+	}
+
+	public String getPay_user_name() {
+		return pay_user_name;
+	}
+
+	public void setPay_user_name(String payUserName) {
+		pay_user_name = payUserName;
+	}
+
+	public String getPay_account_no() {
+		return pay_account_no;
+	}
+
+	public void setPay_account_no(String payAccountNo) {
+		pay_account_no = payAccountNo;
+	}
+
+	public String getSuccess_details() {
+		return success_details;
+	}
+
+	public void setSuccess_details(String successDetails) {
+		success_details = successDetails;
+	}
+
+	public String getFail_details() {
+		return fail_details;
+	}
+
+	public void setFail_details(String failDetails) {
+		fail_details = failDetails;
+	}
+
+}

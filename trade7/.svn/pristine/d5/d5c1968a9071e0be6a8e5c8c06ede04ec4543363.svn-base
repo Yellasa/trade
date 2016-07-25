@@ -1,0 +1,28 @@
+package com.liantuo.trade.bus.factory.template;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.liantuo.trade.bus.template.impl.ANotifyTemp;
+
+/**
+ * 通知类 模版工程
+ */
+@SuppressWarnings("rawtypes")
+public class NotifyTemplateFactory {
+    
+    private Map<String, ANotifyTemp> templateConfig = new HashMap<String, ANotifyTemp>();
+    
+    public ANotifyTemp create(String request_code) throws Exception {
+        return templateConfig.get(request_code);
+    }
+    
+    public Map<String, ANotifyTemp> getTemplateConfig() {
+        return templateConfig;
+    }
+
+    public void setTemplateConfig(Map<String, ANotifyTemp> templateConfig) {
+        this.templateConfig = templateConfig;
+    }
+    
+}

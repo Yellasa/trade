@@ -1,0 +1,16 @@
+package com.liantuo.trade.bus.process;
+
+import com.liantuo.trade.client.trade.packet.TradeRequest;
+import com.liantuo.trade.client.trade.packet.TradeResponse;
+import com.liantuo.trade.client.trade.packet.body.TradeRequestBody;
+
+public interface TradePageQueryInterface<B extends TradeRequestBody> {
+
+    String HEADR_EQUIRED_INNER = "request_code";
+    String HEAD_FORMAT = "core_merchant_no,fund_pool_no";
+    String HEADR_EQUIRED_OUTER = "request_code,core_merchant_no,fund_pool_no";
+    String HEADR_EQUIRED_OUTER_SINGLE_PAYMENT = "request_code,partner_id,core_merchant_no,fund_pool_no";
+    void formatValidate(TradeRequest<B> tradeRquest) throws Exception;
+
+    Object query(TradeRequest<B> tradeRquest, TradeResponse tradeResponse) throws Exception;
+}

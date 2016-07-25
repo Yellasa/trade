@@ -1,0 +1,43 @@
+package com.liantuo.trade.bus.process.impl.withdraw.v1;
+
+import com.liantuo.trade.bus.process.TradeQueryInterface;
+import com.liantuo.trade.bus.service.ExceptionService;
+import com.liantuo.trade.bus.service.v1_1.BizTradePageQueryService;
+import com.liantuo.trade.bus.template.impl.v1_1.ATradeQueryTemp;
+import com.liantuo.trade.client.trade.packet.TradeRequest;
+import com.liantuo.trade.client.trade.packet.TradeResponse;
+import com.liantuo.trade.client.trade.packet.body.withdraw.TradePacketReqBodySingleWithdrawPageDetails;
+import com.liantuo.trade.common.validate.TradeValidationUtil;
+import com.liantuo.trade.exception.BusinessException;
+import com.liantuo.trade.spring.annotation.JobFlow;
+import org.springframework.util.StringUtils;
+
+import javax.annotation.Resource;
+
+/**
+ * 0002_001_999
+ * v1.0
+ */
+@JobFlow(value = "0002_001_999", version = "1.0", template = ATradeQueryTemp.class)
+public class QueryByPageSingleWithdrawInnerProcess
+        implements TradeQueryInterface<TradePacketReqBodySingleWithdrawPageDetails> {
+    @Resource(name = "withdrawPageQueryServiceImpl")
+    private BizTradePageQueryService bizTradePageQueryServ;
+
+    @Resource
+    protected ExceptionService exceptionService;
+
+    @Override
+    public void formatValidate(TradeRequest<TradePacketReqBodySingleWithdrawPageDetails> tradeRquest) throws Exception {
+        String errMsg;
+        errMsg = TradeValidationUtil.validateRequest(tradeRquest, HEADR_EQUIRED_INNER, HEAD_FORMAT, "*");
+        if (!StringUtils.isEmpty(errMsg)) {
+            throw exceptionService.buildBusinessException("JY00020019991000100", BusinessException.class, new Object[]{errMsg});
+        }
+    }
+
+    @Override
+    public Object query(TradeRequest<TradePacketReqBodySingleWithdrawPageDetails> tradeRquest, TradeResponse tradeResponse) throws Exception {
+        return this.bizTradePageQueryServ.queryByPage(tradeRquest, tradeResponse);
+    }
+}

@@ -1,0 +1,253 @@
+package com.liantuo.deposit.advanceaccount.bus.service;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import com.liantuo.deposit.advanceaccount.bus.service.impl.CreditAccountServiceImpl;
+import com.liantuo.deposit.advanceaccount.orm.mapper.CreditAccountMapper;
+import com.liantuo.deposit.advanceaccount.orm.mapper.CreditAccountMapperMock;
+import com.liantuo.deposit.advanceaccount.orm.mapper.PoolMapper;
+import com.liantuo.deposit.advanceaccount.orm.mapper.PoolMapperMock;
+import com.liantuo.deposit.advanceaccount.orm.pojo.Pool;
+import com.liantuo.deposit.advanceaccount.web.vo.req.OpenCreditAccountReqVo;
+import com.liantuo.deposit.common.constants.errorcode.ErrorCode009Constants;
+import com.liantuo.mc.web.client.MerchantClient;
+import com.liantuo.mc.web.client.MerchantClientMock;
+import com.liantuo.mc.web.rsp.MerchantResponse;
+import com.liantuo.trade.exception.BusinessException;
+import com.liantuo.trade.seqno.StepSequenceFactoryForSpdb;
+import com.liantuo.trade.seqno.StepSequenceFactoryForSpdbMock;
+import com.liantuo.unittest.BaseServiceTest;
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ MerchantClient.class})
+public class CreditAccountServiceMockTest extends BaseServiceTest{
+	
+//	@SpringBean(value = "creditAccountServiceImpl")
+	private CreditAccountService creditAccountService=new CreditAccountServiceImpl();
+	
+	private CreditAccountMapper creditAccountMapper; 
+	private PoolMapper poolMapper;
+	private StepSequenceFactoryForSpdb idFactoryCaAccountNo;
+	
+	@Before
+	public void init(){
+		poolMapper = mock(PoolMapper.class);
+		ReflectionTestUtils.setField(creditAccountService, "poolMapper", poolMapper);
+		
+		creditAccountMapper = mock(CreditAccountMapper.class);
+		ReflectionTestUtils.setField(creditAccountService, "creditAccountMapper", creditAccountMapper);
+		
+		idFactoryCaAccountNo = mock(StepSequenceFactoryForSpdb.class);
+		ReflectionTestUtils.setField(creditAccountService, "idFactoryCaAccountNo", idFactoryCaAccountNo);
+		
+		
+		
+	}
+	
+	
+	/**
+	 * 
+	 * @Description: 验证成功情况
+	 * @author JiangKun
+	 * @date 2016年6月30日 下午3:05:13
+	 */
+	@Test
+	public void testServiceVerificationCase1() throws Exception{
+		OpenCreditAccountReqVo vo = new OpenCreditAccountReqVo();
+		vo.setCoreMerchantNo("liantuo");
+		vo.setMerchantNo("CCZX");
+		vo.setPoolNo("PN01000000000000761");
+		//构建返回资金池信息
+		Pool pool = new Pool();
+		pool.setMerchantNo("liantuo");
+		//构建调用接口返回
+		MerchantResponse response = new MerchantResponse();
+		response.setReturnCode("S");
+		response.setMerchantFullName("不为空");
+		response.setMerchantName("不为空");
+		MerchantClientMock.mockGetMerchant(response);
+		PoolMapperMock.mockSelectByPoolNo(poolMapper,pool);
+		
+		creditAccountService.serviceVerification(vo);
+		
+	}
+	
+	/**
+	 * 
+	 * @Description: 资金池为空
+	 * @author JiangKun
+	 * @date 2016年6月30日 下午3:07:50
+	 */
+
+	public void testServiceVerificationCase2() throws Exception{
+		OpenCreditAccountReqVo vo = new OpenCreditAccountReqVo();
+		vo.setCoreMerchantNo("liantuo");
+		vo.setMerchantNo("CCZX");
+		vo.setPoolNo("PN01000000000000761");
+		
+		//构建返回资金池信息
+		Pool pool = null;
+		
+		//构建调用接口返回
+		MerchantResponse response = new MerchantResponse();
+		response.setReturnCode("S");
+		response.setMerchantFullName("不为空");
+		response.setMerchantName("不为空");
+		
+		MerchantClientMock.mockGetMerchant(response);
+		PoolMapperMock.mockSelectByPoolNo(poolMapper,pool);
+		creditAccountService.serviceVerification(vo);
+	}
+	
+	/**
+	 * 
+	 * @Description: 资金池商户编号  不等于 核心商户编号
+	 * @author JiangKun
+	 * @date 2016年6月30日 下午3:10:42
+	 */
+	@Test
+	public void testServiceVerificationCase3() throws Exception{
+		OpenCreditAccountReqVo vo = new OpenCreditAccountReqVo();
+		vo.setCoreMerchantNo("liantuo");
+		vo.setMerchantNo("CCZX");
+		vo.setPoolNo("PN01000000000000761");
+		
+		//构建返回资金池信息
+		Pool pool = new Pool();
+		pool.setMerchantNo("liantuo1");
+		
+		MerchantResponse response = new MerchantResponse();
+		response.setReturnCode("S");
+		response.setMerchantFullName("不为空");
+		response.setMerchantName("不为空");
+		MerchantClientMock.mockGetMerchant(response);
+		PoolMapperMock.mockSelectByPoolNo(poolMapper,pool);
+		BusinessException e=null;
+		try{
+			creditAccountService.serviceVerification(vo);
+		}catch(BusinessException e1){
+			e=e1;
+		}
+		assertNotNull("业务验证应该不通过！",e);
+		assertEquals("异常描述有误！","编号关联关系有误", e.getErrorMessage());
+		assertEquals("异常代码有误",ErrorCode009Constants.NUMBERS_ASSOCIATED_ERROR, e.getErrorCode());
+	}
+	
+	/**
+	 * 
+	 * @Description: MerchantResponse 返回 为null
+	 * @author JiangKun
+	 * @date 2016年6月30日 下午3:10:42
+	 */
+	@Test
+	public void testServiceVerificationCase4() throws Exception{
+		OpenCreditAccountReqVo vo = new OpenCreditAccountReqVo();
+		vo.setCoreMerchantNo("liantuo");
+		vo.setMerchantNo("CCZX");
+		vo.setPoolNo("PN01000000000000761");
+		
+		//构建返回资金池信息
+		Pool pool = new Pool();
+		pool.setMerchantNo("liantuo");
+		
+		MerchantResponse response = null;
+//		response.setReturnCode("S");
+//		response.setMerchantFullName("不为空");
+//		response.setMerchantName("不为空");
+		MerchantClientMock.mockGetMerchant(response);
+		PoolMapperMock.mockSelectByPoolNo(poolMapper,pool);
+		BusinessException e = null;
+		try{
+			creditAccountService.serviceVerification(vo);
+		}catch(BusinessException e1){
+			e= e1;
+		}
+		assertNotNull("业务验证应该不通过",e);
+		assertEquals("异常信息描述不符合预期！", "查询核心商户下某成员商户信息接口失败", e.getErrorMessage());
+		assertEquals("异常错误码不符合预期",ErrorCode009Constants.NOT_MERCHANTNO,e.getErrorCode());
+	}
+	
+	/**
+	 * 
+	 * @Description: MerchantResponse 返回  returnCode 为 F 或者  merchantFullName为空或者merchantName为空
+	 * @author JiangKun
+	 * @date 2016年6月30日 下午3:10:42
+	 */
+	@Test
+	public void testServiceVerificationCase5() throws Exception{
+		OpenCreditAccountReqVo vo = new OpenCreditAccountReqVo();
+		vo.setCoreMerchantNo("liantuo");
+		vo.setMerchantNo("CCZX");
+		vo.setPoolNo("PN01000000000000761");
+		
+		//构建返回资金池信息
+		Pool pool = new Pool();
+		pool.setMerchantNo("liantuo");
+		
+		MerchantResponse response = new MerchantResponse();
+		response.setReturnCode("F");
+		response.setMerchantFullName("不为空");
+		response.setMerchantName("不为空");
+		MerchantClientMock.mockGetMerchant(response);
+		PoolMapperMock.mockSelectByPoolNo(poolMapper,pool);
+		BusinessException e = null;
+		try {
+			creditAccountService.serviceVerification(vo);
+		} catch (BusinessException e1) {
+			e = e1;
+		}
+		assertNotNull("业务验证应该不通过",e);
+		assertEquals("异常信息描述不符合预期！", "核心商户:"+pool.getMerchantNo()+"下某成员商户:"+vo.getMerchantNo()+"不存在", e.getErrorMessage());
+		assertEquals("异常错误码不符合预期",ErrorCode009Constants.NOT_MERCHANTNO,e.getErrorCode());
+	}
+	
+	
+	
+	/**
+	 * 
+	 * @Description: 插入操作
+	 * @author JiangKun
+	 * @date 2016年6月30日 下午3:17:34
+	 */
+	@Test
+	public void testInsertOpenCreditAccountCase1() throws Exception{
+		OpenCreditAccountReqVo vo = new OpenCreditAccountReqVo();
+		vo.setPoolNo("PN01000000000000762");
+		vo.setAccountName("wode");
+		CreditAccountMapperMock.mockInsert(creditAccountMapper);
+		StepSequenceFactoryForSpdbMock.mockGenerate(idFactoryCaAccountNo, "123456");
+		creditAccountService.insertOpenCreditAccount(vo);
+	}
+	
+	/**
+	 * 
+	 * @Description: 插入操作--异常情况--BusinessException
+	 * @author JiangKun
+	 * @date 2016年6月30日 下午3:17:34
+	 */
+	@Test
+	public void testInsertOpenCreditAccountCase2() throws Exception{
+		OpenCreditAccountReqVo vo = new OpenCreditAccountReqVo();
+		
+		CreditAccountMapperMock.mockInsertBusinessException(creditAccountMapper);
+		StepSequenceFactoryForSpdbMock.mockGenerate(idFactoryCaAccountNo, "123456");
+		Exception e = null;
+		try {
+			creditAccountService.insertOpenCreditAccount(vo);			
+		} catch (Exception e1) {
+			e = e1;
+		}
+		assertNotNull("业务验证应该不通过",e);
+	}
+	
+	
+	
+}

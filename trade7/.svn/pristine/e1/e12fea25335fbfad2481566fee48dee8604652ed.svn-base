@@ -1,0 +1,36 @@
+package com.liantuo.trade.orm.service;
+
+import java.util.List;
+
+import com.liantuo.trade.orm.pojo.TradeLedger;
+import com.liantuo.trade.orm.pojo.TradeLedgerExample;
+
+/**
+ * 业务台帐
+ * 
+ * @作者 Jimmy
+ * @最后修改人
+ * @修改时间
+ * @复审人
+ */
+public interface TradeLedgerService {
+
+    /**
+     * 创建生效台账
+     * @param tradeLedger
+     */
+    void insertTradeLedger(TradeLedger tradeLedger);
+    
+    /**
+     * 创建空白台账
+     * @param tradeLedger
+     */
+    void insertTradeLedgerBlank(TradeLedger tradeLedger);
+
+    List<TradeLedger> queryTradeLedgerBy(String ledgerNo);
+    
+    void updateTradeLedger(TradeLedger tradeLedger);
+    
+    public List<TradeLedger> selectByExample(TradeLedgerExample example);
+    
+}

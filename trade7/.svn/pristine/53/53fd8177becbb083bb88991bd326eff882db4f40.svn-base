@@ -1,0 +1,78 @@
+package com.liantuo.trade.common.util.json;
+
+import java.io.IOException;
+import java.util.List;
+
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+import org.codehaus.jackson.type.TypeReference;
+
+public class ObjectJsonUtil
+{
+
+    /**
+     * 将json字符串转换为对象
+     * 
+     * @author dll 2013-6-21 修改者名字 修改日期 修改内容
+     * @param <T>
+     * @param convertStr
+     * @param clazz
+     * @return T
+     * @throws Exception
+     * @throws
+     */
+    public static <T> T string2Object(String convertStr, Class<T> clazz) throws Exception
+    {
+        T reply;
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerSubtypes(clazz);
+        reply = mapper.readValue(convertStr, clazz);
+        return reply;
+    }
+
+    /**
+     * 对象转换为json字符串
+     * 
+     * @author dll 2013-6-21 修改者名字 修改日期 修改内容
+     * @param <T>
+     * @param obj
+     * @return String
+     * @throws Exception
+     * @throws
+     */
+    public static <T> String object2String(T obj) throws Exception
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(Inclusion.NON_NULL);
+        mapper.registerSubtypes(obj.getClass());
+        return mapper.writeValueAsString(obj);
+    }
+    
+    /**
+     * jason转换list
+     * @param json
+     * @param valueTypeRef
+     * @return
+     */
+    public static List<?>  json2List(String json, @SuppressWarnings("rawtypes")
+    TypeReference valueTypeRef){
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			return  mapper.readValue(json,  valueTypeRef);
+		} catch (JsonGenerationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (JsonMappingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return null;
+	}
+
+
+}

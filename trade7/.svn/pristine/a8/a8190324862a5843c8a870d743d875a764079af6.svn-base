@@ -1,0 +1,66 @@
+package com.liantuo.trade.common.util.trade;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.liantuo.deposit.innerclient.advanceaccount.vo.req.HttpConfig;
+import com.liantuo.deposit.innerclient.advanceaccount.vo.req.PoolQueryInnerReq;
+import com.liantuo.deposit.innerclient.advanceaccount.vo.rsp.PoolQueryInnerRsp;
+import com.liantuo.deposit.innerclient.pool.PoolClient;
+import com.liantuo.trade.client.trade.packet.TradeRequest;
+import com.liantuo.trade.client.trade.packet.body.TradeRequestBody;
+import com.liantuo.trade.exception.BusinessException;
+import com.payment.util.tenpay.util.PropertyUtil;
+
+/**
+ * 交易公共校验类
+ * @author yangting
+ *2016年6月12日 下午4:58:10
+ */
+public class TradeCommonValidation {
+	private static Logger logger = LoggerFactory.getLogger(TradeCommonValidation.class);
+	/**
+	 * 校验【核心商户编号】、【资金池编号】对应关系	
+	 * 校验【核心商户编号】、【资金池编号】对应关系，若校验失败返回【失败】	
+	 * 异常原因【核心商户编号与资金池编号不匹配】
+	 * @param tradeRquest
+	 * @param logable 日志是否可用
+	 * @throws Exception
+	 */
+	public static void validateCoreMerchantNoAndFundPoolNo(TradeRequest<? extends TradeRequestBody> tradeRquest,boolean logable,BusinessException businessException)
+			throws Exception {
+		try {
+			PoolQueryInnerReq req = new PoolQueryInnerReq();
+			PoolQueryInnerRsp rsp = new PoolQueryInnerRsp();
+			req.setCoreMerchantNo(tradeRquest.getHead().getCore_merchant_no());
+			req.setPoolNo(tradeRquest.getHead().getFund_pool_no());
+			HttpConfig httpConfig = new HttpConfig();
+			httpConfig.setHost(PropertyUtil.getProperty("trade.host.ip",
+					"/config/properties/servers.properties"));
+			httpConfig.setConnectionTimeout(100000);
+			httpConfig.setSoTimeout(200000);
+			httpConfig.setCharset("UTF-8");
+			long start = System.currentTimeMillis();
+			rsp = PoolClient.poolQuery(req, httpConfig);
+			if(logable){
+				logger.info("调用接口消耗【" + (System.currentTimeMillis() - start) + "】   --->" + rsp);
+			}
+			if(logable && rsp != null){
+				logger.info(rsp.getSuccess() +"--->" + rsp.getRetCode());
+			}
+			
+			if (rsp != null && "S".equals(rsp.getSuccess()) && "S".equals(rsp.getRetCode()) && rsp.getList() != null && rsp.getList().size() > 0) {
+				logger.info("调用成功");
+				return;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			if(logable){
+				logger.error(e.getMessage(), e);
+			}
+		}
+		throw businessException;
+		
+	}
+	
+}

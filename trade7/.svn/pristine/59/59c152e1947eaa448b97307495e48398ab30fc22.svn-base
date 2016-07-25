@@ -1,0 +1,18 @@
+package com.liantuo.trade.bus.process.impl.single_payment.asyn_service;
+
+import com.liantuo.payment.client.pay.PaymentNotify;
+import com.liantuo.trade.client.trade.packet.body.TradeNotifyRequestBody;
+
+public interface AsynNotifyService {
+	/**
+	 * @Title:parsePaymentNotify 
+	 * @Description: 解析并转换数据
+	 * @param notify
+	 * @return:TradeNotifyRequestBody
+	 * @author:zoran.huang
+	 * @date:2016年7月11日 下午5:38:10
+	 */
+	public TradeNotifyRequestBody parsePaymentNotify(PaymentNotify notify) throws Exception;
+	
+	
+}

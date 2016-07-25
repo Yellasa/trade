@@ -1,0 +1,111 @@
+package com.liantuo.trade.client.trade.packet.head;
+
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.NotBlank;
+
+import com.liantuo.trade.common.validate.Format;
+import com.liantuo.trade.common.validate.Required;
+
+/**
+ * 通知头信息
+ */
+public class NotifyPacketHead {
+
+    @NotBlank(message = "pay_channel is required", groups = Required.class)
+    @Pattern(message = "pay_channel format error", regexp = "[\\d]{1,2}", groups = Format.class)
+    private String pay_channel; // 支付渠道
+
+    @NotBlank(message = "request_time is required", groups = Required.class)
+    @Pattern(message="request_time format error", regexp = "[\\d]{8,14}", groups=Format.class)
+    private String request_time; // 请求时间
+
+    @NotBlank(message = "requester is required", groups = Required.class)
+    @Pattern(message = "requester format error", regexp = "[\\d]{1,2}", groups = Format.class)
+    private String requester; // 金融业务类型
+
+    @NotBlank(message = "trade_type is required", groups = Required.class)
+    @Pattern(message = "requester format error", regexp = "[\\d]{1,16}", groups = Format.class)
+    private String trade_type; // 金融交易类型
+
+    @NotBlank(message = "transaction_id is required", groups = Required.class)
+    @Pattern(message = "transaction_id format error", regexp = "[\\d|a-z-A-Z]{1,16}", groups = Format.class)
+    private String transaction_id; // 接口协议号
+    
+    @NotBlank(message = "trade_no is required", groups = Required.class)
+    @Pattern(message="trade_no format error", regexp = "[\\d|a-z-A-Z]{8,64}", groups=Format.class)
+    private String trade_no; // url后面传的tradeNo
+    
+    @NotBlank(message = "service_name is required", groups = Required.class)
+    @Pattern(message="service_name format error", regexp = "[\\d|_]{12,12}", groups=Format.class)
+    private String service_name;
+    
+    @NotBlank(message = "version is required", groups = Required.class)
+    @Pattern(message="version format error", regexp = "^[0-9]+([.]{1}[0-9]+){0,1}$", groups=Format.class)
+    private String version;
+
+    public String getPay_channel() {
+        return pay_channel;
+    }
+
+    public void setPay_channel(String pay_channel) {
+        this.pay_channel = pay_channel;
+    }
+
+    public String getRequest_time() {
+        return request_time;
+    }
+
+    public void setRequest_time(String request_time) {
+        this.request_time = request_time;
+    }
+
+    public String getRequester() {
+        return requester;
+    }
+
+    public void setRequester(String requester) {
+        this.requester = requester;
+    }
+
+    public String getTrade_type() {
+        return trade_type;
+    }
+
+    public void setTrade_type(String trade_type) {
+        this.trade_type = trade_type;
+    }
+
+    public String getTransaction_id() {
+        return transaction_id;
+    }
+
+    public void setTransaction_id(String transaction_id) {
+        this.transaction_id = transaction_id;
+    }
+
+    public String getTrade_no() {
+        return trade_no;
+    }
+    
+    public void setTrade_no(String tradeNo) {
+        this.trade_no = tradeNo;
+    }
+    
+    public String getService_name() {
+        return service_name;
+    }
+
+    public void setService_name(String service_name) {
+        this.service_name = service_name;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+    
+    public void setVersion(String version) {
+        this.version = version;
+    }
+    
+}

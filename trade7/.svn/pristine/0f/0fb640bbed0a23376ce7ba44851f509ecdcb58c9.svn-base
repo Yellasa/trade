@@ -1,0 +1,125 @@
+package com.liantuo.trade.client.trade.packet;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+@XmlRootElement
+public class NotifyPacketResultInfo {
+
+    private String notify_url;// 通知URL
+
+    private String partner_id;// partner_id
+
+    private String core_merchant_no;// core_merchant_no
+
+    private String fund_pool_no; // fund_pool_no
+
+    private String trade_code;// 业务类型编码
+
+    private String result_code;// 业务结果
+
+    private String err_code;// 错误码
+
+    private String err_code_des;// 错误描述
+
+    private String trade_details; // 交易数据
+
+    public NotifyPacketResultInfo () {
+        super();
+    }
+
+    public NotifyPacketResultInfo (String notifyUrl, String partner_id, 
+            String core_merchant_no, String fund_pool_no,
+            String result, String errorCode, String errorMessage, 
+            String tradeData, String tradeCode) {
+        this.notify_url = notifyUrl;
+        this.partner_id = partner_id;
+        this.core_merchant_no = core_merchant_no;
+        this.fund_pool_no = fund_pool_no;
+        this.result_code = result;
+        this.err_code = errorCode;
+        this.err_code_des = errorMessage;
+        this.trade_details = tradeData;
+        this.trade_code = tradeCode;
+    }
+
+    public String getResult_code() {
+        return result_code;
+    }
+
+    public void setResult_code(String result_code) {
+        this.result_code = result_code;
+    }
+
+    public String getErr_code() {
+        return err_code;
+    }
+
+    public void setErr_code(String err_code) {
+        this.err_code = err_code;
+    }
+
+    public String getErr_code_des() {
+        return err_code_des;
+    }
+
+    public void setErr_code_des(String err_code_des) {
+        this.err_code_des = err_code_des;
+    }
+
+    public String getTrade_details() {
+        return trade_details;
+    }
+
+    public void setTrade_details(String trade_details) {
+        this.trade_details = trade_details;
+    }
+
+    public String getNotify_url() {
+        return notify_url;
+    }
+
+    public void setNotify_url(String notify_url) {
+        this.notify_url = notify_url;
+    }
+
+    public String getTrade_code() {
+        return trade_code;
+    }
+
+    public void setTrade_code(String trade_code) {
+        this.trade_code = trade_code;
+    }
+
+    public String getPartner_id() {
+        return partner_id;
+    }
+
+    public void setPartner_id(String partner_id) {
+        this.partner_id = partner_id;
+    }
+
+    public String getCore_merchant_no() {
+        return core_merchant_no;
+    }
+
+    public void setCore_merchant_no(String core_merchant_no) {
+        this.core_merchant_no = core_merchant_no;
+    }
+
+    public String getFund_pool_no() {
+        return fund_pool_no;
+    }
+
+    public void setFund_pool_no(String fund_pool_no) {
+        this.fund_pool_no = fund_pool_no;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
+
+}

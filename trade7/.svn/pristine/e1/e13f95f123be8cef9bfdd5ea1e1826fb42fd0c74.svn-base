@@ -1,0 +1,322 @@
+package com.liantuo.trade.unittest.jy0006;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import org.junit.Test;
+
+import com.liantuo.trade.client.trade.TradeClient;
+import com.liantuo.trade.client.trade.packet.TradeRequest;
+import com.liantuo.trade.client.trade.packet.TradeResponse;
+import com.liantuo.trade.client.trade.packet.body.TradePacketReqBodyOtherPofitLossLedger;
+import com.liantuo.trade.client.trade.packet.body.single_payment.TradePacketReqBodyExternalPayment;
+import com.liantuo.trade.client.trade.packet.body.single_payment.TradePacketReqBodyInnerPayment;
+import com.liantuo.trade.client.trade.packet.head.TradePacketHead;
+import com.liantuo.trade.common.validate.TradeValidationUtil;
+
+public class TradeClient61x {
+
+
+	/**
+	 * 0006_001_001：V1.0   内部支付
+	 * @throws Exception
+	 * 
+	 */
+	@Test
+	public void test0006001001(String str) throws Exception{
+		TradeRequest<TradePacketReqBodyInnerPayment> bizReq = new TradeRequest<TradePacketReqBodyInnerPayment>();
+		TradePacketHead head = new TradePacketHead();
+		TradePacketReqBodyInnerPayment body = new TradePacketReqBodyInnerPayment();
+		head.setSign("f644f5387aaeadae26bf45bf6d4759c2");
+		head.setRequest_time(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS").format(Calendar.getInstance().getTime()));
+		head.setPartner_id("12345678912345650");
+		//核心商户编号	来自输入
+		head.setCore_merchant_no("CC_C3878185775");
+		//资金池编号	来自输入
+		head.setFund_pool_no("PN01000000000010429");
+		//交易客户保留字段1	来自输入
+		body.setMerchant_extend_field_1("merchant_extend_field_1-001");
+		//交易客户保留字段2	来自输入
+		body.setMerchant_extend_field_2("Merchant_extend_field_2-001");
+		//交易客户保留字段3	来自输入
+		body.setMerchant_extend_field_3("Merchant_extend_field_3-001");
+		//交易客户保留字段4	来自输入
+		body.setMerchant_extend_field_4("Merchant_extend_field_4-001");
+		//交易客户保留字段5	来自输入
+		body.setMerchant_extend_field_5("Merchant_extend_field_5-001");
+		//交易发起方发起请求编号	来自输入
+		body.setOut_trade_no_ext(str);
+		//交易发起方业务系统订单号	来自输入
+		body.setOut_trade_no("78avcdeerf012345678Avcdeerf012345678avcdeerf012345678a");
+		//最后变更交易请求类型	0006_001_001
+		head.setRequest_code("0006_001_001");
+		head.setVersion("1.0");
+		/**
+		 * 付款方数据	
+		 */
+		//付款方付出方式
+		body.setPay_type("1");
+		//当付款方式为：2,3时，需要有值
+//		body.setPay_profit_loss_income_decr("1234567891234.12");
+//		body.setPay_profit_loss_cost_incr("1234567891234.12");
+		//付款方账户账户编号   当付款方式为：1,3时，需要有值
+		body.setPay_account_no("CA21000000060621");
+		body.setPay_account_out_accounting_amt("100");
+		//付款方手续费账户出账金额不为空时，不可为空
+		body.setPay_fee_account_no("CA21000000060623");
+		body.setPay_fee_account_out_accounting_amt("1");
+		
+		/**
+		 * 收款方数据
+		 */
+		body.setReceive_type("1");
+		//收款方式为损益时，需有值
+//		body.setReceive_profit_loss_income_incr("");
+//		body.setReceive_profit_loss_cost_decr("");
+		//收款方式为账户时，需有值
+		body.setReceive_account_no("CA21000000088173");
+		body.setReceive_account_in_accounting_amt("100");
+		body.setReceive_account_in_accounting_type("1");
+		//收款方手续费账户出账金额不为空时，不可为空 
+		body.setReceive_fee_account_no("CA21000000088173");
+		body.setReceive_fee_account_out_accounting_type("1");
+		body.setReceive_fee_account_out_accounting_amt("1");
+		
+		TradePacketReqBodyOtherPofitLossLedger profit = new TradePacketReqBodyOtherPofitLossLedger();
+		profit.setMerchant_extend_field_1("OtherPofitLossMerchant_extend_field_1");
+		profit.setIncome_incr("2");
+		List<TradePacketReqBodyOtherPofitLossLedger> profit_list = new ArrayList<TradePacketReqBodyOtherPofitLossLedger>();
+		profit_list.add(profit);
+		body.setProfit_loss_list(profit_list);
+		
+		bizReq.setHead(head);
+		bizReq.setBody(body);
+		TradeResponse response = TradeClient.excute(bizReq);
+		if (null != response) {
+			System.err.println(response.marshal());
+		}
+	}
+	
+	/**
+	 * 0006_001_002：V1.0   内部支付
+	 * @throws Exception
+	 * 
+	 */
+	@Test
+	public void test0006001002() throws Exception{
+		TradeRequest<TradePacketReqBodyExternalPayment> bizReq = new TradeRequest<TradePacketReqBodyExternalPayment>();
+		TradePacketHead head = new TradePacketHead();
+		TradePacketReqBodyExternalPayment body = new TradePacketReqBodyExternalPayment();
+		head.setSign("f644f5387aaeadae26bf45bf6d4759c2");
+		head.setRequest_time(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS").format(Calendar.getInstance().getTime()));
+		head.setRequest_code("0006_001_002");
+		head.setVersion("1.0");
+		
+		head.setPartner_id("12345678912345650");
+		//核心商户编号	来自输入
+		head.setCore_merchant_no("CC_C3878185775");
+		//资金池编号	来自输入
+		head.setFund_pool_no("PN01000000000010429");
+		
+//		//交易客户保留字段1	来自输入
+//		body.setMerchant_extend_field_1("merchant_extend_field_1-001");
+//		//交易客户保留字段2	来自输入
+//		body.setMerchant_extend_field_2("Merchant_extend_field_2-001");
+//		//交易客户保留字段3	来自输入
+//		body.setMerchant_extend_field_3("Merchant_extend_field_3-001");
+//		//交易客户保留字段4	来自输入
+//		body.setMerchant_extend_field_4("Merchant_extend_field_4-001");
+//		//交易客户保留字段5	来自输入
+//		body.setMerchant_extend_field_5("Merchant_extend_field_5-001");
+		//交易发起方发起请求编号	来自输入
+		body.setOut_trade_no_ext("20160612105361");
+		//交易发起方业务系统订单号	来自输入
+//		body.setOut_trade_no("78avcdeerf012345678Avcdeerf012345678avcdeerf012345678a");
+		//最后变更交易请求类型	0006_001_001
+		/**
+		 * 付款方数据	
+		 */
+		//付款方付出方式
+		body.setPay_type("5");//4-支付   5-充付
+		//付款方外部收付款渠道编号
+		body.setExternal_pay_channel("310000");
+		//付款方外部收款金额
+		body.setExternal_pay_received_amt("200");
+		//付款方外部渠道收付款成功日期时间
+		body.setGmt_success_external_pay_channel("2016-06-13 12:00:00");
+		//付款方外部收付款渠道订单号
+		body.setExternal_pay_channel_trade_no("123123123");
+		//付款方账户账户编号-----【付款方付出方式】为第三方充付时必填
+		body.setPay_account_no("CA21000000060621");
+		//付款方账户出账金额-----【付款方付出方式】为第三方充付必填
+		body.setPay_account_out_accounting_amt("200");
+		
+		//付款方手续费账户出账金额不为空时，不可为空
+		body.setPay_fee_account_no("CA21000000060623");
+		body.setPay_fee_account_out_accounting_amt("1");
+		
+		/**
+		 * 收款方数据
+		 */
+		body.setReceive_type("1");//1-账户  2-损益
+		//收款方式为损益时，需有值
+//		body.setReceive_profit_loss_income_incr("99");
+//		body.setReceive_profit_loss_cost_decr("");
+		//收款方式为账户时，需有值
+		body.setReceive_account_no("CA21000000088173");
+		body.setReceive_account_in_accounting_amt("200");
+		body.setReceive_account_in_accounting_type("1");//2-冻结  1-可用
+		//收款方手续费账户出账金额不为空时，不可为空 
+		body.setReceive_fee_account_no("CA21000000088177");
+		body.setReceive_fee_account_out_accounting_type("1");
+		body.setReceive_fee_account_out_accounting_amt("1");
+		
+		TradePacketReqBodyOtherPofitLossLedger profit = new TradePacketReqBodyOtherPofitLossLedger();
+		profit.setIncome_incr("2");
+		List<TradePacketReqBodyOtherPofitLossLedger> profit_list = new ArrayList<TradePacketReqBodyOtherPofitLossLedger>();
+		profit_list.add(profit);
+		body.setProfit_loss_list(profit_list);
+		
+		bizReq.setHead(head);
+		bizReq.setBody(body);
+		TradeResponse response = TradeClient.excute(bizReq);
+		if (null != response) {
+			System.err.println(response.marshal());
+		}
+	}
+	
+	@Test
+	public void testValidate(){
+		TradeRequest<TradePacketReqBodyInnerPayment> bizReq = new TradeRequest<TradePacketReqBodyInnerPayment>();
+		TradePacketHead head = new TradePacketHead();
+		TradePacketReqBodyInnerPayment body = new TradePacketReqBodyInnerPayment();
+		head.setSign("f644f5387aaeadae26bf45bf6d4759c2");
+		head.setRequest_time(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS").format(Calendar.getInstance().getTime()));
+//		head.setPartner_id("12345678912345650");
+		//核心商户编号	来自输入
+		head.setCore_merchant_no("CC_C3878185775");
+		//资金池编号	来自输入
+		head.setFund_pool_no("PN01000000000010429");
+		//交易客户保留字段1	来自输入
+		body.setMerchant_extend_field_1("merchant_extend_field_1-001");
+		//交易客户保留字段2	来自输入
+		body.setMerchant_extend_field_2("Merchant_extend_field_2-001");
+		//交易客户保留字段3	来自输入
+		body.setMerchant_extend_field_3("Merchant_extend_field_3-001");
+		//交易客户保留字段4	来自输入
+		body.setMerchant_extend_field_4("Merchant_extend_field_4-001");
+		//交易客户保留字段5	来自输入
+		body.setMerchant_extend_field_5("Merchant_extend_field_5-001");
+		//交易发起方发起请求编号	来自输入
+		body.setOut_trade_no_ext("20160612105372");
+		//交易发起方业务系统订单号	来自输入
+		body.setOut_trade_no("78avcdeerf012345678Avcdeerf012345678avcdeerf012345678a");
+		//最后变更交易请求类型	0006_001_001
+		head.setRequest_code("0006_001_001");
+		head.setVersion("1.0");
+		/**
+		 * 付款方数据	
+		 */
+		//付款方付出方式
+		body.setPay_type("1");
+		//当付款方式为：2,3时，需要有值
+//		body.setPay_profit_loss_income_decr("1234567891234.12");
+		body.setPay_profit_loss_cost_incr("1234567891234.12");
+		//付款方账户账户编号   当付款方式为：1,3时，需要有值
+		body.setPay_account_no("CA21000000060621");
+		body.setPay_account_out_accounting_amt("100");
+		//付款方手续费账户出账金额不为空时，不可为空
+		body.setPay_fee_account_no("CA21000000060623");
+		body.setPay_fee_account_out_accounting_amt("1");
+		
+		/**
+		 * 收款方数据
+		 */
+		body.setReceive_type("2");
+		//收款方式为损益时，需有值
+		body.setReceive_profit_loss_income_incr("12");
+//		body.setReceive_profit_loss_cost_decr("123");
+		//收款方式为账户时，需有值
+		body.setReceive_account_no("CA21000000088173");
+		body.setReceive_account_in_accounting_amt("100");
+		body.setReceive_account_in_accounting_type("1");
+		//收款方手续费账户出账金额不为空时，不可为空 
+		body.setReceive_fee_account_no("CA21000000088173");
+		body.setReceive_fee_account_out_accounting_type("1");
+		body.setReceive_fee_account_out_accounting_amt("1");
+		
+		TradePacketReqBodyOtherPofitLossLedger profit = new TradePacketReqBodyOtherPofitLossLedger();
+		profit.setMerchant_extend_field_1("OtherPofitLossMerchant_extend_field_1");
+//		profit.setIncome_incr("2");
+		profit.setIncome_decr("2s");
+		List<TradePacketReqBodyOtherPofitLossLedger> profit_list = new ArrayList<TradePacketReqBodyOtherPofitLossLedger>();
+		profit_list.add(profit);
+		body.setProfit_loss_list(profit_list);
+		
+		bizReq.setHead(head);
+		bizReq.setBody(body);
+		
+		System.out.println(TradeValidationUtil.validateRequestWeak(bizReq));
+		
+	}
+	
+	@Test
+	public void testValidate2(){
+//		TradePacketReqBodyInnerPayment body = new TradePacketReqBodyInnerPayment();
+//		body.setReceive_type("1");
+//		body.setReceive_account_in_accounting_type("1");
+//		ValidatorFactory vf = Validation.buildDefaultValidatorFactory();
+//		Set<ConstraintViolation<TradePacketReqBodyInnerPayment>> set = vf.getValidator().validateProperty(body, "receive_account_in_accounting_type", WeakRequired.class);
+//		 for (Iterator<ConstraintViolation<TradePacketReqBodyInnerPayment>> iterator = set.iterator(); iterator.hasNext(); ) {
+//             ConstraintViolation<?> constraintViolation = iterator.next();
+//             System.out.println(constraintViolation.getMessage());
+//         }
+		System.out.println("".matches("[\\da-zA-Z_]{6,32}"));
+	}
+	
+	@Test
+	public void testThread(){
+		ExecutorService service = Executors.newFixedThreadPool(2);
+		Thread thread01 = new Thread(
+		        new Runnable(){
+					@Override
+					public void run() {
+						TradeClient61x  client = new TradeClient61x();
+						try {
+							client.test0006001001("20160618023457");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+		        }		
+		);
+		
+		Thread thread02 = new Thread(
+		        new Runnable(){
+					@Override
+					public void run() {
+						TradeClient61x  client = new TradeClient61x();
+						try {
+							client.test0006001001("20160618023456");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+		        }		
+		);
+		
+		service.submit(thread01);
+		service.submit(thread02);
+		
+	}
+	
+	
+	
+	
+
+}

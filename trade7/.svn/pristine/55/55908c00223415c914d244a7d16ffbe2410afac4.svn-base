@@ -1,0 +1,131 @@
+package com.liantuo.deposit.advanceaccount.orm.mapper;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import java.util.List;
+import org.junit.Test;
+import org.unitils.database.annotations.Transactional;
+import org.unitils.database.util.TransactionMode;
+import org.unitils.dbunit.annotation.DataSet;
+import org.unitils.spring.annotation.SpringBean;
+import com.liantuo.deposit.advanceaccount.orm.mapper.AccountForbidTradeMapper;
+import com.liantuo.deposit.advanceaccount.orm.pojo.AccountForbidTrade;
+import com.liantuo.unittest.BaseDaoTest;
+
+
+@Transactional(value = TransactionMode.ROLLBACK)
+@DataSet(value = { "AccountForbidTrade.AccountForbidMapper.xls" })
+public class AccountForbidMapperTest extends BaseDaoTest{
+	
+	@SpringBean("accountForbidTradeMapper")
+	private AccountForbidTradeMapper accountForbidTradeMapper;
+	
+	// 按主键查询
+	@Test
+	public void selectByPrimaryKey(){
+		int key =1;
+		AccountForbidTrade vo = accountForbidTradeMapper.selectByPrimaryKey(key);
+		System.out.println(vo.getAccountNo()+"-----------");
+		assertNotNull(vo);
+	}
+	
+	//selectWhetherForbidThisTrade查询条件必须包含account_no， forbid_code， type ；
+    //	只有accountNo条件下
+	@Test
+	public void selectWhetherForbidThisTrade(){
+		AccountForbidTrade vo = new AccountForbidTrade();
+		vo.setAccountNo("CA21000110016752");
+		vo = accountForbidTradeMapper.selectWhetherForbidThisTrade(vo);
+		assertNull(vo);
+	}
+	
+	//selectWhetherForbidThisTrade查询条件必须包含account_no， forbid_code,type；
+    //	只有accountNo, forbid_code条件下
+	@Test
+	public void selectWhetherForbidThisTrade2(){
+		AccountForbidTrade vo = new AccountForbidTrade();
+		vo.setAccountNo("CA21000005016956");
+		vo.setForbidCode("0003_001_001");
+		vo = accountForbidTradeMapper.selectWhetherForbidThisTrade(vo);
+		assertNull(vo);
+	}
+	//查询条件必须包含account_no， forbid_code,type；
+	//只有forbid_code,type 条件下
+	@Test
+	public void selectWhetherForbidThisTrade3(){
+		AccountForbidTrade vo = new AccountForbidTrade();
+		vo.setForbidCode("0003_001_001");
+		vo.setType("02");
+		vo = accountForbidTradeMapper.selectWhetherForbidThisTrade(vo);
+		assertNull(vo);
+	}
+	
+	//查询条件必须包含account_no， forbid_code,type;
+	//条件都具备
+	@Test
+	public void selectWhetherForbidThisTrade4(){
+		AccountForbidTrade vo = new AccountForbidTrade();
+		vo.setForbidCode("0003_001_001");
+		vo.setType("02");
+		vo.setAccountNo("CA21000005016956");
+		vo = accountForbidTradeMapper.selectWhetherForbidThisTrade(vo);
+		assertNotNull(vo);
+	}
+	
+	// 根据accountNO查询结果集
+	@Test
+	public void selectByAccouNo(){
+		List<AccountForbidTrade> list = accountForbidTradeMapper.selectByAccouNo("CA21000503016752");
+		System.out.println(list.size()+"***********");
+		assertNotNull(list);
+	}
+	
+	
+	// 查询条件必须具备forbid_code 和accountNo；
+	//只有accountNo条件下
+	@Test
+	public void selectByCAAndForbidCode(){
+		AccountForbidTrade record = new AccountForbidTrade();
+		record.setAccountNo("CA21000000016752");
+		List<AccountForbidTrade>  list = accountForbidTradeMapper.selectByCAAndForbidCode(record);
+		assertEquals("list大小",0,list.size());
+	}
+	// 查询条件必须具备forbid_code 和accountNo；
+	//只有forbid_code条件下
+	@Test
+	public void selectByCAAndForbidCode2(){
+		AccountForbidTrade record = new AccountForbidTrade();
+		record.setForbidCode("0007_001");
+		List<AccountForbidTrade>  list = accountForbidTradeMapper.selectByCAAndForbidCode(record);
+		assertNull(list);
+	}
+	// 查询条件必须具备forbid_code 和accountNo；条件都具备
+	@Test
+	public void selectByCAAndForbidCode3(){
+		AccountForbidTrade record = new AccountForbidTrade();
+		record.setForbidCode("0007_001");
+		record.setAccountNo("CA21000503016752");
+		List<AccountForbidTrade>  list = accountForbidTradeMapper.selectByCAAndForbidCode(record);
+		assertNull(list);
+	}
+	// 插入方法测试
+	@Test
+	public void insert(){
+		int count=999999;
+		AccountForbidTrade record = new AccountForbidTrade();
+		record.setId(count);
+		record.setAccountNo("CA21000000016752");
+		record.setForbidCode("0007_002");
+		record.setType("01");
+		int a = accountForbidTradeMapper.insert(record);
+		assertEquals("插入成功返回应该为1",1,a);
+		
+	}
+	//按主键删除
+	@Test
+	public void deleteByPrimaryKey(){
+		int a=  accountForbidTradeMapper.deleteByPrimaryKey(1);
+		assertEquals("插入成功返回应该为1",1,a);
+	}
+}

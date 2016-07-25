@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                           http://www.springframework.org/schema/context
+                            http://www.springframework.org/schema/context/spring-context-3.2.xsd
+                            http://www.springframework.org/schema/tx
+                            http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+                            http://www.springframework.org/schema/aop
+                            http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
+
+
+    <!-- 引入配置文件 -->
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:config/properties/jdbc.properties</value>
+                <value>classpath:config/properties/datasource.properties</value>
+            </list>
+        </property>
+    </bean>
+
+	<bean id="dataSource"
+		  class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		  destroy-method="close">
+		<property name="driverClass" value="${jdbc.driverClassName}"/>
+		<property name="jdbcUrl" value="${jdbc.url}"/>
+		<property name="user" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+		<!--初始化时获取三个连接，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
+		<property name="minPoolSize" value="20"/>
+		<!--连接池中保留的最大连接数。Default: 15 -->
+		<property name="maxPoolSize" value="200"/>
+		<!--最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->
+		<property name="maxIdleTime" value="3000"/>
+		<!--当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。Default: 3 -->
+		<property name="acquireIncrement" value="30"/>
+		<!--JDBC的标准参数，用以控制数据源内加载的PreparedStatements数量。但由于预缓存的statements
+        属于单个connection而不是整个连接池。所以设置这个参数需要考虑到多方面的因素。
+        如果maxStatements与maxStatementsPerConnection均为0，则缓存被关闭。Default: 0-->
+		<property name="maxStatements" value="0"/>
+		<!--初始化时获取三个连接，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
+		<property name="initialPoolSize" value="20"/>
+		<!--每60秒检查所有连接池中的空闲连接。Default: 0 -->
+		<property name="idleConnectionTestPeriod" value="60"/>
+		<!--定义在从数据库获取新连接失败后重复尝试的次数。Default: 30 -->
+		<property name="acquireRetryAttempts" value="30"/>
+		<!--两次连接中间隔时间，单位毫秒。Default: 1000 -->
+		<property name="acquireRetryDelay" value="1000"/>
+		<!--获取连接失败将会引起所有等待连接池来获取连接的线程抛出异常。但是数据源仍有效
+        保留，并在下次调用getConnection()的时候继续尝试获取连接。如果设为true，那么在尝试
+        获取连接失败后该数据源将申明已断开并永久关闭。Default: false-->
+		<property name="breakAfterAcquireFailure" value="false"/>
+		<!--因性能消耗大请只在需要的时候使用它。如果设为true那么在每个connection提交的
+        时候都将校验其有效性。建议使用idleConnectionTestPeriod或automaticTestTable
+        等方法来提升连接测试的性能。Default: false -->
+		<property name="testConnectionOnCheckout" value="true"/>
+		<!--如果设为true那么在取得连接的同时将校验连接的有效性。Default: false -->
+		<property name="testConnectionOnCheckin" value="true"/>
+		<!--当连接池用完时客户端调用getConnection()后等待获取新连接的时间，超时后将抛出SQLException,如设为0则无限期等待。单位毫秒。Default: 0 -->
+		<property name="checkoutTimeout" value="0"/>
+		<!--定义所有连接测试都执行的测试语句。在使用连接测试的情况下这个一显著提高测试速度。注意：
+                测试的表必须在初始数据源的时候就存在。Default: null-->
+		<property name="preferredTestQuery" value="select 1"/>
+	</bean>
+
+    <!-- mybatis文件配置，扫描所有mapper文件 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="configLocation" value="classpath:/config/mybatis/myBatis-Configuration.cfg.xml"/>
+        <property name="mapperLocations">
+            <list>
+                <value>classpath:com/liantuo/trade/orm/pojo/*.xml</value>
+                <value>classpath:com/liantuo/deposit/orm/pojo/*.xml</value>
+            </list>
+        </property>
+        <property name="typeAliasesPackage"
+                  value="com.liantuo.trade.orm.pojo,com.liantuo.deposit.advanceaccount.orm.pojo"/>
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- spring与mybatis整合配置，扫描所有dao -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <property name="basePackage"
+                  value="com.liantuo.trade.orm.mapper,com.liantuo.deposit.advanceaccount.orm.mapper"/>
+    </bean>
+
+    <!-- 对dataSource 数据源进行事务管理 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 事务管理 增强 -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <!--交易部分-->
+            <!-- 对insert,update,delete 开头的方法进行事务管理,只要有异常就回滚 -->
+            <tx:method read-only="false" propagation="REQUIRED" name="transaction*"/>
+            <tx:method read-only="false" propagation="REQUIRED" name="save*"/>
+            <tx:method read-only="false" propagation="REQUIRED" name="create*"/>
+            <tx:method read-only="false" propagation="REQUIRED" name="insert*"/>
+            <tx:method read-only="false" propagation="REQUIRED" name="update*"/>
+            <tx:method read-only="false" propagation="REQUIRED" name="modify*"/>
+            <tx:method read-only="false" propagation="REQUIRED" name="master*"/>
+            <!--分布式回滚-->
+            <tx:method read-only="false" propagation="REQUIRED" name="realAccountInvoke*"/>
+            <!--账务部分-->
+            <tx:method read-only="false" propagation="REQUIRED" name="realTimeAccounting*"/>
+            <!-- 对其他方法 使用默认的事务管理 -->
+            <tx:method read-only="true" name="query*"/>
+            <tx:method read-only="true" name="select*"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- 事务 aop 配置 -->
+    <aop:config proxy-target-class="true">
+        <aop:pointcut id="tradeMethods"
+                      expression="
+                      execution(* com.liantuo.trade.bus.template..*.*(..)) or
+                      execution(* com.liantuo.trade.bus.process..*.*(..)) or
+                      execution(* com.liantuo.trade.bus.service..*.*(..)) or
+                      execution(* com.liantuo.trade.orm.service.impl.TradeReqLogServiceImpl.*(..)) or
+                      execution(* com.liantuo.trade.orm.service.impl.TradeOutFrontLogServiceImpl.*(..)) or
+                      execution(* com.liantuo.trade.orm.service.impl.TradeOutPaymentLogServiceImpl.*(..)) or
+                      execution(* com.liantuo.trade.orm.service.impl.TradeNotifyPaymentLogServiceImpl.*(..))
+                      "/>
+        <aop:pointcut id="accountMethods"
+                      expression="
+                      execution(* com.liantuo.deposit.advanceaccount.bus.service..*.*(..))
+                      "/>
+        <!--交易部分-->
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="tradeMethods"/>
+        <!--账务部分-->
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="accountMethods"/>
+    </aop:config>
+
+
+
+    <!-- 启用对事务注解的支持 -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!-- Cache配置 -->
+    <!--<cache:annotation-driven cache-manager="cacheManager"/>
+    <bean id="ehCacheManagerFactory" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
+          p:configLocation="classpath:config/spring/ehcache.xml"/>
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager"
+          p:cacheManager-ref="ehCacheManagerFactory"/>-->
+    <!-- id services 数据库字段char(19)长度大于long的长度 9223372036854775807)-->
+    <bean id="idFactoryTable" class="com.liantuo.trade.seqno.IdTable">
+        <property name="dataSource" ref="dataSource"></property>
+        <property name="tableName">
+            <value>trade_seqno</value>
+        </property>
+        <property name="typeColName">
+            <value>seq_type</value>
+        </property>
+        <property name="idColName">
+            <value>seq_no</value>
+        </property>
+        <!--param name="rangeColName">range</param -->
+    </bean>
+
+    <!--账务交易编号-->
+    <bean id="idFactoryDepositRecordNum"
+          class="com.liantuo.trade.seqno.StepSequenceFactoryForSpdb">
+        <property name="table" ref="idFactoryTable"></property>
+        <property name="format">
+            <value>T{yyMMddHHmmssSSS}{##############}</value>
+        </property>
+        <property name="type">
+            <value>deposit_record_num</value>
+        </property>
+        <property name="step">
+            <value>100</value>
+        </property>
+    </bean>
+
+    <!--trade_payment_trade_no-->
+    <bean id="idFactoryTradePaymentTradeNo"
+          class="com.liantuo.trade.seqno.StepSequenceFactoryForSpdb">
+        <property name="table" ref="idFactoryTable"></property>
+        <property name="format">
+            <value>{yyMMddHHmmssSSS}{##########}</value>
+        </property>
+        <property name="type">
+            <value>trade_payment_trade_no</value>
+        </property>
+        <property name="step">
+            <value>100</value>
+        </property>
+    </bean>
+
+    <!--trade_req_log_req_no-->
+    <bean id="idFactoryTradeReqLogReqNo"
+          class="com.liantuo.trade.seqno.StepSequenceFactoryForSpdb">
+        <property name="table" ref="idFactoryTable"></property>
+        <property name="format">
+            <value>{yyMMddHHmmssSSS}{##########}</value>
+        </property>
+        <property name="type">
+            <value>trade_req_log_req_no</value>
+        </property>
+        <property name="step">
+            <value>500</value>
+        </property>
+    </bean>
+
+    <!--退款交易编号-->
+    <bean id="idFactoryTradeRefundTradeNo"
+          class="com.liantuo.trade.seqno.StepSequenceFactoryForSpdb">
+        <property name="table" ref="idFactoryTable"></property>
+        <property name="format">
+            <value>{yyMMddHHmmssSSS}{##########}</value>
+        </property>
+        <property name="type">
+            <value>trade_refund_trade_no</value>
+        </property>
+        <property name="step">
+            <value>100</value>
+        </property>
+    </bean>
+
+    <!--台账编号-->
+    <bean id="idFactoryTradeLegderLegderNo"
+          class="com.liantuo.trade.seqno.StepSequenceFactoryForSpdb">
+        <property name="table" ref="idFactoryTable"></property>
+        <property name="format">
+            <value>{yyMMddHHmmssSSS}{##########}</value>
+        </property>
+        <property name="type">
+            <value>trade_legder_legder_no</value>
+        </property>
+        <property name="step">
+            <value>100</value>
+        </property>
+    </bean>
+    <!--提现-冻结-编号-->
+    <bean id="idFactoryWithdrawDeductTradeNo"
+          class="com.liantuo.trade.seqno.StepSequenceFactoryForSpdb">
+        <property name="table" ref="idFactoryTable"></property>
+        <property name="format">
+            <value>{yyMMddHHmmssSSS}{##########}</value>
+        </property>
+        <property name="type">
+            <value>withdraw_deduct_trade_no</value>
+        </property>
+        <property name="step">
+            <value>100</value>
+        </property>
+    </bean>
+    <!--提现批次号-->
+    <bean id="idFactoryWithdrawThirdBatchno"
+          class="com.liantuo.trade.seqno.StepSequenceFactoryForSpdb">
+        <property name="table" ref="idFactoryTable"></property>
+        <property name="format">
+            <value>{yyMMddHHmmssSSS}{##########}</value>
+        </property>
+        <property name="type">
+            <value>withdraw_third_batchno</value>
+        </property>
+        <property name="step">
+            <value>100</value>
+        </property>
+    </bean>
+    <!--回调通知编号-->
+    <bean id="idFactoryNotifyReqLogReqNo"
+          class="com.liantuo.trade.seqno.StepSequenceFactoryForSpdb">
+        <property name="table" ref="idFactoryTable"></property>
+        <property name="format">
+            <value>{yyMMddHHmmssSSS}{##########}</value>
+        </property>
+        <property name="type">
+            <value>trade_notify_log_notify_no</value>
+        </property>
+        <property name="step">
+            <value>500</value>
+        </property>
+    </bean>
+    <bean id="idFactoryTradeOutFrontLogNo"
+          class="com.liantuo.trade.seqno.StepSequenceFactoryForSpdb">
+        <property name="table" ref="idFactoryTable"></property>
+        <property name="format">
+            <value>{yyMMddHHmmssSSS}{##########}</value>
+        </property>
+        <property name="type">
+            <value>trade_out_front_log_no</value>
+        </property>
+        <property name="step">
+            <value>100</value>
+        </property>
+    </bean>
+    <bean id="idFactoryTradeOutPaymentLogNo"
+          class="com.liantuo.trade.seqno.StepSequenceFactoryForSpdb">
+        <property name="table" ref="idFactoryTable"></property>
+        <property name="format">
+            <value>{yyMMddHHmmssSSS}{##########}</value>
+        </property>
+        <property name="type">
+            <value>trade_out_payment_log_no</value>
+        </property>
+        <property name="step">
+            <value>100</value>
+        </property>
+    </bean>
+
+    <bean id="idFactoryTradeAdjustAccountNo"
+          class="com.liantuo.trade.seqno.StepSequenceFactoryForSpdb">
+        <property name="table" ref="idFactoryTable"></property>
+        <property name="format">
+            <value>{yyMMddHHmmssSSS}{##########}</value>
+        </property>
+        <property name="type">
+            <value>trade_adjust_account_no</value>
+        </property>
+        <property name="step">
+            <value>100</value>
+        </property>
+    </bean>
+
+ 	<!-- CA成员转账 -->
+ 	<bean id="idFactoryTradeTransferAccountNo"
+          class="com.liantuo.trade.seqno.StepSequenceFactoryForSpdb">
+        <property name="table" ref="idFactoryTable"></property>
+        <property name="format">
+            <value>{yyMMddHHmmssSSS}{##########}</value>
+        </property>
+        <property name="type">
+            <value>trade_transfer_account_no</value>
+        </property>
+        <property name="step">
+            <value>100</value>
+        </property>
+    </bean>
+
+  	<!-- 充值交易编号 -->
+    <bean id="idFactoryOfflineandOnlineTradeNo"
+        class="com.liantuo.trade.seqno.StepSequenceFactoryForSpdb">
+        <property name="table" ref="idFactoryTable"></property>
+        <property name="format">
+            <value>{yyMMddHHmmssSSS}{##########}</value>
+        </property>
+        <property name="type">
+            <value>trade_recharge_trade_no</value>
+        </property>
+        <property name="step">
+            <value>100</value>
+        </property>
+    </bean>
+
+    <!-- 简单支付交易编号 -->
+    <bean id="idFactorySinglePaymentTradeNo"
+        class="com.liantuo.trade.seqno.StepSequenceFactoryForSpdb">
+        <property name="table" ref="idFactoryTable"></property>
+        <property name="format">
+            <value>0006001{yyMMddHHmmssSSS}{##########}</value>
+        </property>
+        <property name="type">
+            <value>trade_single_payment_trade_no</value>
+        </property>
+        <property name="step">
+            <value>100</value>
+        </property>
+    </bean>
+    <!-- 0006_002支付退款类 -->
+    <bean id="idFactorySinglePaymentRefundTradeNo"
+        class="com.liantuo.trade.seqno.StepSequenceFactoryForSpdb">
+        <property name="table" ref="idFactoryTable"></property>
+        <property name="format">
+            <value>0006002{yyMMddHHmmssSSS}{##########}</value>
+        </property>
+        <property name="type">
+            <value>trade_single_payment_refund_trade_no</value>
+        </property>
+        <property name="step">
+            <value>100</value>
+        </property>
+    </bean>
+
+   	<!-- 流水号产生器资金池编号 -->
+    <bean id="idFactoryPoolNo"
+        class="com.liantuo.trade.seqno.StepSequenceFactoryForSpdb">
+        <property name="table" ref="idFactoryTable"></property>
+        <property name="format">
+            <value>PN02{###############}</value>
+        </property>
+        <property name="type">
+            <value>PoolNo</value>
+        </property>
+        <property name="step">
+            <value>20</value>
+        </property>
+    </bean>
+
+    <!-- 内部支付退款 -->
+ 	<bean id="idFactoryTradeInnerRefundNo"
+          class="com.liantuo.trade.seqno.StepSequenceFactoryForSpdb">
+        <property name="table" ref="idFactoryTable"></property>
+        <property name="format">
+            <value>{yyMMddHHmmssSSS}{##########}</value>
+        </property>
+        <property name="type">
+            <value>trade_inner_refund_no</value>
+        </property>
+        <property name="step">
+            <value>100</value>
+        </property>
+    </bean>
+    <!-- 账户编号ca账号生成 -->
+    <bean id="idFactoryCaAccountNo"
+        class="com.liantuo.trade.seqno.StepSequenceFactoryForSpdb">
+        <property name="table" ref="idFactoryTable"></property>
+        <property name="format">
+            <value>CA31{############}</value>
+        </property>
+        <property name="type">
+            <value>CaAccountNo</value>
+        </property>
+        <property name="step">
+            <value>20</value>
+        </property>
+    </bean>
+    <!-- 生成支付的流水号 -->
+    <bean id="idFactorySinglePaymentSerialNumber"
+        class="com.liantuo.trade.seqno.StepSequenceFactoryForSpdb">
+        <property name="table" ref="idFactoryTable"></property>
+        <property name="format">
+            <value>zf_sn_{yyMMddHHmmssSSS}{##########}</value>
+        </property>
+        <property name="type">
+            <value>trade_single_payment_serial_number</value>
+        </property>
+        <property name="step">
+            <value>10</value>
+        </property>
+    </bean>
+</beans>

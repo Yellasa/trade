@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+    <!-- 模板工厂 -->
+    <bean id="tradeTemplateFactory" class="com.liantuo.trade.bus.factory.template.TradeTemplateFactory">
+        <property name="templateConfig">
+            <map>
+            	<!-- 冻付减 -->
+                <entry key="0001_001_001" value-ref="genMerchantFreezeProcess"/><!-- 冻结 -->
+                <entry key="0001_002_001" value-ref="genRefundOfflineSettleProcess"/><!-- 线下付款退回 -->
+                <entry key="0001_001_003" value-ref="modUnfreezeFullProcess"/><!-- 全额解冻 -->
+                <entry key="0001_001_002" value-ref="modUnfreezeOfflineSettleProcess"/><!-- 线下付款剩余解冻 -->
+                <entry key="0001_001_998" value-ref="queryByPagePaymenProcess"/><!-- 交易查询 -->
+                <entry key="0001_002_998" value-ref="queryByPageRefundProcess"/><!-- 退回查询 -->
+                <!-- 提现 -->
+                <entry key="0002_001_001" value-ref="withdrawDeductProcess"/><!-- 提现扣减 -->
+                <entry key="0002_001_002" value-ref="withdrawAlipayPayProcess"/><!-- 提现支付宝出款 -->
+                <entry key="0002_001_004" value-ref="withdrawPayResultQueryProcess"/><!-- 提现扣减 -->
+                <entry key="0002_001_005" value-ref="withdrawDeductRefundProcess"/><!-- 提现退回 -->
+                <entry key="0002_001_998" value-ref="withdrawQueryByPageProcess"/><!-- 提现交易查询 -->
+            </map>
+        </property>
+
+    </bean>
+    
+    <!-- 通知了模板 -->
+    <bean id="notifyTemplateFactory" class="com.liantuo.trade.bus.factory.template.NotifyTemplateFactory">
+        <property name="templateConfig">
+            <map>
+            	<!-- 提现通知回调   payChannel_tradeType -->
+                <entry key="0002_001_003" value-ref="withdrawNotifyProcess"/>
+            </map>
+        </property>
+    </bean>
+    
+</beans>

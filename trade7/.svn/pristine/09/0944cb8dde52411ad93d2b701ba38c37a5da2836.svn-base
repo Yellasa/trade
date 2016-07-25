@@ -1,0 +1,106 @@
+package com.liantuo.trade.client.trade.packet.body;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import javax.xml.bind.annotation.XmlType;
+
+@XmlType(propOrder = {"return_code", "is_success", "err_code", "err_code_des","bus_err_code","bus_err_code_des", "resultCount", "trade_details"})
+public class TradeResponseBody {
+    private String return_code;//通信标识
+
+    private String is_success;//业务结果
+
+    private String err_code;//错误码
+
+    private String err_code_des;//错误描述
+
+    private String bus_err_code;//业务错误码 来自底层支付返回
+    
+    private String bus_err_code_des;//业务错误描述
+    
+    private String resultCount ;
+
+    private String trade_details;
+    
+    private String third_data;//第三方返回数据
+    
+    public String getReturn_code() {
+        return return_code;
+    }
+
+    public void setReturn_code(String return_code) {
+        this.return_code = return_code;
+    }
+
+    public String getIs_success() {
+        return is_success;
+    }
+
+    public void setIs_success(String is_success) {
+        this.is_success = is_success;
+    }
+
+    public String getErr_code() {
+        return err_code;
+    }
+
+    public void setErr_code(String err_code) {
+        this.err_code = err_code;
+    }
+
+    public String getErr_code_des() {
+        return err_code_des;
+    }
+
+    public void setErr_code_des(String err_code_des) {
+        this.err_code_des = err_code_des;
+    }
+
+    public String getResultCount() {
+        return resultCount;
+    }
+
+    public void setResultCount(String resultCount) {
+        this.resultCount = resultCount;
+    }
+
+    public String getTrade_details() {
+        return trade_details;
+    }
+
+    public void setTrade_details(String trade_details) {
+        this.trade_details = trade_details;
+    }
+
+    public String getBus_err_code() {
+		return bus_err_code;
+	}
+
+	public void setBus_err_code(String bus_err_code) {
+		this.bus_err_code = bus_err_code;
+	}
+
+	public String getBus_err_code_des() {
+		return bus_err_code_des;
+	}
+
+	public void setBus_err_code_des(String bus_err_code_des) {
+		this.bus_err_code_des = bus_err_code_des;
+	}
+
+	@Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
+
+	public String getThird_data() {
+		return third_data;
+	}
+
+	public void setThird_data(String thirdData) {
+		third_data = thirdData;
+	}
+
+
+}

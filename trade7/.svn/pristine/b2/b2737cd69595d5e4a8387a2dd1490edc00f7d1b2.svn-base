@@ -1,0 +1,23 @@
+package com.liantuo.deposit.advanceaccount.orm.mapper;
+
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+
+import java.sql.SQLException;
+
+import com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccount;
+import com.liantuo.unittest.mockito.IsTClass;
+
+public class CreditAccountMapperMock {
+
+	
+	public static void mockInsert(CreditAccountMapper accountMapper){
+		doReturn(1).when(accountMapper).insert(argThat(new IsTClass<CreditAccount>(new CreditAccount())));
+	}
+	
+	public static void mockInsertBusinessException(CreditAccountMapper accountMapper){
+		doThrow(new RuntimeException()).when(accountMapper).insert(argThat(new IsTClass<CreditAccount>(new CreditAccount())));
+	}
+	
+}

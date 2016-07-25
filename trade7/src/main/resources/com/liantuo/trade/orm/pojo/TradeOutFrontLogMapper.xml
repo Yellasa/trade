@@ -1,0 +1,626 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liantuo.trade.orm.mapper.TradeOutFrontLogMapper" >
+  <resultMap id="BaseResultMap" type="com.liantuo.trade.orm.pojo.TradeOutFrontLog" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="req_no" property="reqNo" jdbcType="VARCHAR" />
+    <result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+    <result column="core_merchant_no" property="coreMerchantNo" jdbcType="VARCHAR" />
+    <result column="service_name" property="serviceName" jdbcType="VARCHAR" />
+    <result column="req_date_time" property="reqDateTime" jdbcType="TIMESTAMP" />
+    <result column="res_date_time" property="resDateTime" jdbcType="TIMESTAMP" />
+    <result column="req_cost_time" property="reqCostTime" jdbcType="VARCHAR" />
+    <result column="req_status" property="reqStatus" jdbcType="CHAR" />
+    <result column="gmt_created" property="gmtCreated" jdbcType="TIMESTAMP" />
+    <result column="req_extend_field_1" property="reqExtendField1" jdbcType="VARCHAR" />
+    <result column="req_extend_field_2" property="reqExtendField2" jdbcType="VARCHAR" />
+    <result column="req_extend_field_3" property="reqExtendField3" jdbcType="VARCHAR" />
+    <result column="req_extend_field_4" property="reqExtendField4" jdbcType="VARCHAR" />
+    <result column="req_extend_field_5" property="reqExtendField5" jdbcType="VARCHAR" />
+    <result column="req_extend_field_6" property="reqExtendField6" jdbcType="VARCHAR" />
+    <result column="req_extend_field_7" property="reqExtendField7" jdbcType="VARCHAR" />
+    <result column="req_extend_field_8" property="reqExtendField8" jdbcType="VARCHAR" />
+    <result column="req_extend_field_9" property="reqExtendField9" jdbcType="VARCHAR" />
+    <result column="req_extend_field_10" property="reqExtendField10" jdbcType="VARCHAR" />
+    <result column="req_extend_field_11" property="reqExtendField11" jdbcType="VARCHAR" />
+    <result column="req_extend_field_12" property="reqExtendField12" jdbcType="VARCHAR" />
+    <result column="req_extend_field_13" property="reqExtendField13" jdbcType="VARCHAR" />
+    <result column="req_extend_field_14" property="reqExtendField14" jdbcType="VARCHAR" />
+    <result column="req_extend_field_15" property="reqExtendField15" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.liantuo.trade.orm.pojo.TradeOutFrontLogWithBLOBs" extends="BaseResultMap" >
+    <result column="req_text" property="reqText" jdbcType="LONGVARCHAR" />
+    <result column="res_text" property="resText" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, req_no, trade_no, core_merchant_no, service_name, req_date_time, res_date_time, 
+    req_cost_time, req_status, gmt_created, req_extend_field_1, req_extend_field_2, req_extend_field_3, 
+    req_extend_field_4, req_extend_field_5, req_extend_field_6, req_extend_field_7, req_extend_field_8, 
+    req_extend_field_9, req_extend_field_10, req_extend_field_11, req_extend_field_12, 
+    req_extend_field_13, req_extend_field_14, req_extend_field_15
+  </sql>
+  <sql id="Blob_Column_List" >
+    req_text, res_text
+  </sql>
+  <!--  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.liantuo.trade.orm.pojo.TradeOutFrontLogExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from trade_out_front_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.liantuo.trade.orm.pojo.TradeOutFrontLogExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from trade_out_front_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>-->
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from trade_out_front_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <!--<insert id="insert" parameterType="com.liantuo.trade.orm.pojo.TradeOutFrontLogWithBLOBs" >
+    insert into trade_out_front_log (id, req_no, trade_no, 
+      core_merchant_no, service_name, req_date_time, 
+      res_date_time, req_cost_time, req_status, 
+      gmt_created, req_extend_field_1, req_extend_field_2, 
+      req_extend_field_3, req_extend_field_4, req_extend_field_5, 
+      req_extend_field_6, req_extend_field_7, req_extend_field_8, 
+      req_extend_field_9, req_extend_field_10, req_extend_field_11, 
+      req_extend_field_12, req_extend_field_13, req_extend_field_14, 
+      req_extend_field_15, req_text, res_text
+      )
+    values (#{id,jdbcType=BIGINT}, #{reqNo,jdbcType=VARCHAR}, #{tradeNo,jdbcType=VARCHAR}, 
+      #{coreMerchantNo,jdbcType=VARCHAR}, #{serviceName,jdbcType=VARCHAR}, #{reqDateTime,jdbcType=TIMESTAMP}, 
+      #{resDateTime,jdbcType=TIMESTAMP}, #{reqCostTime,jdbcType=VARCHAR}, #{reqStatus,jdbcType=CHAR}, 
+      #{gmtCreated,jdbcType=TIMESTAMP}, #{reqExtendField1,jdbcType=VARCHAR}, #{reqExtendField2,jdbcType=VARCHAR}, 
+      #{reqExtendField3,jdbcType=VARCHAR}, #{reqExtendField4,jdbcType=VARCHAR}, #{reqExtendField5,jdbcType=VARCHAR}, 
+      #{reqExtendField6,jdbcType=VARCHAR}, #{reqExtendField7,jdbcType=VARCHAR}, #{reqExtendField8,jdbcType=VARCHAR}, 
+      #{reqExtendField9,jdbcType=VARCHAR}, #{reqExtendField10,jdbcType=VARCHAR}, #{reqExtendField11,jdbcType=VARCHAR}, 
+      #{reqExtendField12,jdbcType=VARCHAR}, #{reqExtendField13,jdbcType=VARCHAR}, #{reqExtendField14,jdbcType=VARCHAR}, 
+      #{reqExtendField15,jdbcType=VARCHAR}, #{reqText,jdbcType=LONGVARCHAR}, #{resText,jdbcType=LONGVARCHAR}
+      )
+  </insert>-->
+  <insert id="insertSelective" parameterType="com.liantuo.trade.orm.pojo.TradeOutFrontLogWithBLOBs" >
+    <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+		SELECT LAST_INSERT_ID() AS id
+	</selectKey>
+    insert into trade_out_front_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="reqNo != null" >
+        req_no,
+      </if>
+      <if test="tradeNo != null" >
+        trade_no,
+      </if>
+      <if test="coreMerchantNo != null" >
+        core_merchant_no,
+      </if>
+      <if test="serviceName != null" >
+        service_name,
+      </if>
+      <if test="reqDateTime != null" >
+        req_date_time,
+      </if>
+      <if test="resDateTime != null" >
+        res_date_time,
+      </if>
+      <if test="reqCostTime != null" >
+        req_cost_time,
+      </if>
+      <if test="reqStatus != null" >
+        req_status,
+      </if>
+        gmt_created,
+      <if test="reqExtendField1 != null" >
+        req_extend_field_1,
+      </if>
+      <if test="reqExtendField2 != null" >
+        req_extend_field_2,
+      </if>
+      <if test="reqExtendField3 != null" >
+        req_extend_field_3,
+      </if>
+      <if test="reqExtendField4 != null" >
+        req_extend_field_4,
+      </if>
+      <if test="reqExtendField5 != null" >
+        req_extend_field_5,
+      </if>
+      <if test="reqExtendField6 != null" >
+        req_extend_field_6,
+      </if>
+      <if test="reqExtendField7 != null" >
+        req_extend_field_7,
+      </if>
+      <if test="reqExtendField8 != null" >
+        req_extend_field_8,
+      </if>
+      <if test="reqExtendField9 != null" >
+        req_extend_field_9,
+      </if>
+      <if test="reqExtendField10 != null" >
+        req_extend_field_10,
+      </if>
+      <if test="reqExtendField11 != null" >
+        req_extend_field_11,
+      </if>
+      <if test="reqExtendField12 != null" >
+        req_extend_field_12,
+      </if>
+      <if test="reqExtendField13 != null" >
+        req_extend_field_13,
+      </if>
+      <if test="reqExtendField14 != null" >
+        req_extend_field_14,
+      </if>
+      <if test="reqExtendField15 != null" >
+        req_extend_field_15,
+      </if>
+      <if test="reqText != null" >
+        req_text,
+      </if>
+      <if test="resText != null" >
+        res_text,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="reqNo != null" >
+        #{reqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeNo != null" >
+        #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="coreMerchantNo != null" >
+        #{coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceName != null" >
+        #{serviceName,jdbcType=VARCHAR},
+      </if>
+      <if test="reqDateTime != null" >
+        #{reqDateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="resDateTime != null" >
+        #{resDateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reqCostTime != null" >
+        #{reqCostTime,jdbcType=VARCHAR},
+      </if>
+      <if test="reqStatus != null" >
+        #{reqStatus,jdbcType=CHAR},
+      </if>
+      NOW(),
+      <if test="reqExtendField1 != null" >
+        #{reqExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField2 != null" >
+        #{reqExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField3 != null" >
+        #{reqExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField4 != null" >
+        #{reqExtendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField5 != null" >
+        #{reqExtendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField6 != null" >
+        #{reqExtendField6,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField7 != null" >
+        #{reqExtendField7,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField8 != null" >
+        #{reqExtendField8,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField9 != null" >
+        #{reqExtendField9,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField10 != null" >
+        #{reqExtendField10,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField11 != null" >
+        #{reqExtendField11,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField12 != null" >
+        #{reqExtendField12,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField13 != null" >
+        #{reqExtendField13,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField14 != null" >
+        #{reqExtendField14,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField15 != null" >
+        #{reqExtendField15,jdbcType=VARCHAR},
+      </if>
+      <if test="reqText != null" >
+        #{reqText,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="resText != null" >
+        #{resText,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <!--<update id="updateByExampleSelective" parameterType="map" >
+    update trade_out_front_log
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.reqNo != null" >
+        req_no = #{record.reqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tradeNo != null" >
+        trade_no = #{record.tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.coreMerchantNo != null" >
+        core_merchant_no = #{record.coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.serviceName != null" >
+        service_name = #{record.serviceName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqDateTime != null" >
+        req_date_time = #{record.reqDateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.resDateTime != null" >
+        res_date_time = #{record.resDateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.reqCostTime != null" >
+        req_cost_time = #{record.reqCostTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqStatus != null" >
+        req_status = #{record.reqStatus,jdbcType=CHAR},
+      </if>
+      <if test="record.gmtCreated != null" >
+        gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.reqExtendField1 != null" >
+        req_extend_field_1 = #{record.reqExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqExtendField2 != null" >
+        req_extend_field_2 = #{record.reqExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqExtendField3 != null" >
+        req_extend_field_3 = #{record.reqExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqExtendField4 != null" >
+        req_extend_field_4 = #{record.reqExtendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqExtendField5 != null" >
+        req_extend_field_5 = #{record.reqExtendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqExtendField6 != null" >
+        req_extend_field_6 = #{record.reqExtendField6,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqExtendField7 != null" >
+        req_extend_field_7 = #{record.reqExtendField7,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqExtendField8 != null" >
+        req_extend_field_8 = #{record.reqExtendField8,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqExtendField9 != null" >
+        req_extend_field_9 = #{record.reqExtendField9,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqExtendField10 != null" >
+        req_extend_field_10 = #{record.reqExtendField10,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqExtendField11 != null" >
+        req_extend_field_11 = #{record.reqExtendField11,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqExtendField12 != null" >
+        req_extend_field_12 = #{record.reqExtendField12,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqExtendField13 != null" >
+        req_extend_field_13 = #{record.reqExtendField13,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqExtendField14 != null" >
+        req_extend_field_14 = #{record.reqExtendField14,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqExtendField15 != null" >
+        req_extend_field_15 = #{record.reqExtendField15,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqText != null" >
+        req_text = #{record.reqText,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.resText != null" >
+        res_text = #{record.resText,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update trade_out_front_log
+    set id = #{record.id,jdbcType=BIGINT},
+      req_no = #{record.reqNo,jdbcType=VARCHAR},
+      trade_no = #{record.tradeNo,jdbcType=VARCHAR},
+      core_merchant_no = #{record.coreMerchantNo,jdbcType=VARCHAR},
+      service_name = #{record.serviceName,jdbcType=VARCHAR},
+      req_date_time = #{record.reqDateTime,jdbcType=TIMESTAMP},
+      res_date_time = #{record.resDateTime,jdbcType=TIMESTAMP},
+      req_cost_time = #{record.reqCostTime,jdbcType=VARCHAR},
+      req_status = #{record.reqStatus,jdbcType=CHAR},
+      gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP},
+      req_extend_field_1 = #{record.reqExtendField1,jdbcType=VARCHAR},
+      req_extend_field_2 = #{record.reqExtendField2,jdbcType=VARCHAR},
+      req_extend_field_3 = #{record.reqExtendField3,jdbcType=VARCHAR},
+      req_extend_field_4 = #{record.reqExtendField4,jdbcType=VARCHAR},
+      req_extend_field_5 = #{record.reqExtendField5,jdbcType=VARCHAR},
+      req_extend_field_6 = #{record.reqExtendField6,jdbcType=VARCHAR},
+      req_extend_field_7 = #{record.reqExtendField7,jdbcType=VARCHAR},
+      req_extend_field_8 = #{record.reqExtendField8,jdbcType=VARCHAR},
+      req_extend_field_9 = #{record.reqExtendField9,jdbcType=VARCHAR},
+      req_extend_field_10 = #{record.reqExtendField10,jdbcType=VARCHAR},
+      req_extend_field_11 = #{record.reqExtendField11,jdbcType=VARCHAR},
+      req_extend_field_12 = #{record.reqExtendField12,jdbcType=VARCHAR},
+      req_extend_field_13 = #{record.reqExtendField13,jdbcType=VARCHAR},
+      req_extend_field_14 = #{record.reqExtendField14,jdbcType=VARCHAR},
+      req_extend_field_15 = #{record.reqExtendField15,jdbcType=VARCHAR},
+      req_text = #{record.reqText,jdbcType=LONGVARCHAR},
+      res_text = #{record.resText,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update trade_out_front_log
+    set id = #{record.id,jdbcType=BIGINT},
+      req_no = #{record.reqNo,jdbcType=VARCHAR},
+      trade_no = #{record.tradeNo,jdbcType=VARCHAR},
+      core_merchant_no = #{record.coreMerchantNo,jdbcType=VARCHAR},
+      service_name = #{record.serviceName,jdbcType=VARCHAR},
+      req_date_time = #{record.reqDateTime,jdbcType=TIMESTAMP},
+      res_date_time = #{record.resDateTime,jdbcType=TIMESTAMP},
+      req_cost_time = #{record.reqCostTime,jdbcType=VARCHAR},
+      req_status = #{record.reqStatus,jdbcType=CHAR},
+      gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP},
+      req_extend_field_1 = #{record.reqExtendField1,jdbcType=VARCHAR},
+      req_extend_field_2 = #{record.reqExtendField2,jdbcType=VARCHAR},
+      req_extend_field_3 = #{record.reqExtendField3,jdbcType=VARCHAR},
+      req_extend_field_4 = #{record.reqExtendField4,jdbcType=VARCHAR},
+      req_extend_field_5 = #{record.reqExtendField5,jdbcType=VARCHAR},
+      req_extend_field_6 = #{record.reqExtendField6,jdbcType=VARCHAR},
+      req_extend_field_7 = #{record.reqExtendField7,jdbcType=VARCHAR},
+      req_extend_field_8 = #{record.reqExtendField8,jdbcType=VARCHAR},
+      req_extend_field_9 = #{record.reqExtendField9,jdbcType=VARCHAR},
+      req_extend_field_10 = #{record.reqExtendField10,jdbcType=VARCHAR},
+      req_extend_field_11 = #{record.reqExtendField11,jdbcType=VARCHAR},
+      req_extend_field_12 = #{record.reqExtendField12,jdbcType=VARCHAR},
+      req_extend_field_13 = #{record.reqExtendField13,jdbcType=VARCHAR},
+      req_extend_field_14 = #{record.reqExtendField14,jdbcType=VARCHAR},
+      req_extend_field_15 = #{record.reqExtendField15,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>-->
+  <update id="updateByPrimaryKeySelective" parameterType="com.liantuo.trade.orm.pojo.TradeOutFrontLogWithBLOBs" >
+    update trade_out_front_log
+    <set >
+      <if test="reqNo != null" >
+        req_no = #{reqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeNo != null" >
+        trade_no = #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="coreMerchantNo != null" >
+        core_merchant_no = #{coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceName != null" >
+        service_name = #{serviceName,jdbcType=VARCHAR},
+      </if>
+      <if test="reqDateTime != null" >
+        req_date_time = #{reqDateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="resDateTime != null" >
+        res_date_time = #{resDateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reqCostTime != null" >
+        req_cost_time = #{reqCostTime,jdbcType=VARCHAR},
+      </if>
+      <if test="reqStatus != null" >
+        req_status = #{reqStatus,jdbcType=CHAR},
+      </if>
+      <if test="gmtCreated != null" >
+        gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reqExtendField1 != null" >
+        req_extend_field_1 = #{reqExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField2 != null" >
+        req_extend_field_2 = #{reqExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField3 != null" >
+        req_extend_field_3 = #{reqExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField4 != null" >
+        req_extend_field_4 = #{reqExtendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField5 != null" >
+        req_extend_field_5 = #{reqExtendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField6 != null" >
+        req_extend_field_6 = #{reqExtendField6,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField7 != null" >
+        req_extend_field_7 = #{reqExtendField7,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField8 != null" >
+        req_extend_field_8 = #{reqExtendField8,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField9 != null" >
+        req_extend_field_9 = #{reqExtendField9,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField10 != null" >
+        req_extend_field_10 = #{reqExtendField10,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField11 != null" >
+        req_extend_field_11 = #{reqExtendField11,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField12 != null" >
+        req_extend_field_12 = #{reqExtendField12,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField13 != null" >
+        req_extend_field_13 = #{reqExtendField13,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField14 != null" >
+        req_extend_field_14 = #{reqExtendField14,jdbcType=VARCHAR},
+      </if>
+      <if test="reqExtendField15 != null" >
+        req_extend_field_15 = #{reqExtendField15,jdbcType=VARCHAR},
+      </if>
+      <if test="reqText != null" >
+        req_text = #{reqText,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="resText != null" >
+        res_text = #{resText,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <!--<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.liantuo.trade.orm.pojo.TradeOutFrontLogWithBLOBs" >
+    update trade_out_front_log
+    set req_no = #{reqNo,jdbcType=VARCHAR},
+      trade_no = #{tradeNo,jdbcType=VARCHAR},
+      core_merchant_no = #{coreMerchantNo,jdbcType=VARCHAR},
+      service_name = #{serviceName,jdbcType=VARCHAR},
+      req_date_time = #{reqDateTime,jdbcType=TIMESTAMP},
+      res_date_time = #{resDateTime,jdbcType=TIMESTAMP},
+      req_cost_time = #{reqCostTime,jdbcType=VARCHAR},
+      req_status = #{reqStatus,jdbcType=CHAR},
+      gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      req_extend_field_1 = #{reqExtendField1,jdbcType=VARCHAR},
+      req_extend_field_2 = #{reqExtendField2,jdbcType=VARCHAR},
+      req_extend_field_3 = #{reqExtendField3,jdbcType=VARCHAR},
+      req_extend_field_4 = #{reqExtendField4,jdbcType=VARCHAR},
+      req_extend_field_5 = #{reqExtendField5,jdbcType=VARCHAR},
+      req_extend_field_6 = #{reqExtendField6,jdbcType=VARCHAR},
+      req_extend_field_7 = #{reqExtendField7,jdbcType=VARCHAR},
+      req_extend_field_8 = #{reqExtendField8,jdbcType=VARCHAR},
+      req_extend_field_9 = #{reqExtendField9,jdbcType=VARCHAR},
+      req_extend_field_10 = #{reqExtendField10,jdbcType=VARCHAR},
+      req_extend_field_11 = #{reqExtendField11,jdbcType=VARCHAR},
+      req_extend_field_12 = #{reqExtendField12,jdbcType=VARCHAR},
+      req_extend_field_13 = #{reqExtendField13,jdbcType=VARCHAR},
+      req_extend_field_14 = #{reqExtendField14,jdbcType=VARCHAR},
+      req_extend_field_15 = #{reqExtendField15,jdbcType=VARCHAR},
+      req_text = #{reqText,jdbcType=LONGVARCHAR},
+      res_text = #{resText,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.liantuo.trade.orm.pojo.TradeOutFrontLog" >
+    update trade_out_front_log
+    set req_no = #{reqNo,jdbcType=VARCHAR},
+      trade_no = #{tradeNo,jdbcType=VARCHAR},
+      core_merchant_no = #{coreMerchantNo,jdbcType=VARCHAR},
+      service_name = #{serviceName,jdbcType=VARCHAR},
+      req_date_time = #{reqDateTime,jdbcType=TIMESTAMP},
+      res_date_time = #{resDateTime,jdbcType=TIMESTAMP},
+      req_cost_time = #{reqCostTime,jdbcType=VARCHAR},
+      req_status = #{reqStatus,jdbcType=CHAR},
+      gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      req_extend_field_1 = #{reqExtendField1,jdbcType=VARCHAR},
+      req_extend_field_2 = #{reqExtendField2,jdbcType=VARCHAR},
+      req_extend_field_3 = #{reqExtendField3,jdbcType=VARCHAR},
+      req_extend_field_4 = #{reqExtendField4,jdbcType=VARCHAR},
+      req_extend_field_5 = #{reqExtendField5,jdbcType=VARCHAR},
+      req_extend_field_6 = #{reqExtendField6,jdbcType=VARCHAR},
+      req_extend_field_7 = #{reqExtendField7,jdbcType=VARCHAR},
+      req_extend_field_8 = #{reqExtendField8,jdbcType=VARCHAR},
+      req_extend_field_9 = #{reqExtendField9,jdbcType=VARCHAR},
+      req_extend_field_10 = #{reqExtendField10,jdbcType=VARCHAR},
+      req_extend_field_11 = #{reqExtendField11,jdbcType=VARCHAR},
+      req_extend_field_12 = #{reqExtendField12,jdbcType=VARCHAR},
+      req_extend_field_13 = #{reqExtendField13,jdbcType=VARCHAR},
+      req_extend_field_14 = #{reqExtendField14,jdbcType=VARCHAR},
+      req_extend_field_15 = #{reqExtendField15,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>-->
+</mapper>

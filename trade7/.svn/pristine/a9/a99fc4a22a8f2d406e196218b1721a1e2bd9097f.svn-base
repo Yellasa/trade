@@ -1,0 +1,147 @@
+package com.liantuo.trade.unittest.jy0005;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.dozer.DozerBeanMapper;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+
+import com.liantuo.payment.client.pay.alipay.vo1.rsp.AlipayBatchNotifyResponse;
+import com.liantuo.payment.client.pay.head.PaymentHead;
+import com.liantuo.payment.client.pay.weixin.base.WeiXinCouponInfo;
+import com.liantuo.payment.client.pay.weixin.vo1.agent.rsp.WeiXinUnifiedOrderNotifyResponse;
+import com.liantuo.spring.WebContextTestExecutionListener;
+import com.liantuo.trade.bus.process.impl.single_recharge.v1.SingleRechargeOnlineAlipayPwdBatchPayNotifyProcess;
+import com.liantuo.trade.bus.service.SinglePaymentRefundService;
+import com.liantuo.trade.bus.service.SinglePaymentService;
+import com.liantuo.trade.bus.template.impl.v1_1.ATradeOnlinePaymentAsyNotifyTemp;
+import com.liantuo.trade.client.trade.packet.TradePaymentAsyNotifyPacket;
+import com.liantuo.trade.orm.pojo.TradeSinglePaymentExample;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {
+        "classpath:config/spring/applicationContext-*.xml"
+})
+@TestExecutionListeners({ 
+    WebContextTestExecutionListener.class, 
+    DependencyInjectionTestExecutionListener.class,
+    DirtiesContextTestExecutionListener.class })
+public class Recharge005 {
+
+	@Resource(name = "0005_001_005:1.0")
+	private SingleRechargeOnlineAlipayPwdBatchPayNotifyProcess process;
+	@Autowired
+	private ATradeOnlinePaymentAsyNotifyTemp temp;
+	@Resource(name ="beanMapper")
+	private DozerBeanMapper mapper ;
+	@Autowired
+	private SinglePaymentRefundService refundService;//退款交易Service
+	
+	@Autowired
+	private SinglePaymentService paymentService;//原交易Service
+	
+	@Test
+	public void testAutowired(){
+		TradeSinglePaymentExample example = new TradeSinglePaymentExample();
+		example.createCriteria().andTradeExtendField9EqualTo("123");
+		try {
+			paymentService.queryByExample(example);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+//	@Test
+//	public void testExec(){
+//		new ClassPathXmlApplicationContext();
+//		AlipayBatchNotifyResponse request = new AlipayBatchNotifyResponse();
+//		request.setPayment_req_no("00000000342");
+//		request.setTrade_no("00050011605091034152980000008700");
+//		request.setCore_merchant_no("CC_C8785258588");
+//		request.setLedger_no("00050011605091034153200000159200");
+//		request.setTrade_req_no("00050011605091034147130001073100");
+//		//request.setOut_trade_no("");
+//		request.setVersion("1.0");
+//		request.setPay_channel("ZF0001_01_001");
+//		request.setPay_transaction_id("000000000000104");
+//		request.setNotify_time("2016-05-09 16:03:04");
+//		request.setNotify_type("batch_trans_notify");
+//		request.setNotify_id("70fec0c2730b27528665af4517c27b95");
+//		request.setBatch_no("00050011605091034153030000022400");
+//		request.setPay_user_id("2088001426547005");
+//		request.setPay_user_name("2088001426547005");
+//		request.setPay_account_no("2088001426547005");
+//	//	request.setSuccess_details("001^ltftest02_zfb@126.com^合肥联拓金融信息服务有限公司^0.01^S^^20100812^20160509143605");
+//		request.setFail_details("001^ltftest02_zfb@126.com^合肥联拓金融信息服务有限公司^0.01^F^TXN_RESULT_TRANSFER_OUT_CAN_NOT_EQUAL_IN^01605098427067^20160509143605^ ");
+//		
+//		try {
+//			temp.setProcess(process);
+//			temp.setIp("127.0.0.1");
+//			
+//			temp.execute(request);
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
+	
+	@Test
+	public void testExe(){
+		
+//		mapper.setMappingFiles(Arrays.asList("config/spring/dozer-bean-mapping.xml"));
+
+//		AlipayBatchNotifyResponse resp = new AlipayBatchNotifyResponse();
+//		PaymentHead zf_head = new PaymentHead();
+//		zf_head.setCore_merchant_no("core_merchant_no");
+//		zf_head.setLedger_no("Ledger_no");
+//		zf_head.setOut_trade_no("out_trade_no");
+//		zf_head.setPay_channel("pay_channel");
+//		zf_head.setPay_transaction_id("pay_transaction_id");
+//		zf_head.setTrade_req_no("0005_001_001");
+//		zf_head.setVersion("1.0");
+//		zf_head.setTrade_no("12312123");
+//		resp.setZf_head(zf_head);
+////		resp.setBatch_no("Batch_no");
+//		resp.setPay_user_name("123");
+//		TradePaymentAsyNotifyPacket request = new TradePaymentAsyNotifyPacket();
+//		request.setBatch_no("xxxx");
+		
+		WeiXinUnifiedOrderNotifyResponse   response = new WeiXinUnifiedOrderNotifyResponse();
+		response.setAttach("1231");
+		List<WeiXinCouponInfo> couponInfos = new ArrayList<WeiXinCouponInfo>();
+		WeiXinCouponInfo couponInfo = new WeiXinCouponInfo();
+		couponInfo.setCoupon_batch_id("one-one-one");
+		couponInfo.setCoupon_fee("counpon_fee");
+		couponInfos.add(couponInfo);
+		
+		
+		
+		
+		
+		TradePaymentAsyNotifyPacket  request = mapper.map(response, TradePaymentAsyNotifyPacket.class);
+		request.setIp("127.0.0.1");
+//        try {
+//           
+//            BeanUtils.copyProperties(resp, request);
+//        } catch (Exception e) {
+//            System.err.println("类转换异常"+ e);
+//        }
+        System.out.println("005在线充值测试-->接收支付中心异步通知参数如下：" + request.toString());
+    }
+	
+	
+	
+	
+	
+	
+}

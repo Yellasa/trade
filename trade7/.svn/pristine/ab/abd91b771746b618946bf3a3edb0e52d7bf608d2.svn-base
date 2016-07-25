@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liantuo.deposit.advanceaccount.orm.mapper.CreditAccountMapper" >
+  <resultMap id="BaseResultMap" type="com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccount" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="BIGINT" />
+    <result column="account_no" property="accountNo" jdbcType="VARCHAR" />
+    <result column="owner_agency_id" property="ownerAgencyId" jdbcType="INTEGER" />
+    <result column="credit_by_agency_id" property="creditByAgencyId" jdbcType="INTEGER" />
+    <result column="credit_line" property="creditLine" jdbcType="DOUBLE" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="fee_rate" property="feeRate" jdbcType="DOUBLE" />
+    <result column="total_balance" property="totalBalance" jdbcType="DOUBLE" />
+    <result column="available_balance" property="availableBalance" jdbcType="DOUBLE" />
+    <result column="freezen_balance" property="freezenBalance" jdbcType="DOUBLE" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="credit_recharge_system_charge_payer" property="creditRechargeSystemChargePayer" jdbcType="INTEGER" />
+    <result column="credit_recharge_tenpay_system_charge_payer" property="creditRechargeTenpaySystemChargePayer" jdbcType="INTEGER" />
+    <result column="credit_recharge_cyber_system_charge_payer" property="creditRechargeCyberSystemChargePayer" jdbcType="INTEGER" />
+    <result column="credit_recharge_credit_system_charge_payer" property="creditRechargeCreditSystemChargePayer" jdbcType="INTEGER" />
+    <result column="credit_withdraw_system_charge_payer" property="creditWithdrawSystemChargePayer" jdbcType="INTEGER" />
+    <result column="credit_receive_alipay_email" property="creditReceiveAlipayEmail" jdbcType="VARCHAR" />
+    <result column="credit_receive_alipay_email_name" property="creditReceiveAlipayEmailName" jdbcType="VARCHAR" />
+    <result column="credit_payment_alipay_email" property="creditPaymentAlipayEmail" jdbcType="VARCHAR" />
+    <result column="credit_payment_alipay_email_name" property="creditPaymentAlipayEmailName" jdbcType="VARCHAR" />
+    <result column="protect_credit_email" property="protectCreditEmail" jdbcType="VARCHAR" />
+    <result column="credit_protect_status" property="creditProtectStatus" jdbcType="INTEGER" />
+    <result column="credit_problem_one" property="creditProblemOne" jdbcType="INTEGER" />
+    <result column="credit_problem_two" property="creditProblemTwo" jdbcType="INTEGER" />
+    <result column="credit_answer_one" property="creditAnswerOne" jdbcType="VARCHAR" />
+    <result column="credit_answer_two" property="creditAnswerTwo" jdbcType="VARCHAR" />
+    <result column="credit_sign" property="creditSign" jdbcType="INTEGER" />
+    <result column="custom_id" property="customId" jdbcType="INTEGER" />
+    <result column="credit_type" property="creditType" jdbcType="INTEGER" />
+    <result column="posrecharge_fee" property="posrechargeFee" jdbcType="DOUBLE" />
+    <result column="unavailable_balance" property="unavailableBalance" jdbcType="DOUBLE" />
+    <result column="tzzh" property="tzzh" jdbcType="VARCHAR" />
+    <result column="nocard_recharge_fee" property="nocardRechargeFee" jdbcType="DOUBLE" />
+    <result column="open_id" property="openId" jdbcType="INTEGER" />
+    <result column="superior_open_id" property="superiorOpenId" jdbcType="INTEGER" />
+    <result column="core_merchant_no" property="coreMerchantNo" jdbcType="VARCHAR" />
+    <result column="organization_no" property="organizationNo" jdbcType="VARCHAR" />
+    <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR" />
+    <result column="account_type" property="accountType" jdbcType="INTEGER" />
+    <result column="pool_no" property="poolNo" jdbcType="VARCHAR" />
+    <result column="isbuffering" property="isbuffering" jdbcType="CHAR" />
+    <result column="subject_no" property="subjectNo" jdbcType="VARCHAR" />
+    <result column="balance_dir" property="balanceDir" jdbcType="CHAR" />
+    <result column="intransit_amt" property="intransitAmt" jdbcType="DECIMAL" />
+    <result column="last_balance_amt" property="lastBalanceAmt" jdbcType="DECIMAL" />
+    <result column="gmt_created" property="gmtCreated" jdbcType="TIMESTAMP" />
+    <result column="creator_no" property="creatorNo" jdbcType="VARCHAR" />
+    <result column="creator_cn" property="creatorCn" jdbcType="VARCHAR" />
+    <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
+    <result column="modifier_no" property="modifierNo" jdbcType="VARCHAR" />
+    <result column="modifier_cn" property="modifierCn" jdbcType="VARCHAR" />
+    <result column="pay_channel" property="payChannel" jdbcType="CHAR" />
+    <result column="rmk_name" property="rmkName" jdbcType="VARCHAR" />
+    <result column="balance_n_flag" property="balanceNFlag" jdbcType="CHAR" />
+    <result column="super_type" property="superType" jdbcType="VARCHAR" />
+    <result column="isdr" property="isdr" jdbcType="CHAR" />
+    <result column="isreal" property="isreal" jdbcType="CHAR" />
+    <result column="bal_last_change_time" property="balLastChangeTime" jdbcType="TIMESTAMP" />
+    <result column="sys_time" property="sysTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccount" extends="BaseResultMap" >
+    <result column="rmk" property="rmk" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, version, account_no, owner_agency_id, credit_by_agency_id, credit_line, status, 
+    fee_rate, total_balance, available_balance, freezen_balance, password, credit_recharge_system_charge_payer, 
+    credit_recharge_tenpay_system_charge_payer, credit_recharge_cyber_system_charge_payer, 
+    credit_recharge_credit_system_charge_payer, credit_withdraw_system_charge_payer, 
+    credit_receive_alipay_email, credit_receive_alipay_email_name, credit_payment_alipay_email, 
+    credit_payment_alipay_email_name, protect_credit_email, credit_protect_status, credit_problem_one, 
+    credit_problem_two, credit_answer_one, credit_answer_two, credit_sign, custom_id, 
+    credit_type, posrecharge_fee, unavailable_balance, tzzh, nocard_recharge_fee, open_id, 
+    superior_open_id, core_merchant_no, organization_no, merchant_no, account_type, pool_no, 
+    isbuffering, subject_no, balance_dir, intransit_amt, last_balance_amt, gmt_created, 
+    creator_no, creator_cn, gmt_modified, modifier_no, modifier_cn, pay_channel, rmk_name, 
+    balance_n_flag, super_type, isdr, isreal, bal_last_change_time, sys_time
+  </sql>
+  <sql id="Blob_Column_List" >
+    rmk
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from credit_account
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByAccountNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from credit_account
+    where account_no = #{accountNo,jdbcType=VARCHAR}
+  </select>
+  
+  <update id="updateAvlBalance" parameterType="com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccount">
+  	update credit_account
+	  	set version = version+1,
+	  	total_balance = #{totalBalance,jdbcType=DOUBLE},
+	  	available_balance = #{availableBalance,jdbcType=DOUBLE},
+	  	bal_last_change_time = #{balLastChangeTime,jdbcType=TIMESTAMP},
+	  	sys_time = CURRENT_TIMESTAMP
+  	where id =#{id,jdbcType=INTEGER} and version=  #{version,jdbcType=BIGINT}
+  </update>
+  
+  <update id="updateFrozenBalance" parameterType="com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccount">
+  	update credit_account
+	  	set version = version+1,
+	  	freezen_balance = #{freezenBalance,jdbcType=DOUBLE},
+	  	bal_last_change_time = #{balLastChangeTime,jdbcType=TIMESTAMP},
+	  	total_balance = #{totalBalance,jdbcType=DOUBLE},
+	  	sys_time = CURRENT_TIMESTAMP
+  	where id =#{id,jdbcType=INTEGER} and version=  #{version,jdbcType=BIGINT}
+  </update>
+    <update id="updateAccountInfo" parameterType="com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccount">
+      update credit_account
+    set
+      <if test="accountType != null" >
+        account_type = #{accountType,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="superType != null" >
+        super_type = #{superType,jdbcType=CHAR},
+      </if>
+      version = version+1 ,
+      sys_time =  #{sysTime,jdbcType=TIMESTAMP},
+      gmt_modified=now()
+      where id = #{id,jdbcType=INTEGER}
+      AND version = #{version,jdbcType=BIGINT}
+    </update>
+    
+  <!-- <select id="ascAccountNos" resultMap="BaseResultMap" parameterType="com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccount">
+  	select 
+  		<include refid="Base_Column_List" />
+  	from credit_account
+  	where account_no in
+  	<foreach collection="array" index="index" item="item" open="(" separator="," close=")">  
+            #{item}   
+    </foreach>  
+    order by id asc
+  </select> -->
+  
+   
+  <select id="findAdvanceAccountByAccountNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+  	select ca.* 
+  	from credit_account ca ,payment_sxtz sx 
+  	where ca.account_no = #{accountNo,jdbcType=VARCHAR}
+    and ca.credit_type=0 
+    and ca.tzzh is not null 
+    and ca.tzzh=sx.tzzh 
+    and sx.tzzt in (1,2);
+  </select>
+  
+  <select id="selectByIdForUpdate" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  	select 
+  	<include refid="Base_Column_List" />
+  	from credit_account
+  	where id = #{id,jdbcType=INTEGER} for update
+  </select>
+
+  
+    <select id="findAdvanceAccountByQueryVO" 
+    resultType="com.liantuo.deposit.advanceaccount.web.vo.returnvo.CreditAccountVo" 
+    parameterType="com.liantuo.deposit.advanceaccount.web.vo.queryvo.CreditAccountQueryVo">
+  	select 
+  	ca.account_no as accountNo,
+  	ca.core_merchant_no as coreMerchantNo,
+    ca.pool_no as poolNo,
+    ca.merchant_no as merchantNo,
+	ca.super_type as accountName,
+	ca.bal_last_change_time as balLastChangeTime,
+	ca.version as version,
+	ca.status as status,	
+    ca.available_balance as availableBalance,
+    ca.freezen_balance as freezenBalance,	
+    ca.total_balance as totalBalance,	
+    ca.account_type as accountType,	
+    ca.credit_type as creditType,	
+    ca.pay_channel as payChannel,				
+    ca.balance_n_flag as balanceNFlag,
+    ca.gmt_created as gmtCreated 						    
+  	from credit_account ca
+    where ca.core_merchant_no=#{coreMerchantNo,jdbcType=VARCHAR}
+    <if test="poolNo != null" >
+         and ca.pool_no = #{poolNo,jdbcType=VARCHAR}
+    </if>
+    <if test="merchantNo != null" >
+         and ca.merchant_no = #{merchantNo,jdbcType=VARCHAR}
+    </if>
+     <if test="accountNo != null" >
+         and ca.account_no = #{accountNo,jdbcType=VARCHAR}
+    </if>
+    <if test="accountName != null" >
+         and ca.super_type = #{accountName,jdbcType=VARCHAR}
+    </if>
+     <if test="accountType != null and accountType!=''" >
+         and ca.account_type = #{accountType,jdbcType=INTEGER}
+    </if>
+     <if test="status != null and status!=''" >
+         and ca.status = #{status,jdbcType=INTEGER}
+    </if>
+     <if test="createTimeStart != null" >
+       and ca.gmt_created &gt;= #{createTimeStart,jdbcType=TIMESTAMP}
+    </if>
+     <if test="createTimeEnd != null">
+       and ca.gmt_created &lt;= #{createTimeEnd,jdbcType=TIMESTAMP}
+    </if>
+    and ca.credit_type=0 
+    and (ca.tzzh is null or not 
+    EXISTS(SELECT 1 from payment_sxtz ps where ps.tzzh=ca.tzzh and ps.tzzt in(1,2))
+    ) order by ca.gmt_created desc 
+  limit #{startCount,jdbcType=INTEGER}, #{showCount,jdbcType=INTEGER}
+  </select>
+  
+   <select id="countAdvanceAccountByQueryVO" resultType="java.lang.Integer" 
+    parameterType="com.liantuo.deposit.advanceaccount.web.vo.queryvo.CreditAccountQueryVo">
+  	select count(ca.id)					    
+  	from credit_account ca
+    where ca.core_merchant_no=#{coreMerchantNo,jdbcType=VARCHAR}
+    <if test="poolNo != null" >
+         and ca.pool_no = #{poolNo,jdbcType=VARCHAR}
+    </if>
+    <if test="merchantNo != null" >
+         and ca.merchant_no = #{merchantNo,jdbcType=VARCHAR}
+    </if>
+     <if test="accountNo != null" >
+         and ca.account_no = #{accountNo,jdbcType=VARCHAR}
+    </if>
+    <if test="accountName != null" >
+         and ca.super_type = #{accountName,jdbcType=VARCHAR}
+    </if>
+     <if test="accountType != null and accountType!=''" >
+         and ca.account_type = #{accountType,jdbcType=INTEGER}
+    </if>
+     <if test="status != null and status!=''" >
+         and ca.status = #{status,jdbcType=INTEGER}
+    </if>
+     <if test="createTimeStart != null" >
+       and ca.gmt_created &gt;= #{createTimeStart,jdbcType=TIMESTAMP}
+    </if>
+     <if test="createTimeEnd != null">
+       and ca.gmt_created &lt;= #{createTimeEnd,jdbcType=TIMESTAMP}
+    </if>
+     and ca.credit_type=0 
+    and (ca.tzzh is null or not 
+    EXISTS(SELECT 1 from payment_sxtz ps where ps.tzzh=ca.tzzh and ps.tzzt in(1,2))
+    )
+  </select>
+  
+  <select id="findAdvanceAccountInnerByQueryVO" resultType="com.liantuo.deposit.advanceaccount.web.inner.vo.returnvo.CreditAccountInnerVo" 
+  parameterType="com.liantuo.deposit.advanceaccount.web.inner.vo.queryvo.CreditAccountQueryInnerVo">
+  	select 
+  	ca.account_no as accountNo,
+  	ca.core_merchant_no as coreMerchantNo,
+    ca.pool_no as poolNo,
+    ca.merchant_no as merchantNo,
+	ca.super_type as accountName,
+	ca.bal_last_change_time as balLastChangeTime,
+	ca.version as version,
+	ca.status as status,	
+    ca.available_balance as availableBalance,
+    ca.freezen_balance as freezenBalance,	
+    ca.total_balance as totalBalance,	
+    ca.account_type as accountType,	
+    ca.credit_type as creditType,	
+    ca.pay_channel as payChannel,				
+    ca.balance_n_flag as balanceNFlag,
+    ca.gmt_created as gmtCreated 						    
+  	from credit_account ca 
+    where ca.core_merchant_no=#{coreMerchantNo,jdbcType=VARCHAR}
+    <if test="poolNo != null" >
+         and ca.pool_no  = #{poolNo,jdbcType=VARCHAR}
+    </if>
+    <if test="merchantNo != null" >
+         and ca.merchant_no = #{merchantNo,jdbcType=VARCHAR}
+    </if>
+     <if test="accountNo != null" >
+         and ca.account_no = #{accountNo,jdbcType=VARCHAR}
+    </if>
+    <if test="accountName != null" >
+         and ca.super_type = #{accountName,jdbcType=VARCHAR}
+    </if>
+     <if test="accountType != null and accountType!=''" >
+         and ca.account_type = #{accountType,jdbcType=INTEGER}
+    </if>
+     <if test="status != null and status!=''" >
+         and ca.status = #{status,jdbcType=INTEGER}
+    </if>
+     <if test="createTimeStart != null" >
+       and ca.gmt_created &gt;= #{createTimeStart,jdbcType=TIMESTAMP}
+    </if>
+     <if test="createTimeEnd != null">
+       and ca.gmt_created &lt;= #{createTimeEnd,jdbcType=TIMESTAMP}
+    </if>
+   and ca.credit_type=0 
+    and (ca.tzzh is null or not 
+    EXISTS(SELECT 1 from payment_sxtz ps where ps.tzzh=ca.tzzh and ps.tzzt in(1,2))
+    ) order by ca.gmt_created desc 
+  limit #{startCount,jdbcType=INTEGER}, #{showCount,jdbcType=INTEGER}
+  </select>
+  
+   <select id="countAdvanceAccountInnerByQueryVO" resultType="java.lang.Integer" 
+  parameterType="com.liantuo.deposit.advanceaccount.web.inner.vo.queryvo.CreditAccountQueryInnerVo">
+  	select count(ca.id)					    
+  	from credit_account ca
+    where ca.core_merchant_no=#{coreMerchantNo,jdbcType=VARCHAR}
+    <if test="poolNo != null" >
+         and ca.pool_no  = #{poolNo,jdbcType=VARCHAR}
+    </if>
+    <if test="merchantNo != null" >
+         and ca.merchant_no = #{merchantNo,jdbcType=VARCHAR}
+    </if>
+     <if test="accountNo != null" >
+         and ca.account_no = #{accountNo,jdbcType=VARCHAR}
+    </if>
+    <if test="accountName != null" >
+         and ca.super_type = #{accountName,jdbcType=VARCHAR}
+    </if>
+     <if test="accountType != null and accountType!=''" >
+         and ca.account_type = #{accountType,jdbcType=INTEGER}
+    </if>
+     <if test="status != null and status!=''" >
+         and ca.status = #{status,jdbcType=INTEGER}
+    </if>
+     <if test="createTimeStart != null" >
+       and ca.gmt_created &gt;= #{createTimeStart,jdbcType=TIMESTAMP}
+    </if>
+     <if test="createTimeEnd != null">
+       and ca.gmt_created &lt;= #{createTimeEnd,jdbcType=TIMESTAMP}
+    </if>
+   and ca.credit_type=0 
+    and (ca.tzzh is null or not 
+    EXISTS(SELECT 1 from payment_sxtz ps where ps.tzzh=ca.tzzh and ps.tzzt in(1,2)))
+  </select>
+</mapper>

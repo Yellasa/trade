@@ -1,0 +1,215 @@
+package com.liantuo.trade.bus.process.impl.single_payment;
+
+import javax.annotation.Resource;
+
+import org.dozer.DozerBeanMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.liantuo.payment.client.pay.PaymentNotify;
+import com.liantuo.payment.client.pay.alipay.vo1.rsp.AlipayTradePrecreateNotifyResponse;
+import com.liantuo.payment.client.pay.weixin.vo1.agent.rsp.WeiXinUnifiedOrderNotifyResponse;
+import com.liantuo.trade.bus.process.TradeOnlineAsynPaymentNotifyInterface;
+import com.liantuo.trade.bus.process.TradeState;
+import com.liantuo.trade.bus.process.impl.single_payment.asyn_service.AsynNotifyService;
+import com.liantuo.trade.bus.process.impl.single_payment.asyn_service.impl.AlipayAsynTradePrecreateService;
+import com.liantuo.trade.bus.service.ExceptionService;
+import com.liantuo.trade.bus.service.LegderService;
+import com.liantuo.trade.bus.template.impl.v1_1.ATradeOnlineAsynPaymentNotifyTemp;
+import com.liantuo.trade.bus.vo.ZFPaymentAsynNotifyDetail;
+import com.liantuo.trade.client.trade.packet.NotifyPacketResultInfo;
+import com.liantuo.trade.client.trade.packet.body.TradeNotifyRequestBody;
+import com.liantuo.trade.client.trade.packet.body.TradeNotifyRequestPacket;
+import com.liantuo.trade.client.trade.packet.body.zf.AlipayTradePrecreatePacket;
+import com.liantuo.trade.client.trade.packet.body.zf.WeiXinUnifiedOrderPacket;
+import com.liantuo.trade.common.constants.TradeConstants;
+import com.liantuo.trade.common.util.xml.ObjectXmlUtil;
+import com.liantuo.trade.common.validate.TradeValidationUtil;
+import com.liantuo.trade.orm.pojo.TradeLedger;
+import com.liantuo.trade.orm.pojo.TradeOutFrontLogWithBLOBs;
+import com.liantuo.trade.orm.service.TradeLedgerService;
+import com.liantuo.trade.spring.annotation.JobFlow;
+
+/**
+ * @ClassName: SingleExternalAsynPaymentOnlineNotifyProcess.java
+ * @Description: 接收扫码支付的异步通知，
+ * @Company: 联拓金融信息服务有限公司
+ * @author zoran.huang
+ * @version V1.0
+ * @date 2016年7月8日 上午11:40:21
+ */
+@JobFlow(value = "0006_001_008", version = "1.0", template = ATradeOnlineAsynPaymentNotifyTemp.class)
+public class SingleExternalAsynPaymentOnlineNotifyProcess implements TradeOnlineAsynPaymentNotifyInterface<TradeNotifyRequestBody> {
+	private final Logger logger = LoggerFactory.getLogger(SingleExternalAsynPaymentOnlineNotifyProcess.class);
+	@Autowired
+	private ExceptionService exceptionService;
+
+	@Resource(name = "legderServiceImpl")
+	private LegderService legderService;
+
+	@Resource(name = "tradeLedgerService")
+	private TradeLedgerService tradeLedgerService;
+
+	private AlipayTradePrecreateNotifyResponse a;
+	private WeiXinUnifiedOrderNotifyResponse b;
+
+	private TradeNotifyRequestPacket request;
+	private TradeNotifyRequestBody requestBody;
+	@Resource(name = "beanMapper")
+	private DozerBeanMapper mapper;
+	private String payChannel;
+	private TradeLedger tradeLedger;
+	
+	
+	private AsynNotifyService asynService;
+
+	@Override
+	public TradeNotifyRequestPacket setRequestDetail(PaymentNotify notify, String ip) {
+		// 保存支付中心请求交易数据
+		try {
+			request = mapper.map(notify, TradeNotifyRequestPacket.class);
+			request.setIp(ip);
+			request.setRequestXML(ObjectXmlUtil.marshal(notify));
+		} catch (Exception e) {
+			logger.error("-->保存支付中心数据转化异常", e);
+		}
+		return null;
+	}
+
+	@Override
+	public void validateClearChannel(PaymentNotify notify) throws Exception {
+		payChannel = notify.getZf_head().getPay_channel();
+		if (!TradeConstants.ALI_ASYN_PAY_CHANNEL.equals(payChannel) && !TradeConstants.WX_ASYN_PAY_CHANNEL.equals(payChannel)) {
+			throw exceptionService.buildBusinessException("JY00060010081000500");
+		}
+		String tradeNo = notify.getZf_head().getTrade_no();
+		String ledgerNo = notify.getZf_head().getLedger_no();
+		tradeLedger = tradeLedgerService.queryByLedgerNoAndTradeNo(ledgerNo, tradeNo);
+		if (tradeLedger == null) {
+			throw exceptionService.buildBusinessException("JY00060010081000300");
+		}
+		if (!payChannel.equals(tradeLedger.getClearChannel())) {
+			throw exceptionService.buildBusinessException("JY00060010081000400");
+		}
+	}
+
+	@Override
+	public void parsePaymentNotify(PaymentNotify notify) throws Exception {
+		// 解析相应的数据
+		requestBody = new TradeNotifyRequestBody();
+		if (TradeConstants.ALI_ASYN_PAY_CHANNEL.equals(payChannel)) {
+			asynService = new AlipayAsynTradePrecreateService();
+			AlipayTradePrecreateNotifyResponse response = (AlipayTradePrecreateNotifyResponse) notify;
+			requestBody.setZf_head(response.getZf_head());
+			AlipayTradePrecreatePacket body = mapper.map(notify, AlipayTradePrecreatePacket.class);
+			requestBody.setBody(body);
+		} else if (TradeConstants.WX_ASYN_PAY_CHANNEL.equals(payChannel)) {
+			WeiXinUnifiedOrderNotifyResponse response = (WeiXinUnifiedOrderNotifyResponse) notify;
+			requestBody.setZf_head(response.getZf_head());
+			WeiXinUnifiedOrderPacket body = mapper.map(notify, WeiXinUnifiedOrderPacket.class);
+			requestBody.setBody(body);
+		}
+	}
+
+	@Override
+	public TradeNotifyRequestBody getTradeRequest() {
+		return requestBody;
+	}
+
+	@Override
+	public void validate(TradeNotifyRequestBody tradeRquest) throws Exception {
+		String msg = TradeValidationUtil.validateRequestWeak(tradeRquest);
+		if(msg != null ){
+			logger.info("-->输入参数校验不通过：" + msg);
+			throw exceptionService.buildBusinessException("JY00060010081000700", msg);
+		}
+		//需要区分支付宝和卫星
+		
+	}
+
+	@Override
+	public TradeState getTradePaymentStatus() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void transactionReceipt(TradeNotifyRequestBody tradeRquest) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void transactionEntry(TradeNotifyRequestBody tradeRquest) throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setReqNo(String reqNo) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void transactionFailure(TradeNotifyRequestBody tradeRquest) throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public ZFPaymentAsynNotifyDetail getFailureMessage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void transactionUnknownStatus(TradeNotifyRequestBody tradeRquest) throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public NotifyPacketResultInfo getNotifyFrontDetailsInfo(String result, String errorCode, String errorMessage) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public NotifyPacketResultInfo getNotice() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getServiceName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getUnknownErrorCode() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void notifyFront(NotifyPacketResultInfo info) throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public TradeOutFrontLogWithBLOBs prepareTradeOutFrontLog() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TradeOutFrontLogWithBLOBs updateTradeOutFrontLog(long id) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

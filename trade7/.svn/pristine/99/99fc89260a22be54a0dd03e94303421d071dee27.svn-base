@@ -1,0 +1,430 @@
+/**
+ *  实时账务处理
+ * case1:可用余额减少金额正常流程
+ * case2:ca账户不存在
+ * case3:账户表中的核心商户和参数中的核心商户不符
+ * case4:账户表中资金池编号和参数中的资金池编号不符
+ * case5:账户余额不足(可用余额不够减)
+ * case6:账户状态异常
+ * case7:可用余额增加正常流程
+ * case8:冻结余额增加正常流程
+ * case9：冻结余额减少正常流程 
+ * case10：冻结余额减少时冻结金额不足以减 (账户余额不足)
+ */
+
+package com.liantuo.deposit.advanceaccount.bus.service.impl;
+
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+
+import com.liantuo.deposit.advanceaccount.bus.service.AdvanceAccountService;
+import com.liantuo.deposit.advanceaccount.bus.vo.RealTimeAccountingRsp;
+import com.liantuo.deposit.advanceaccount.bus.vo.RealTimeAccountingVo;
+import com.liantuo.trade.exception.BusinessUncheckedException;
+
+import org.junit.Assert;
+
+
+@ContextConfiguration(locations = { "classpath:config/spring/applicationContext-myBatis.xml","classpath:config/spring/applicationContext-common.xml",
+		"classpath:config/spring/applicationContext-template.xml",
+		"classpath:config/spring/applicationContext-mq-producter.xml"})
+@TransactionConfiguration(defaultRollback = false)
+public class AdvanceAccountServiceTest_Old extends AbstractTransactionalJUnit4SpringContextTests {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(AdvanceAccountServiceTest_Old.class);
+	
+	@Autowired
+    private AdvanceAccountService advanceAccountService;
+ 
+	//case1 可用余额减少金额正常流程
+	@Test
+	public void testRealTimeAccounting() {
+		List<RealTimeAccountingVo> list = new ArrayList<RealTimeAccountingVo>();
+		List<RealTimeAccountingRsp> rsp = new ArrayList<RealTimeAccountingRsp>();
+		
+		try {
+			RealTimeAccountingVo vo = new RealTimeAccountingVo();
+			vo.setAccountNo("CA21000000019141");
+			vo.setCoreMerchantNo("ebillmaster");
+			vo.setPoolNo("PN01000000000003124");
+			vo.setReservedFields1("可用金额减少1块钱");
+			vo.setReservedFields2("预留2");
+			vo.setTradeCode("123");
+			vo.setTradeNo("456");
+			vo.setTradeGmtCreated(new Date());
+			vo.setRmk("备注");
+			vo.setTradeReqCode("0001_001_001");
+			vo.setTradeStepNo("00000000000002360020151223100702");
+			vo.setSequenceNo("00000000000002360020151223100702");
+			vo.setAvlBalDecrAmt(Long.valueOf(10000000));//前置的100万相当于账务1块
+			
+			
+			RealTimeAccountingVo vo1 = new RealTimeAccountingVo();
+			vo1.setAccountNo("CA21000000019141");
+			vo1.setCoreMerchantNo("ebillmaster");
+			vo1.setPoolNo("PN01000000000003124");
+			vo1.setReservedFields1("冻结金额增加1块钱");
+			vo1.setReservedFields2("预留2");
+			vo1.setTradeCode("123");
+			vo1.setTradeNo("456");
+			vo1.setTradeGmtCreated(new Date());
+			vo1.setRmk("备注");
+			vo1.setTradeReqCode("0001_001_001");
+			vo1.setTradeStepNo("00000000000002360020151223100702");
+			vo1.setSequenceNo("00000000000002360020151223100702");
+			vo1.setFrozenBalIncrAmt(Long.valueOf(10000000));//前置的100万相当于账务1块
+			
+			
+			list.add(vo);
+			list.add(vo1);
+			rsp = advanceAccountService.realTimeAccounting(list);
+			for(int i=0;i<rsp.size();i++){
+				Assert.assertEquals("S",rsp.get(i).getSuccess());
+			}
+			
+		} catch (BusinessUncheckedException e) {
+			LOGGER.error(e.getMessage());
+		}
+	}
+	
+	//case2 ca账户不存在
+	@Test
+	public void accountNo_notExist() {
+		List<RealTimeAccountingVo> list = new ArrayList<RealTimeAccountingVo>();
+		List<RealTimeAccountingRsp> rsp = new ArrayList<RealTimeAccountingRsp>();
+		
+		try {
+			RealTimeAccountingVo vo = new RealTimeAccountingVo();
+			vo.setAccountNo("CA21000000019141");
+			vo.setCoreMerchantNo("ebillmaster");
+			vo.setPoolNo("PN01000000000003124");
+			vo.setReservedFields1("可用金额减少1块钱");
+			vo.setReservedFields2("预留2");
+			vo.setTradeCode("123");
+			vo.setTradeNo("456");
+			vo.setTradeGmtCreated(new Date());
+			vo.setRmk("备注");
+			vo.setTradeReqCode("avl_decr");
+			vo.setTradeStepNo("12345907654");
+			vo.setSequenceNo("1379543234434");
+			vo.setAvlBalDecrAmt(Long.valueOf(10000000));//前置的100万相当于账务1块
+			list.add(vo);
+			rsp = advanceAccountService.realTimeAccounting(list);
+			System.out.println(rsp);
+		} catch (BusinessUncheckedException e) {
+			LOGGER.error(e.getMessage());
+		}
+	}
+	
+	//case3 账户表中资金池编号和参数中的资金池编号不符
+	@Test
+	public void coreMerchantNo_noMatch() {
+		List<RealTimeAccountingVo> list = new ArrayList<RealTimeAccountingVo>();
+		List<RealTimeAccountingRsp> rsp = new ArrayList<RealTimeAccountingRsp>();
+		
+		try {
+			RealTimeAccountingVo vo = new RealTimeAccountingVo();
+			vo.setAccountNo("CA21000000019141");
+			vo.setCoreMerchantNo("ebillmaster");
+			vo.setPoolNo("PN0100*&^%$0003124");
+			vo.setReservedFields1("可用金额减少1块钱");
+			vo.setReservedFields2("预留2");
+			vo.setTradeCode("123");
+			vo.setTradeNo("456");
+			vo.setTradeGmtCreated(new Date());
+			vo.setRmk("备注");
+			vo.setTradeReqCode("avl_decr");
+			vo.setTradeStepNo("12345907654");
+			vo.setSequenceNo("1379543234434");
+			vo.setAvlBalDecrAmt(Long.valueOf(10000000));//前置的100万相当于账务1块
+			list.add(vo);
+			rsp = advanceAccountService.realTimeAccounting(list);
+		} catch (BusinessUncheckedException e) {
+			LOGGER.error(e.getMessage());
+		}
+	}
+	//case4
+	@Test
+	public void poolNo_noMatch() {
+		List<RealTimeAccountingVo> list = new ArrayList<RealTimeAccountingVo>();
+		List<RealTimeAccountingRsp> rsp = new ArrayList<RealTimeAccountingRsp>();
+		
+		try {
+			RealTimeAccountingVo vo = new RealTimeAccountingVo();
+			vo.setAccountNo("CA21000000019141");
+			vo.setCoreMerchantNo("eb****aster");
+			vo.setPoolNo("PN01000000000003124");
+			vo.setReservedFields1("可用金额减少1块钱");
+			vo.setReservedFields2("预留2");
+			vo.setTradeCode("123");
+			vo.setTradeNo("456");
+			vo.setTradeGmtCreated(new Date());
+			vo.setRmk("备注");
+			vo.setTradeReqCode("avl_decr");
+			vo.setTradeStepNo("12345907654");
+			vo.setSequenceNo("1379543234434");
+			vo.setAvlBalDecrAmt(Long.valueOf(10000000));//前置的100万相当于账务1块
+			list.add(vo);
+			rsp = advanceAccountService.realTimeAccounting(list);
+		} catch (BusinessUncheckedException e) {
+			LOGGER.error(e.getMessage());
+		}
+	}
+	
+	//case5:账户余额不足(可用余额不足)
+	@Test 
+	public void avlBalDecrAmt_no_enough() {
+		List<RealTimeAccountingVo> list = new ArrayList<RealTimeAccountingVo>();
+		List<RealTimeAccountingRsp> rsp = new ArrayList<RealTimeAccountingRsp>();
+		
+		try {
+			RealTimeAccountingVo vo = new RealTimeAccountingVo();
+			vo.setAccountNo("CA21000000019141");
+			vo.setCoreMerchantNo("ebillmaster");
+			vo.setPoolNo("PN01000000000003124");
+			vo.setReservedFields1("可用金额减少1块钱");
+			vo.setReservedFields2("预留2");
+			vo.setTradeCode("123");
+			vo.setTradeNo("456");
+			vo.setTradeGmtCreated(new Date());
+			vo.setRmk("备注");
+			vo.setTradeReqCode("avl_decr");
+			vo.setTradeStepNo("12345907654");
+			vo.setSequenceNo("1379543234434");
+			vo.setAvlBalDecrAmt(Long.valueOf(1000000000));//前置的100万相当于账务1块
+			list.add(vo);
+			rsp = advanceAccountService.realTimeAccounting(list);
+			for(int i=0;i<rsp.size();i++){
+				Assert.assertEquals("S",rsp.get(i).getSuccess());
+			}
+			
+		} catch (BusinessUncheckedException e) {
+			LOGGER.error(e.getMessage());
+		}
+	}
+	
+	//case6: 账户状态异常
+	@Test 
+	public void statusException() {
+		List<RealTimeAccountingVo> list = new ArrayList<RealTimeAccountingVo>();
+		List<RealTimeAccountingRsp> rsp = new ArrayList<RealTimeAccountingRsp>();
+		
+		try {
+			RealTimeAccountingVo vo = new RealTimeAccountingVo();
+			vo.setAccountNo("CA08082110918000");
+			vo.setCoreMerchantNo("ZLZX");
+			vo.setPoolNo("PN01000000000000875");
+			vo.setReservedFields1("可用金额减少1块钱");
+			vo.setReservedFields2("预留2");
+			vo.setTradeCode("123");
+			vo.setTradeNo("456");
+			vo.setTradeGmtCreated(new Date());
+			vo.setRmk("备注");
+			vo.setTradeReqCode("avl_decr");
+			vo.setTradeStepNo("12345907654");
+			vo.setSequenceNo("1379543234434");
+			vo.setAvlBalDecrAmt(Long.valueOf(1000));//前置的100万相当于账务1块
+			list.add(vo);
+			rsp = advanceAccountService.realTimeAccounting(list);
+			for(int i=0;i<rsp.size();i++){
+				Assert.assertEquals("S",rsp.get(i).getSuccess());
+			}
+			
+		} catch (BusinessUncheckedException e) {
+			LOGGER.error(e.getMessage());
+		}
+	}
+	
+	//case7:可用余额增加正常流程
+	@Test 
+	public void avlBalIncrAmt() {
+		List<RealTimeAccountingVo> list = new ArrayList<RealTimeAccountingVo>();
+		List<RealTimeAccountingRsp> rsp = new ArrayList<RealTimeAccountingRsp>();
+		
+		try {
+			RealTimeAccountingVo vo = new RealTimeAccountingVo();
+			vo.setAccountNo("CA08081910137000");
+			vo.setCoreMerchantNo("SHYF");
+			vo.setPoolNo("PN01000000000000872");
+			vo.setReservedFields1("可用金额增加10块");
+			vo.setReservedFields2("预留2");
+			vo.setTradeCode("987");
+			vo.setTradeNo("849678");
+			vo.setTradeGmtCreated(new Date());
+			vo.setRmk("备注");
+			vo.setTradeReqCode("avl_decr");
+			vo.setTradeStepNo("12345907654");
+			vo.setSequenceNo("shb9999543234434");
+			vo.setAvlBalIncrAmt(Long.valueOf(10000000));//前置的100万相当于账务1块
+			list.add(vo);
+			rsp = advanceAccountService.realTimeAccounting(list);
+			System.out.println("avlBal="+ rsp.get(0).getAccountingRecord().getAvlBal());
+		} catch (BusinessUncheckedException e) {
+			LOGGER.error(e.getMessage());
+		}
+	}
+	
+	//case8:冻结余额增加正常流程
+	@Test 
+	public void frozenBalIncrAmt() {
+		List<RealTimeAccountingVo> list = new ArrayList<RealTimeAccountingVo>();
+		List<RealTimeAccountingRsp> rsp = new ArrayList<RealTimeAccountingRsp>();
+		
+		try {
+			RealTimeAccountingVo vo = new RealTimeAccountingVo();
+			vo.setAccountNo("CA08082051330000");
+			vo.setCoreMerchantNo("CSCS");
+			vo.setPoolNo("PN01000000000000836");
+			vo.setReservedFields1("冻结金额增加10块");
+			vo.setReservedFields2("预留2");
+			vo.setTradeCode("444");
+			vo.setTradeNo("123123");
+			vo.setTradeGmtCreated(new Date());
+			vo.setRmk("备注");
+			vo.setTradeReqCode("avl_decr");
+			vo.setTradeStepNo("12345907654");
+			vo.setSequenceNo("shb1379543234434");
+			vo.setFrozenBalIncrAmt(Long.valueOf(10000000));//前置的100万相当于账务1块
+			list.add(vo);
+			rsp = advanceAccountService.realTimeAccounting(list);
+			System.out.println("avlBal="+ rsp.get(0).getAccountingRecord().getAvlBal());
+		} catch (BusinessUncheckedException e) {
+			LOGGER.error(e.getMessage());
+		}
+	}
+	
+	//case9:冻结余额减少正常流程 
+	@Test 
+	public void frozenBalDecrAmt() {
+		List<RealTimeAccountingVo> list = new ArrayList<RealTimeAccountingVo>();
+		List<RealTimeAccountingRsp> rsp = new ArrayList<RealTimeAccountingRsp>();
+		
+		try {
+			RealTimeAccountingVo vo = new RealTimeAccountingVo();
+			vo.setAccountNo("CA08082065700000");
+			vo.setCoreMerchantNo("BJGS");
+			vo.setPoolNo("PN01000000000000852");
+			vo.setReservedFields1("冻结减11块");
+			vo.setReservedFields2("预留2");
+			vo.setTradeCode("444");
+			vo.setTradeNo("123123");
+			vo.setTradeGmtCreated(new Date());
+			vo.setRmk("备注");
+			vo.setTradeReqCode("avl_decr");
+			vo.setTradeStepNo("12345907654");
+			vo.setSequenceNo("frozen1379543234434");
+			vo.setFrozenBalDecrAmt(Long.valueOf(11000000)); 
+			list.add(vo);
+			rsp = advanceAccountService.realTimeAccounting(list);
+			System.out.println("avlBal="+ rsp.get(0).getAccountingRecord().getAvlBal());
+		} catch (BusinessUncheckedException e) {
+			LOGGER.error(e.getMessage());
+		}
+	}
+	
+	//case10:冻结余额减少时冻结金额不足以减 (账户余额不足)
+	@Test 
+	public void frozenBalDecrAmt_no_ennough() {
+		List<RealTimeAccountingVo> list = new ArrayList<RealTimeAccountingVo>();
+		List<RealTimeAccountingRsp> rsp = new ArrayList<RealTimeAccountingRsp>();
+		
+		try {
+			RealTimeAccountingVo vo = new RealTimeAccountingVo();
+			vo.setAccountNo("CA08081910137000");
+			vo.setCoreMerchantNo("SHYF");
+			vo.setPoolNo("PN01000000000000872");
+			vo.setReservedFields1("可用金额减11块");
+			vo.setReservedFields2("预留2");
+			vo.setTradeCode("444");
+			vo.setTradeNo("123123");
+			vo.setTradeGmtCreated(new Date());
+			vo.setRmk("备注");
+			vo.setTradeReqCode("avl_decr");
+			vo.setTradeStepNo("12345907654");
+			vo.setSequenceNo("shb1379543234434");
+			vo.setFrozenBalDecrAmt(Long.valueOf(11000000));
+			list.add(vo);
+			rsp = advanceAccountService.realTimeAccounting(list);
+			System.out.println("avlBal="+ rsp.get(0).getAccountingRecord().getAvlBal());
+		} catch (BusinessUncheckedException e) {
+			LOGGER.error(e.getMessage());
+		}
+	}
+	/**
+	 * frozen_trade_code : 所属业务冻结交易类型
+       frozen_trad_no : 所属业务冻结交易编号
+	 * @Title:        testRealTimeAccountingFrozenCode 
+	 * @Description:  TODO(功能描述及使用场景)     (para中每个参数的中文名称,return中的具体内容)  
+	 * @author        liujingbei(添加方法的人)
+	 * @Date          2016-3-4 下午3:40:21
+	 */
+     public static void main(String[] args){
+		ApplicationContext context= new ClassPathXmlApplicationContext(new String[]{"config/spring/applicationContext-myBatis.xml",
+		"config/spring/applicationContext-common.xml", 
+         "config/spring/applicationContext-template.xml",
+         "config/spring/applicationContext-mq-producter.xml",
+         "config/spring/controller-context.xml"}); 
+		List<RealTimeAccountingVo> list = new ArrayList<RealTimeAccountingVo>();
+		List<RealTimeAccountingRsp> rsp = new ArrayList<RealTimeAccountingRsp>();
+		AdvanceAccountService advanceAccountService1= (AdvanceAccountService) context.getBean("advanceAccountServiceImpl");
+		try {
+			RealTimeAccountingVo vo = new RealTimeAccountingVo();
+			vo.setAccountNo("CA21000000019141");
+			vo.setCoreMerchantNo("ebillmaster");
+			vo.setPoolNo("PN01000000000003124");
+			vo.setReservedFields1("可用金额减少1块钱");
+			vo.setReservedFields2("预留2");
+			vo.setTradeCode("123");
+			vo.setFrozenTradeCode("8444888121");
+			vo.setFrozenTradeNo("66959999121");
+			vo.setTradeNo("456");
+			vo.setTradeGmtCreated(new Date());
+			vo.setRmk("备注");
+			vo.setTradeReqCode("0001_001_001");
+			vo.setTradeStepNo("00000000000002360020151223100702");
+			vo.setSequenceNo("00000000000002360020151223100702");
+			vo.setAvlBalDecrAmt(Long.valueOf(10000000));//前置的100万相当于账务1块
+			
+			
+			RealTimeAccountingVo vo1 = new RealTimeAccountingVo();
+			vo1.setAccountNo("CA21000000019141");
+			vo1.setCoreMerchantNo("ebillmaster");
+			vo1.setPoolNo("PN01000000000003124");
+			vo1.setReservedFields1("冻结金额增加1块钱");
+			vo1.setReservedFields2("预留2");
+			vo1.setTradeCode("123");
+			vo1.setTradeNo("456");
+			vo1.setFrozenTradeCode("8444454121");
+			vo1.setFrozenTradeNo("669545454121");
+			vo1.setTradeGmtCreated(new Date());
+			vo1.setRmk("备注");
+			vo1.setTradeReqCode("0001_001_001");
+			vo1.setTradeStepNo("00000000000002360020151223100702");
+			vo1.setSequenceNo("00000000000002360020151223100702");
+			vo1.setFrozenBalIncrAmt(Long.valueOf(10000000));//前置的100万相当于账务1块
+			
+			
+			list.add(vo);
+			list.add(vo1);
+			rsp = advanceAccountService1.realTimeAccounting(list);
+			for(int i=0;i<rsp.size();i++){
+				Assert.assertEquals("S",rsp.get(i).getSuccess());
+			}
+			
+		} catch (BusinessUncheckedException e) {
+			e.printStackTrace();
+		}
+	}
+}

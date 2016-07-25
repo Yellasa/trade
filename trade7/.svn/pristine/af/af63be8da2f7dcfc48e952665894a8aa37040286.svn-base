@@ -1,0 +1,212 @@
+package com.liantuo.trade.bus.process.impl.simple_fund_handle.v1;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.util.StringUtils;
+
+import com.liantuo.trade.bus.process.TradePageQueryInterface;
+import com.liantuo.trade.bus.service.AdjustAccountDetailsPageQueryService;
+import com.liantuo.trade.bus.service.ExceptionService;
+import com.liantuo.trade.bus.template.impl.v1_1.query.ATradePageQueryNoPaymentTemp;
+import com.liantuo.trade.client.trade.packet.TradeRequest;
+import com.liantuo.trade.client.trade.packet.TradeResponse;
+import com.liantuo.trade.client.trade.packet.body.simple_fund_handle.TradePacketReqBodyAdjustAccountQry;
+import com.liantuo.trade.client.trade.packet.head.TradePacketHead;
+import com.liantuo.trade.common.util.amount.AmountUtils;
+import com.liantuo.trade.common.util.date.DateUtil;
+import com.liantuo.trade.common.validate.TradeValidationUtil;
+import com.liantuo.trade.exception.AmountConvertException;
+import com.liantuo.trade.exception.BizRuntimeException;
+import com.liantuo.trade.exception.BusinessException;
+import com.liantuo.trade.orm.pojo.TradeAdjustAccountExample;
+import com.liantuo.trade.orm.pojo.TradeAdjustAccountExample.Criteria;
+import com.liantuo.trade.spring.annotation.JobFlow;
+
+/**
+ * 0003_001_998
+ * v1.0
+ */
+@JobFlow(value = "0003_001_999", version = "1.0", template = ATradePageQueryNoPaymentTemp.class)
+public class QueryByPageAdjustAccountInnerProcess
+implements TradePageQueryInterface<TradePacketReqBodyAdjustAccountQry> {
+    @Resource
+    protected ExceptionService exceptionService;
+
+    private final int MIN_RESULT_NUM = 0; 
+    
+    @Resource(name = "adjustAccountDetailsPageQueryServiceImpl")
+    private AdjustAccountDetailsPageQueryService adjustAccountDetailsPageQueryService;
+    @Override
+    public void formatValidate(TradeRequest<TradePacketReqBodyAdjustAccountQry> tradeRquest) throws Exception {
+        String errMsg;
+        errMsg = TradeValidationUtil.validateRequest(tradeRquest, HEADR_EQUIRED_INNER, HEAD_FORMAT, "*");
+        if(!StringUtils.isEmpty(errMsg)){
+            throw exceptionService.buildBusinessException("JY00030019991000100", BusinessException.class, new Object[]{errMsg});
+        }
+    }
+    @Override
+    public Object query(TradeRequest<TradePacketReqBodyAdjustAccountQry> tradeRquest, TradeResponse tradeResponse) throws Exception {
+    	TradeAdjustAccountExample tradeAdjustAccountExample = new TradeAdjustAccountExample();
+    	TradePacketHead head =   tradeRquest.getHead();
+    	TradePacketReqBodyAdjustAccountQry  reqBody = tradeRquest.getBody();
+    	Criteria accurateCondition = tradeAdjustAccountExample.createCriteria();
+    	
+    	if(!StringUtils.isEmpty(head.getCore_merchant_no())){
+    		accurateCondition.andCoreMerchantNoEqualTo(head.getCore_merchant_no());
+    	}
+    	if(!StringUtils.isEmpty(head.getFund_pool_no())){
+    		accurateCondition.andFundPoolNoEqualTo(head.getFund_pool_no());
+    	}
+    	//可选条件，只能通过判断之后进行加入
+    	 if (!StringUtils.isEmpty(reqBody.getTrade_no())) {                                                                      //交易编号
+             accurateCondition.andTradeNoEqualTo(reqBody.getTrade_no());
+         }
+    	 
+    	//精确查询
+         if (!StringUtils.isEmpty(reqBody.getExtend_field_1_accurate_query())) {
+             accurateCondition.andMerchantExtendField1EqualTo(reqBody.getExtend_field_1_accurate_query());
+         }
+         if (!StringUtils.isEmpty(reqBody.getExtend_field_2_accurate_query())) {
+             accurateCondition.andMerchantExtendField2EqualTo(reqBody.getExtend_field_2_accurate_query());
+         }
+         if (!StringUtils.isEmpty(reqBody.getExtend_field_3_accurate_query())) {
+             accurateCondition.andMerchantExtendField3EqualTo(reqBody.getExtend_field_3_accurate_query());
+         }
+         if (!StringUtils.isEmpty(reqBody.getExtend_field_4_accurate_query())) {
+             accurateCondition.andMerchantExtendField4EqualTo(reqBody.getExtend_field_4_accurate_query());
+         }
+         if (!StringUtils.isEmpty(reqBody.getExtend_field_5_accurate_query())) {
+             accurateCondition.andMerchantExtendField5EqualTo(reqBody.getExtend_field_5_accurate_query());
+         }
+
+         //模糊查询
+         if (StringUtils.isEmpty(reqBody.getExtend_field_1_accurate_query()) && !StringUtils.isEmpty(reqBody.getExtend_field_1_fuzzy_query())) {
+             accurateCondition.andMerchantExtendField1Like("%" + reqBody.getExtend_field_1_fuzzy_query() + "%");
+         }
+         if (StringUtils.isEmpty(reqBody.getExtend_field_2_accurate_query()) && !StringUtils.isEmpty(reqBody.getExtend_field_2_fuzzy_query())) {
+             accurateCondition.andMerchantExtendField2Like("%" + reqBody.getExtend_field_2_fuzzy_query() + "%");
+         }
+         if (StringUtils.isEmpty(reqBody.getExtend_field_3_accurate_query()) && !StringUtils.isEmpty(reqBody.getExtend_field_3_fuzzy_query())) {
+             accurateCondition.andMerchantExtendField3Like("%" + reqBody.getExtend_field_3_fuzzy_query() + "%");
+         }
+         if (StringUtils.isEmpty(reqBody.getExtend_field_4_accurate_query()) && !StringUtils.isEmpty(reqBody.getExtend_field_4_fuzzy_query())) {
+             accurateCondition.andMerchantExtendField4Like("%" + reqBody.getExtend_field_4_fuzzy_query() + "%");
+         }
+         if (StringUtils.isEmpty(reqBody.getExtend_field_5_accurate_query()) && !StringUtils.isEmpty(reqBody.getExtend_field_5_fuzzy_query())) {
+             accurateCondition.andMerchantExtendField5Like("%" + reqBody.getExtend_field_5_fuzzy_query() + "%");
+         }
+         
+         if (!StringUtils.isEmpty(reqBody.getOut_trade_no())) {
+             accurateCondition.andOutTradeNoEqualTo(reqBody.getOut_trade_no());
+         }
+
+         if (!StringUtils.isEmpty(reqBody.getOut_trade_no_ext())) {
+             accurateCondition.andOutTradeNoExtEqualTo(reqBody.getOut_trade_no_ext());
+         }
+
+         try {
+             if (!StringUtils.isEmpty(reqBody.getGmt_created_start())) {
+                 accurateCondition.andGmtCreatedGreaterThanOrEqualTo(DateUtil.formatDateTime(reqBody.getGmt_created_start()));               //交易创建日期 区间查询
+             }
+             if (!StringUtils.isEmpty(reqBody.getGmt_created_end())) {
+                 accurateCondition.andGmtCreatedLessThanOrEqualTo(DateUtil.formatDateTime(reqBody.getGmt_created_end()));
+             }
+
+             if (!StringUtils.isEmpty(reqBody.getGmt_latest_modified_start())) {
+                 accurateCondition.andGmtLatestModifiedGreaterThanOrEqualTo(DateUtil.formatDateTime(reqBody.getGmt_latest_modified_start()));//交易最后变更日期  区间查询
+             }
+             if (!StringUtils.isEmpty(reqBody.getGmt_latest_modified_end())) {
+                 accurateCondition.andGmtLatestModifiedLessThanOrEqualTo(DateUtil.formatDateTime(reqBody.getGmt_latest_modified_end()));
+             }
+
+             if (!StringUtils.isEmpty(reqBody.getGmt_success_clear_channel_start())) {
+                 accurateCondition.andGmtSuccessClearChannelGreaterThanOrEqualTo(DateUtil.formatDateTime(reqBody.getGmt_success_clear_channel_start()));    //收付款渠道收到日期时间  区间查询
+             }
+             if (!StringUtils.isEmpty(reqBody.getGmt_success_clear_channel_end())) {
+                 accurateCondition.andGmtSuccessClearChannelLessThanOrEqualTo(DateUtil.formatDateTime(reqBody.getGmt_success_clear_channel_end()));
+             }
+             
+         } catch (Exception e) {
+             throw new BizRuntimeException("trade.details.date.error");
+         }
+         
+         //交易状态
+         // 交易状态 枚举 可空 精确查询条件
+         if (org.apache.commons.lang3.StringUtils.isNotBlank(reqBody.getStatus())) {
+             if (reqBody.getStatus().contains("^")) {
+                 String[] arr = reqBody.getStatus().split("\\^");
+                 List<String> list = Arrays.asList(arr);
+                 Collections.sort(list);
+                 accurateCondition.andStatusIn(list);
+             } else {
+                 accurateCondition.andStatusEqualTo(reqBody.getStatus());
+             }
+         }
+         
+         //付
+         if (!StringUtils.isEmpty(reqBody.getPayment_merchant_no())) {
+             accurateCondition.andPaymentMerchantNoEqualTo(reqBody.getPayment_merchant_no());                                        //原付出成员商户编号
+         }
+         if (!StringUtils.isEmpty(reqBody.getPayment_account_no())) {
+             accurateCondition.andPaymentAccountNoEqualTo(reqBody.getPayment_account_no());                                          //付出CA账户编号
+         }
+         //收
+         if (!StringUtils.isEmpty(reqBody.getReceive_merchant_no())) {
+             accurateCondition.andReceiveMerchantNoEqualTo(reqBody.getReceive_merchant_no());                                        //原收款成员商户编号
+         }
+         if (!StringUtils.isEmpty(reqBody.getReceive_account_no())) {
+             accurateCondition.andReceiveAccountNoEqualTo(reqBody.getReceive_account_no());                                          //收款CA账户编号
+         }
+
+         //请求组别
+         // 请求组别 枚举 可空 精确查询条件
+         if (org.apache.commons.lang3.StringUtils.isNotBlank(reqBody.getRequest_group())) {
+                 accurateCondition.andRequestGroupEqualTo(reqBody.getRequest_group());
+         }
+         //收款渠道
+         if (!StringUtils.isEmpty(reqBody.getClear_channel())) {
+             accurateCondition.andClearChannelEqualTo(reqBody.getClear_channel());                                          //付出CA账户编号
+         }
+         
+         //收付款渠道订单号
+         if (!StringUtils.isEmpty(reqBody.getThird_trade_no())) {
+             accurateCondition.andThirdTradeNoEqualTo(reqBody.getThird_trade_no());                                      
+         }
+    	
+         if(!StringUtils.isEmpty(reqBody.getAdjust_amount_start())){
+        	 long tradeAmountstart;
+        	 try {
+      			tradeAmountstart = AmountUtils.bizAmountConvertToLong(reqBody.getAdjust_amount_start());
+      		} catch (AmountConvertException e) {
+      			throw exceptionService.buildBusinessException("JY000000000000201");
+      		}
+      		accurateCondition.andAdjustAmountGreaterThanOrEqualTo(tradeAmountstart);  
+         }
+         
+         if(!StringUtils.isEmpty(reqBody.getAdjust_amount_end())){
+        	 long tradeAmountend;
+        	 try {
+        		 tradeAmountend = AmountUtils.bizAmountConvertToLong(reqBody.getAdjust_amount_end());
+      		} catch (AmountConvertException e) {
+      			throw exceptionService.buildBusinessException("JY000000000000201");
+      		}
+      		 accurateCondition.andAdjustAmountLessThanOrEqualTo(tradeAmountend);   
+         }
+         
+         //查询数据总条数,并设置到返回实体类中 
+         int total = adjustAccountDetailsPageQueryService.queryCountByExample(tradeAdjustAccountExample);
+         if( MIN_RESULT_NUM >= total){
+        	 tradeResponse.getBody().setResultCount("0");
+        	 return null;
+         }
+		tradeResponse.getBody().setResultCount(total + "");
+		// 定义排序字段,并设置排序规则
+		tradeAdjustAccountExample.setOrderByClause("gmt_created desc");
+		return adjustAccountDetailsPageQueryService.queryPageByExample(tradeAdjustAccountExample,reqBody);
+    }
+    
+}

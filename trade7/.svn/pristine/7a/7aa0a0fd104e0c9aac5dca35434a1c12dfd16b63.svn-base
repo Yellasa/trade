@@ -1,0 +1,14 @@
+package com.liantuo.deposit.pool.bus.service;
+
+import com.liantuo.deposit.advanceaccount.orm.pojo.Pool;
+import com.liantuo.unittest.mockito.IsTClass;
+
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.*;
+public class PoolServiceMock {
+
+	public static void mockCreatePool(PoolService poolService,Pool returnObject){
+		doReturn(returnObject).when(poolService).createPool(
+				argThat(new IsTClass<Pool>(new Pool())));
+	}
+}

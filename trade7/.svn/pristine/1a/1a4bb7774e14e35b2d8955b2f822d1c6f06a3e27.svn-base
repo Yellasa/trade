@@ -1,0 +1,89 @@
+package com.liantuo.trade.bus.process.impl;
+
+import javax.annotation.Resource;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+
+import com.liantuo.spring.WebContextTestExecutionListener;
+import com.liantuo.trade.bus.process.impl.simple_fund_handle.v1.QueryByPageAdjustAccountInnerProcess;
+import com.liantuo.trade.bus.template.impl.v1_1.query.ATradePageQueryNoPaymentTemp;
+import com.liantuo.trade.client.trade.packet.TradeRequest;
+import com.liantuo.trade.client.trade.packet.body.simple_fund_handle.TradePacketReqBodyAdjustAccountQry;
+import com.liantuo.trade.client.trade.packet.head.TradePacketHead;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {
+        "classpath:config/spring/applicationContext-*.xml"
+})
+@TestExecutionListeners({ 
+    WebContextTestExecutionListener.class, 
+    DependencyInjectionTestExecutionListener.class,
+    DirtiesContextTestExecutionListener.class })
+public class AdjustAccountProcessTest {
+//	@Resource(name = "0003_001_998:1.0")
+//	private QueryByPageAdjustAccountProcess process;
+	@Resource(name = "0003_001_999:1.0")
+	private QueryByPageAdjustAccountInnerProcess process;
+	@Autowired
+	private ATradePageQueryNoPaymentTemp temp;
+	@Test
+	public void testExec(){
+		new ClassPathXmlApplicationContext();
+		
+		TradeRequest<TradePacketReqBodyAdjustAccountQry> request = new TradeRequest<TradePacketReqBodyAdjustAccountQry>();
+		
+		TradePacketReqBodyAdjustAccountQry body = new TradePacketReqBodyAdjustAccountQry();
+		TradePacketHead head = new TradePacketHead();
+		head.setPartner_id("10000002057141223");
+		head.setCore_merchant_no("CC_C8785258588");
+		head.setFund_pool_no("PN01000000000010876");
+		head.setRequest_time("2016-02-24 19:21:55");
+		head.setRequest_code("0003_001_999");
+		head.setVersion("1.0");
+		
+		head.setSign("02E039A8FB4D7FF322CD3C7E7103E184");
+		
+//		body.setOut_trade_no("12345678920160405051");
+//		body.setPayment_account_no("CA12050317300000");
+//		body.setOut_trade_no_ext("df201635972353959002741");
+		body.setPage("3");
+		body.setPage_size("3");
+		body.setAdjust_amount_start("0.01");
+		body.setAdjust_amount_end("0.01");
+		body.setStatus("01");
+		body.setGmt_created_start("2016-04-05 18:19:50");
+		body.setGmt_created_end("2016-04-05 18:19:52");
+		request.setBody(body);
+		request.setHead(head);
+		try {
+			temp.setProcess(process);
+			temp.setIp("127.0.0.1");
+			temp.setRequestXML("");
+			temp.execute(request);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
+	/**
+	 * 测试事务
+	 */
+	@Test
+	public void testTrasaction(){
+		
+		
+		
+	}
+	
+	
+}

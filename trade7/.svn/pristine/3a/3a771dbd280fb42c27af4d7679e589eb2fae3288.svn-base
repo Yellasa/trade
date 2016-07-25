@@ -1,0 +1,41 @@
+package com.liantuo.deposit.pool.bus.mapper;
+
+import static org.junit.Assert.assertEquals;
+import java.util.List;
+import javax.annotation.Resource;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import com.liantuo.deposit.advanceaccount.orm.mapper.PoolMapper;
+import com.liantuo.deposit.advanceaccount.orm.pojo.Pool;
+import com.liantuo.deposit.advanceaccount.web.inner.vo.queryvo.PoolQueryInnerVo;
+import com.liantuo.deposit.advanceaccount.web.inner.vo.rsp.PoolInnerRspVo;
+import com.liantuo.deposit.advanceaccount.web.vo.queryvo.PoolQueryVo;
+import com.liantuo.deposit.advanceaccount.web.vo.rsp.PoolRspVo;
+@ContextConfiguration(locations = { "classpath:config/spring/applicationContext-myBatis.xml","classpath:config/spring/applicationContext-common.xml",
+		"classpath:config/spring/applicationContext-template.xml",
+		"classpath:config/spring/applicationContext-mq-producter.xml"})
+public class PoolMapperTest extends AbstractTransactionalJUnit4SpringContextTests {
+
+	@Resource
+	private PoolMapper poolMapper;
+	
+	@Test
+	public void testFindByMerchantNoAndPoolName() {
+		PoolQueryVo poolQueryVo = new PoolQueryVo();
+		poolQueryVo.setPoolName("北京联拓天际电子商务有限公司");
+		poolQueryVo.setCoreMerchantNo("liantuo");
+		PoolRspVo returnVo= poolMapper.findByMerchantNoAndPoolName(poolQueryVo);
+		assertEquals("PN01000000000000761",returnVo.getPoolNo());
+	}
+	
+	@Test
+	public void testSelectByPoolNo() {
+		String poolNo="PN01000000000000802";
+        Pool pool =  poolMapper.selectByPoolNo(poolNo);
+        assertEquals("成都启明航空服务有限公司",pool.getPoolName());
+	}
+ 
+ 
+}

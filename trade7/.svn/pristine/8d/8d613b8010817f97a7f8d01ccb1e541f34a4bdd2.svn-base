@@ -1,0 +1,41 @@
+package com.liantuo.trade.bus.process.impl.single_recharge.v1;
+
+import com.liantuo.trade.bus.process.TradePageQueryInterface;
+import com.liantuo.trade.bus.service.ExceptionService;
+import com.liantuo.trade.bus.service.v1_1.BizTradePageQueryService;
+import com.liantuo.trade.bus.template.impl.v1_1.query.ATradePageQueryNoPaymentTemp;
+import com.liantuo.trade.client.trade.packet.TradeRequest;
+import com.liantuo.trade.client.trade.packet.TradeResponse;
+import com.liantuo.trade.client.trade.packet.body.single_recharge.QueryPage4RechargeDetail;
+import com.liantuo.trade.common.validate.TradeValidationUtil;
+import com.liantuo.trade.exception.BusinessException;
+import com.liantuo.trade.spring.annotation.JobFlow;
+import org.springframework.util.StringUtils;
+
+import javax.annotation.Resource;
+
+@JobFlow(value = "0005_001_998", version = "1.0", template = ATradePageQueryNoPaymentTemp.class)
+public class QueryByPageRechargeOuterProcess implements TradePageQueryInterface<QueryPage4RechargeDetail> {
+
+    @Resource(name = "rechargePageQueryServiceImpl")
+    private BizTradePageQueryService bizTradePageQueryServ;
+
+    @Resource
+    protected ExceptionService exceptionService;
+
+    @Override
+    public void formatValidate(TradeRequest<QueryPage4RechargeDetail> tradeRquest) throws Exception {
+        String errMsg;
+        errMsg = TradeValidationUtil.validateRequest(tradeRquest, HEADR_EQUIRED_OUTER, HEAD_FORMAT, "*");
+        if (!StringUtils.isEmpty(errMsg)) {
+            throw exceptionService.buildBusinessException("JY00050019981000100", BusinessException.class, new Object[]{errMsg});
+        }
+    }
+
+    @Override
+    public Object query(TradeRequest<QueryPage4RechargeDetail> tradeRquest, TradeResponse tradeResponse)
+            throws Exception {
+        return this.bizTradePageQueryServ.queryByPage(tradeRquest, tradeResponse);
+    }
+
+}

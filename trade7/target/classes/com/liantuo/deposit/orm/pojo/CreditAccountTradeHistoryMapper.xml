@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liantuo.deposit.advanceaccount.orm.mapper.CreditAccountTradeHistoryMapper" >
+  <resultMap id="BaseResultMap" type="com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccountTradeHistory" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="credit_account_id" property="creditAccountId" jdbcType="INTEGER" />
+    <result column="income" property="income" jdbcType="DOUBLE" />
+    <result column="payout" property="payout" jdbcType="DOUBLE" />
+    <result column="balance" property="balance" jdbcType="DOUBLE" />
+    <result column="credit_line" property="creditLine" jdbcType="DOUBLE" />
+    <result column="gmt_created" property="gmtCreated" jdbcType="TIMESTAMP" />
+    <result column="created_cn" property="createdCn" jdbcType="VARCHAR" />
+    <result column="trade_id" property="tradeId" jdbcType="INTEGER" />
+    <result column="trade_type" property="tradeType" jdbcType="INTEGER" />
+    <result column="applicant_agency_id" property="applicantAgencyId" jdbcType="INTEGER" />
+    <result column="sequence_no" property="sequenceNo" jdbcType="VARCHAR" />
+    <result column="super_agency_code_name" property="superAgencyCodeName" jdbcType="VARCHAR" />
+    <result column="super_agency_name" property="superAgencyName" jdbcType="VARCHAR" />
+    <result column="owner_code_name" property="ownerCodeName" jdbcType="VARCHAR" />
+    <result column="owner_name" property="ownerName" jdbcType="VARCHAR" />
+    <result column="mode_track" property="modeTrack" jdbcType="INTEGER" />
+    <result column="pnr" property="pnr" jdbcType="VARCHAR" />
+    <result column="flight_info" property="flightInfo" jdbcType="VARCHAR" />
+    <result column="superior_open_id" property="superiorOpenId" jdbcType="INTEGER" />
+    <result column="deposit_record_no" property="depositRecordNo" jdbcType="VARCHAR" />
+    <result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+    <result column="trade_step_no" property="tradeStepNo" jdbcType="VARCHAR" />
+    <result column="third_trade_no" property="thirdTradeNo" jdbcType="VARCHAR" />
+    <result column="pay_no" property="payNo" jdbcType="VARCHAR" />
+    <result column="organization_no" property="organizationNo" jdbcType="VARCHAR" />
+    <result column="core_merchant_no" property="coreMerchantNo" jdbcType="VARCHAR" />
+    <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR" />
+    <result column="pool_no" property="poolNo" jdbcType="VARCHAR" />
+    <result column="wallet_no" property="walletNo" jdbcType="VARCHAR" />
+    <result column="subject_no" property="subjectNo" jdbcType="VARCHAR" />
+    <result column="creator_no" property="creatorNo" jdbcType="VARCHAR" />
+    <result column="modifier_no" property="modifierNo" jdbcType="VARCHAR" />
+    <result column="modifier_cn" property="modifierCn" jdbcType="VARCHAR" />
+    <result column="trade_amt" property="tradeAmt" jdbcType="DECIMAL" />
+    <result column="account_no" property="accountNo" jdbcType="VARCHAR" />
+    <result column="data_flag" property="dataFlag" jdbcType="CHAR" />
+    <result column="pay_mark" property="payMark" jdbcType="CHAR" />
+    <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
+    <result column="biz_type" property="bizType" jdbcType="VARCHAR" />
+    <result column="version" property="version" jdbcType="BIGINT" />
+    <result column="reserved_fields1" property="reservedFields1" jdbcType="VARCHAR" />
+    <result column="reserved_fields2" property="reservedFields2" jdbcType="VARCHAR" />
+    <result column="reserved_fields3" property="reservedFields3" jdbcType="VARCHAR" />
+    <result column="reserved_fields4" property="reservedFields4" jdbcType="VARCHAR" />
+    <result column="reserved_fields5" property="reservedFields5" jdbcType="VARCHAR" />
+    <result column="avl_bal_incr_amt" property="avlBalIncrAmt" jdbcType="BIGINT" />
+    <result column="avl_bal_decr_amt" property="avlBalDecrAmt" jdbcType="BIGINT" />
+    <result column="frozen_bal_incr_amt" property="frozenBalIncrAmt" jdbcType="BIGINT" />
+    <result column="frozen_bal_decr_amt" property="frozenBalDecrAmt" jdbcType="BIGINT" />
+    <result column="trade_req_code" property="tradeReqCode" jdbcType="VARCHAR" />
+    <result column="trade_code" property="tradeCode" jdbcType="VARCHAR" />
+    <result column="sys_time" property="sysTime" jdbcType="TIMESTAMP" />
+    <result column="trade_gmt_created" property="tradeGmtCreated" jdbcType="TIMESTAMP" />
+    <result column="availible_balance" property="availibleBalance" jdbcType="BIGINT" />
+    <result column="frozen_balance" property="frozenBalance" jdbcType="BIGINT" />
+  </resultMap>
+
+  <resultMap id="SingleAccountAccountingRecordMap" type="com.liantuo.deposit.advanceaccount.web.vo.rsp.SingleAccountAccountingRecord" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="credit_account_id" property="creditAccountId" jdbcType="INTEGER" />
+    <result column="income" property="income" jdbcType="DOUBLE" />
+    <result column="payout" property="payout" jdbcType="DOUBLE" />
+    <result column="balance" property="balance" jdbcType="DOUBLE" />
+    <result column="credit_line" property="creditLine" jdbcType="DOUBLE" />
+    <result column="gmt_created" property="gmtCreated" jdbcType="TIMESTAMP" />
+    <result column="created_cn" property="createdCn" jdbcType="VARCHAR" />
+    <result column="trade_id" property="tradeId" jdbcType="INTEGER" />
+    <result column="trade_type" property="tradeType" jdbcType="INTEGER" />
+    <result column="applicant_agency_id" property="applicantAgencyId" jdbcType="INTEGER" />
+    <result column="sequence_no" property="sequenceNo" jdbcType="VARCHAR" />
+    <result column="super_agency_code_name" property="superAgencyCodeName" jdbcType="VARCHAR" />
+    <result column="super_agency_name" property="superAgencyName" jdbcType="VARCHAR" />
+    <result column="owner_code_name" property="ownerCodeName" jdbcType="VARCHAR" />
+    <result column="owner_name" property="ownerName" jdbcType="VARCHAR" />
+    <result column="mode_track" property="modeTrack" jdbcType="INTEGER" />
+    <result column="pnr" property="pnr" jdbcType="VARCHAR" />
+    <result column="flight_info" property="flightInfo" jdbcType="VARCHAR" />
+    <result column="superior_open_id" property="superiorOpenId" jdbcType="INTEGER" />
+    <result column="deposit_record_no" property="depositRecordNo" jdbcType="VARCHAR" />
+    <result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+    <result column="trade_step_no" property="tradeStepNo" jdbcType="VARCHAR" />
+    <result column="third_trade_no" property="thirdTradeNo" jdbcType="VARCHAR" />
+    <result column="pay_no" property="payNo" jdbcType="VARCHAR" />
+    <result column="organization_no" property="organizationNo" jdbcType="VARCHAR" />
+    <result column="core_merchant_no" property="coreMerchantNo" jdbcType="VARCHAR" />
+    <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR" />
+    <result column="pool_no" property="poolNo" jdbcType="VARCHAR" />
+    <result column="wallet_no" property="walletNo" jdbcType="VARCHAR" />
+    <result column="subject_no" property="subjectNo" jdbcType="VARCHAR" />
+    <result column="creator_no" property="creatorNo" jdbcType="VARCHAR" />
+    <result column="modifier_no" property="modifierNo" jdbcType="VARCHAR" />
+    <result column="modifier_cn" property="modifierCn" jdbcType="VARCHAR" />
+    <result column="trade_amt" property="tradeAmt" jdbcType="DECIMAL" />
+    <result column="account_no" property="accountNo" jdbcType="VARCHAR" />
+    <result column="data_flag" property="dataFlag" jdbcType="CHAR" />
+    <result column="pay_mark" property="payMark" jdbcType="CHAR" />
+    <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
+    <result column="biz_type" property="bizType" jdbcType="VARCHAR" />
+    <result column="version" property="version" jdbcType="BIGINT" />
+    <result column="reserved_fields1" property="reservedFields1" jdbcType="VARCHAR" />
+    <result column="reserved_fields2" property="reservedFields2" jdbcType="VARCHAR" />
+    <result column="reserved_fields3" property="reservedFields3" jdbcType="VARCHAR" />
+    <result column="reserved_fields4" property="reservedFields4" jdbcType="VARCHAR" />
+    <result column="reserved_fields5" property="reservedFields5" jdbcType="VARCHAR" />
+    <result column="avl_bal_incr_amt" property="avlBalIncrAmt" jdbcType="BIGINT" />
+    <result column="avl_bal_decr_amt" property="avlBalDecrAmt" jdbcType="BIGINT" />
+    <result column="frozen_bal_incr_amt" property="frozenBalIncrAmt" jdbcType="BIGINT" />
+    <result column="frozen_bal_decr_amt" property="frozenBalDecrAmt" jdbcType="BIGINT" />
+    <result column="trade_req_code" property="tradeReqCode" jdbcType="VARCHAR" />
+    <result column="trade_code" property="tradeCode" jdbcType="VARCHAR" />
+    <result column="sys_time" property="sysTime" jdbcType="TIMESTAMP" />
+    <result column="trade_gmt_created" property="tradeGmtCreated" jdbcType="TIMESTAMP" />
+    <result column="availible_balance" property="availibleBalance" jdbcType="BIGINT" />
+    <result column="frozen_balance" property="frozenBalance" jdbcType="BIGINT" />
+    <result column="frozen_trade_code" property="frozenTradeCode" jdbcType="VARCHAR" />
+    <result column="frozen_trade_no" property="frozenTradeNo" jdbcType="VARCHAR" />
+  </resultMap>
+  
+   <resultMap id="SingleAccountAccounHisRecordMap" type="com.liantuo.deposit.advanceaccount.bus.vo.SingleAccountAccountRecord" >
+    <result column="deposit_record_no" property="depositRecordNo" jdbcType="VARCHAR" />
+    <result column="core_merchant_no" property="coreMerchantNo" jdbcType="VARCHAR" />
+    <result column="pool_no" property="poolNo" jdbcType="VARCHAR" />
+    <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR" />
+    <result column="trade_code" property="tradeCode" jdbcType="VARCHAR" />
+    <result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+    <result column="trade_gmt_created" property="tradeGmtCreated" jdbcType="TIMESTAMP" />
+    <result column="trade_req_code" property="tradeReqCode" jdbcType="VARCHAR" />
+    <result column="trade_step_no" property="tradeReqNo" jdbcType="VARCHAR" />
+    <result column="sequence_no" property="outTradeNo" jdbcType="VARCHAR" />
+    <result column="frozen_trade_no" property="frozenTradeNo" jdbcType="VARCHAR" />
+    <result column="frozen_trade_code" property="frozenTradeCode" jdbcType="VARCHAR" />
+    <result column="applicant_agency_id" property="subAccountType" jdbcType="INTEGER" />
+    <result column="rmk" property="rmk" jdbcType="VARCHAR" />
+    <result column="avl_bal_incr_amt" property="avlBalIncrAmt" jdbcType="BIGINT" />
+    <result column="avl_bal_decr_amt" property="avlBalDecrAmt" jdbcType="BIGINT" />
+    <result column="frozen_bal_incr_amt" property="frozenBalIncrAmt" jdbcType="BIGINT" />
+    <result column="frozen_bal_decr_amt" property="frozenBalDecrAmt" jdbcType="BIGINT" />
+    <result column="availible_balance" property="availibleBalance" jdbcType="BIGINT" />
+    <result column="frozen_balance" property="frozenBalance" jdbcType="BIGINT" />
+     <result column="version" property="version" jdbcType="BIGINT" />
+    <result column="gmt_created" property="gmtCreated" jdbcType="TIMESTAMP" />
+    <result column="reserved_fields1" property="reservedFields1" jdbcType="VARCHAR" />
+    <result column="reserved_fields2" property="reservedFields2" jdbcType="VARCHAR" />
+    <result column="reserved_fields3" property="reservedFields3" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  
+  
+  <resultMap id="ResultMapWithBLOBs" type="com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccountTradeHistory" extends="BaseResultMap" >
+    <result column="rmk" property="rmk" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, credit_account_id, income, payout, balance, credit_line, gmt_created, created_cn, 
+    trade_id, trade_type, applicant_agency_id, sequence_no, super_agency_code_name, super_agency_name, 
+    owner_code_name, owner_name, mode_track, pnr, flight_info, superior_open_id, deposit_record_no, 
+    trade_no, trade_step_no, third_trade_no, pay_no, organization_no, core_merchant_no, 
+    merchant_no, pool_no, wallet_no, subject_no, creator_no, modifier_no, modifier_cn, 
+    trade_amt, account_no, data_flag, pay_mark, gmt_modified, biz_type, version, reserved_fields1, 
+    reserved_fields2, reserved_fields3, reserved_fields4, reserved_fields5, avl_bal_incr_amt, 
+    avl_bal_decr_amt, frozen_bal_incr_amt, frozen_bal_decr_amt, trade_req_code, trade_code, 
+    sys_time, trade_gmt_created, availible_balance, frozen_balance
+  </sql>
+  <sql id="Blob_Column_List" >
+    rmk
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from credit_account_trade_history
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <insert id="insert" parameterType="com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccountTradeHistory" 
+    useGeneratedKeys="true" keyProperty="id" >
+    insert into credit_account_trade_history (id, credit_account_id, income, 
+      payout, balance, credit_line, 
+      gmt_created, created_cn, trade_id, 
+      trade_type, applicant_agency_id, sequence_no, 
+      super_agency_code_name, super_agency_name, owner_code_name, 
+      owner_name, mode_track, pnr, 
+      flight_info, superior_open_id, deposit_record_no, 
+      trade_no,frozen_trade_no, trade_step_no, third_trade_no, 
+      pay_no, organization_no, core_merchant_no, 
+      merchant_no, pool_no, wallet_no, 
+      subject_no, creator_no, modifier_no, 
+      modifier_cn, trade_amt, account_no, 
+      data_flag, pay_mark, gmt_modified, 
+      biz_type, version, reserved_fields1, 
+      reserved_fields2, reserved_fields3, reserved_fields4, 
+      reserved_fields5, avl_bal_incr_amt, avl_bal_decr_amt, 
+      frozen_bal_incr_amt, frozen_bal_decr_amt, trade_req_code, 
+      trade_code,frozen_trade_code, sys_time, trade_gmt_created, 
+      availible_balance, frozen_balance, rmk
+      )
+    values (#{id,jdbcType=INTEGER}, #{creditAccountId,jdbcType=INTEGER}, #{income,jdbcType=DOUBLE}, 
+      #{payout,jdbcType=DOUBLE}, #{balance,jdbcType=DOUBLE}, #{creditLine,jdbcType=DOUBLE}, 
+      #{gmtCreated,jdbcType=TIMESTAMP}, #{createdCn,jdbcType=VARCHAR}, #{tradeId,jdbcType=INTEGER}, 
+      #{tradeType,jdbcType=INTEGER}, #{applicantAgencyId,jdbcType=INTEGER}, #{sequenceNo,jdbcType=VARCHAR}, 
+      #{superAgencyCodeName,jdbcType=VARCHAR}, #{superAgencyName,jdbcType=VARCHAR}, #{ownerCodeName,jdbcType=VARCHAR}, 
+      #{ownerName,jdbcType=VARCHAR}, #{modeTrack,jdbcType=INTEGER}, #{pnr,jdbcType=VARCHAR}, 
+      #{flightInfo,jdbcType=VARCHAR}, #{superiorOpenId,jdbcType=INTEGER}, #{depositRecordNo,jdbcType=VARCHAR}, 
+      #{tradeNo,jdbcType=VARCHAR},#{frozenTradeNo,jdbcType=VARCHAR}, #{tradeStepNo,jdbcType=VARCHAR}, #{thirdTradeNo,jdbcType=VARCHAR}, 
+      #{payNo,jdbcType=VARCHAR}, #{organizationNo,jdbcType=VARCHAR}, #{coreMerchantNo,jdbcType=VARCHAR}, 
+      #{merchantNo,jdbcType=VARCHAR}, #{poolNo,jdbcType=VARCHAR}, #{walletNo,jdbcType=VARCHAR}, 
+      #{subjectNo,jdbcType=VARCHAR}, #{creatorNo,jdbcType=VARCHAR}, #{modifierNo,jdbcType=VARCHAR}, 
+      #{modifierCn,jdbcType=VARCHAR}, #{tradeAmt,jdbcType=DECIMAL}, #{accountNo,jdbcType=VARCHAR}, 
+      #{dataFlag,jdbcType=CHAR}, #{payMark,jdbcType=CHAR}, #{gmtModified,jdbcType=TIMESTAMP}, 
+      #{bizType,jdbcType=VARCHAR}, #{version,jdbcType=BIGINT}, #{reservedFields1,jdbcType=VARCHAR}, 
+      #{reservedFields2,jdbcType=VARCHAR}, #{reservedFields3,jdbcType=VARCHAR}, #{reservedFields4,jdbcType=VARCHAR}, 
+      #{reservedFields5,jdbcType=VARCHAR}, #{avlBalIncrAmt,jdbcType=BIGINT}, #{avlBalDecrAmt,jdbcType=BIGINT}, 
+      #{frozenBalIncrAmt,jdbcType=BIGINT}, #{frozenBalDecrAmt,jdbcType=BIGINT}, #{tradeReqCode,jdbcType=VARCHAR}, 
+      #{tradeCode,jdbcType=VARCHAR},#{frozenTradeCode,jdbcType=VARCHAR},NOW(), #{tradeGmtCreated,jdbcType=TIMESTAMP}, 
+      #{availibleBalance,jdbcType=BIGINT}, #{frozenBalance,jdbcType=BIGINT}, #{rmk,jdbcType=VARCHAR}
+      )
+  </insert>
+  <!-- 单账户账务历史查询接口 (外部用) -->
+  <select id = "selectSingleAccountHisPageQuery" resultMap="SingleAccountAccountingRecordMap"
+                parameterType="com.liantuo.deposit.advanceaccount.bus.vo.SingleAccountHisPageQueryVo">
+        select * from credit_account_trade_history    where 1=1
+        	AND credit_account_id=#{creditAccountId,jdbcType=INTEGER}
+        
+        <if test = "sequenceNo != null and ''!= sequenceNo">
+       	    AND sequence_no=#{sequenceNo,jdbcType=VARCHAR}
+        </if>
+        
+        <if test = "tradeCode != null and ''!= tradeCode">
+        	AND trade_code=#{tradeCode,jdbcType=VARCHAR}
+        </if>
+        
+        <if test = "tradeNo != null and ''!= tradeNo">
+        	AND trade_no=#{tradeNo,jdbcType=VARCHAR}
+        </if>
+        
+        <if test = "tradeReqCode != null and ''!= tradeReqCode">
+        	AND trade_req_code=#{tradeReqCode,jdbcType=VARCHAR}
+        </if>
+        
+        <if test = "tradeStepNo != null and ''!= tradeStepNo">
+        	AND trade_step_no=#{tradeStepNo,jdbcType=VARCHAR}
+        </if>
+        
+        <if test = "beginTime != null and endTime != null">
+        	AND gmt_created BETWEEN #{beginTime,jdbcType=TIMESTAMP}
+        	AND #{endTime,jdbcType=TIMESTAMP}
+        </if>
+         
+        <if test = "type == 'FRZ'">
+        	AND (frozen_bal_incr_amt >0 OR frozen_bal_decr_amt >0)
+        </if>
+        
+        <if test = "type == 'AVL'">
+        	AND not ((frozen_bal_incr_amt is not null and frozen_bal_incr_amt >0 )OR (frozen_bal_decr_amt >0 and frozen_bal_decr_amt is not null))
+        </if>
+         <if test = "reservedFields1 != null and ''!=reservedFields1">
+        	AND reserved_fields1=#{reservedFields1,jdbcType=VARCHAR}
+        </if>
+         <if test = "reservedFields2 != null and ''!=reservedFields2">
+        	AND reserved_fields2=#{reservedFields2,jdbcType=VARCHAR} 
+        </if>
+         <if test = "reservedFields3 != null and ''!=reservedFields3">
+        	AND reserved_fields3=#{reservedFields3,jdbcType=VARCHAR}
+        </if>
+        <if test = "reservedFields1Fuzzy != null and ''!=reservedFields1Fuzzy">
+        	AND reserved_fields1 like CONCAT('%',#{reservedFields1Fuzzy,jdbcType=VARCHAR},'%') 
+        </if>
+         <if test = "reservedFields2Fuzzy != null and ''!=reservedFields2Fuzzy">
+        	AND reserved_fields2 like CONCAT('%',#{reservedFields2Fuzzy,jdbcType=VARCHAR},'%')  
+        </if>
+         <if test = "reservedFields3Fuzzy != null and ''!=reservedFields3Fuzzy">
+        	AND reserved_fields3 like CONCAT('%',#{reservedFields3Fuzzy,jdbcType=VARCHAR},'%') 
+        </if>
+        
+        order by id 
+        <if test = "sortType == '01'">
+        	desc
+        </if>
+   </select>   
+   
+   
+   
+    <!--0_021 V1.0单账户账务历史查询接口-数据标准版-->
+  <select id = "singleAccountHisPageQueryStand" resultMap="SingleAccountAccounHisRecordMap"
+                parameterType="com.liantuo.deposit.advanceaccount.bus.vo.SingleAccountHisQueryVo">
+        select  deposit_record_no,core_merchant_no,pool_no,merchant_no,trade_code, trade_no,trade_gmt_created,
+        trade_req_code, trade_step_no, sequence_no, frozen_trade_no, frozen_trade_code, applicant_agency_id, rmk,
+        avl_bal_incr_amt, avl_bal_decr_amt, frozen_bal_incr_amt, frozen_bal_decr_amt,  availible_balance, frozen_balance,
+        version,  gmt_created ,reserved_fields1 ,reserved_fields2 ,reserved_fields3 from credit_account_trade_history    where 1=1
+        	AND credit_account_id=#{accountNo,jdbcType=VARCHAR}
+        <if test = "outTradeNo != null and ''!= outTradeNo">
+       	    AND sequence_no=#{outTradeNo,jdbcType=VARCHAR}
+        </if>
+        <if test = "tradeCode != null and ''!= tradeCode">
+        	AND trade_code=#{tradeCode,jdbcType=VARCHAR}
+        </if>
+        <if test = "tradeNo != null and ''!= tradeNo">
+        	AND trade_no=#{tradeNo,jdbcType=VARCHAR}
+        </if>
+        <if test = "tradeReqCode != null and ''!= tradeReqCode">
+        	AND trade_req_code=#{tradeReqCode,jdbcType=VARCHAR}
+        </if>
+        <if test = "tradeReqNo != null and ''!= tradeReqNo">
+        	AND trade_step_no=#{tradeReqNo,jdbcType=VARCHAR}
+        </if>
+        <if test = "gmtCreateBegin != null and gmtCreateEnd != null">
+        	AND gmt_created BETWEEN #{gmtCreateBegin,jdbcType=TIMESTAMP}
+        	AND #{gmtCreateEnd,jdbcType=TIMESTAMP}
+        </if>
+        <if test = "subAccountType == 'FRZ'">
+        	AND (frozen_bal_incr_amt >0 OR frozen_bal_decr_amt >0)
+        </if>
+        <if test = "subAccountType == 'AVL'">
+        	AND not ((frozen_bal_incr_amt is not null and frozen_bal_incr_amt >0 )OR (frozen_bal_decr_amt >0 and frozen_bal_decr_amt is not null))
+        </if>
+         <if test = "reservedFields1 != null and ''!=reservedFields1">
+        	AND reserved_fields1=#{reservedFields1,jdbcType=VARCHAR}
+        </if>
+         <if test = "reservedFields2 != null and ''!=reservedFields2">
+        	AND reserved_fields2=#{reservedFields2,jdbcType=VARCHAR} 
+        </if>
+         <if test = "reservedFields3 != null and ''!=reservedFields3">
+        	AND reserved_fields3=#{reservedFields3,jdbcType=VARCHAR}
+        </if>
+        order by id 
+        <if test = "sortType == '01'">
+        	desc
+        </if>
+   </select>  
+   
+   <!-- 0_021 V1.0单账户账务历史查询接口-数据标准版 -->
+   <select id = "countSingleAccountHisQueryStand"  resultType="java.lang.Integer"
+                parameterType="com.liantuo.deposit.advanceaccount.bus.vo.SingleAccountHisQueryVo">
+        select count(id) from credit_account_trade_history    where 1=1
+        	AND credit_account_id=#{accountNo,jdbcType=VARCHAR}
+        <if test = "outTradeNo != null and ''!= outTradeNo">
+       	    AND sequence_no=#{outTradeNo,jdbcType=VARCHAR}
+        </if>
+        <if test = "tradeCode != null and ''!= tradeCode">
+        	AND trade_code=#{tradeCode,jdbcType=VARCHAR}
+        </if>
+        <if test = "tradeNo != null and ''!= tradeNo">
+        	AND trade_no=#{tradeNo,jdbcType=VARCHAR}
+        </if>
+        <if test = "tradeReqCode != null and ''!= tradeReqCode">
+        	AND trade_req_code=#{tradeReqCode,jdbcType=VARCHAR}
+        </if>
+        <if test = "tradeReqNo != null and ''!= tradeReqNo">
+        	AND trade_step_no=#{tradeReqNo,jdbcType=VARCHAR}
+        </if>
+        <if test = "gmtCreateBegin != null and gmtCreateEnd != null">
+        	AND gmt_created BETWEEN #{gmtCreateBegin,jdbcType=TIMESTAMP}
+        	AND #{gmtCreateEnd,jdbcType=TIMESTAMP}
+        </if>
+        <if test = "subAccountType == 'FRZ'">
+        	AND (frozen_bal_incr_amt >0 OR frozen_bal_decr_amt >0)
+        </if>
+        <if test = "subAccountType == 'AVL'">
+        	AND not ((frozen_bal_incr_amt is not null and frozen_bal_incr_amt >0 )OR (frozen_bal_decr_amt >0 and frozen_bal_decr_amt is not null))
+        </if>
+         <if test = "reservedFields1 != null and ''!=reservedFields1">
+        	AND reserved_fields1=#{reservedFields1,jdbcType=VARCHAR}
+        </if>
+         <if test = "reservedFields2 != null and ''!=reservedFields2">
+        	AND reserved_fields2=#{reservedFields2,jdbcType=VARCHAR} 
+        </if>
+         <if test = "reservedFields3 != null and ''!=reservedFields3">
+        	AND reserved_fields3=#{reservedFields3,jdbcType=VARCHAR}
+        </if>
+   </select>  
+   
+   <select id = "selectCountSingleAccountHis" resultType="java.lang.Integer"
+                parameterType="com.liantuo.deposit.advanceaccount.bus.vo.SingleAccountHisPageQueryVo">
+        select count(id) from credit_account_trade_history    where 1=1
+        	AND credit_account_id=#{creditAccountId,jdbcType=INTEGER}
+        <if test = "sequenceNo != null and ''!= sequenceNo">
+       	    AND sequence_no=#{sequenceNo,jdbcType=VARCHAR}
+        </if>
+        <if test = "tradeCode != null and ''!= tradeCode">
+        	AND trade_code=#{tradeCode,jdbcType=VARCHAR}
+        </if>
+        <if test = "tradeNo != null and ''!= tradeNo">
+        	AND trade_no=#{tradeNo,jdbcType=VARCHAR}
+        </if>
+        <if test = "tradeReqCode != null and ''!= tradeReqCode">
+        	AND trade_req_code=#{tradeReqCode,jdbcType=VARCHAR}
+        </if>
+        <if test = "tradeStepNo != null and ''!= tradeStepNo">
+        	AND trade_step_no=#{tradeStepNo,jdbcType=VARCHAR}
+        </if>
+        <if test = "beginTime != null and endTime != null">
+        	AND gmt_created BETWEEN #{beginTime,jdbcType=TIMESTAMP}
+        	AND #{endTime,jdbcType=TIMESTAMP}
+        </if> 
+        <if test = "type == 'FRZ'">
+        	AND (frozen_bal_incr_amt >0 OR frozen_bal_decr_amt >0)
+        </if>
+        <if test = "type == 'AVL'">
+        	AND not ((frozen_bal_incr_amt is not null and frozen_bal_incr_amt >0 )OR (frozen_bal_decr_amt >0 and frozen_bal_decr_amt is not null))
+        </if>
+         <if test = "reservedFields1 != null and ''!=reservedFields1">
+        	AND reserved_fields1=#{reservedFields1,jdbcType=VARCHAR}
+        </if>
+         <if test = "reservedFields2 != null and ''!=reservedFields2">
+        	AND reserved_fields2=#{reservedFields2,jdbcType=VARCHAR} 
+        </if>
+         <if test = "reservedFields3 != null and ''!=reservedFields3">
+        	AND reserved_fields3=#{reservedFields3,jdbcType=VARCHAR}
+        </if>
+         <if test = "reservedFields1Fuzzy != null and ''!=reservedFields1Fuzzy">
+        	AND reserved_fields1 like CONCAT('%',#{reservedFields1Fuzzy,jdbcType=VARCHAR},'%') 
+        </if>
+         <if test = "reservedFields2Fuzzy != null and ''!=reservedFields2Fuzzy">
+        	AND reserved_fields2 like CONCAT('%',#{reservedFields2Fuzzy,jdbcType=VARCHAR},'%')  
+        </if>
+         <if test = "reservedFields3Fuzzy != null and ''!=reservedFields3Fuzzy">
+        	AND reserved_fields3 like CONCAT('%',#{reservedFields3Fuzzy,jdbcType=VARCHAR},'%') 
+        </if>
+        
+        
+   </select>       
+   
+   <!-- 单账户账务历史查询接口(内部接口) -->
+   <select id = "selectSingleInnerCAHisPageQuery" resultMap="SingleAccountAccountingRecordMap"
+                parameterType="com.liantuo.deposit.advanceaccount.bus.vo.SingleAccountHisPageQueryInnerVo">
+        select * from credit_account_trade_history    where 1=1
+        	AND credit_account_id=#{creditAccountId,jdbcType=INTEGER}
+        
+        <if test = "sequenceNo != null and ''!= sequenceNo">
+       	    AND sequence_no=#{sequenceNo,jdbcType=VARCHAR}
+        </if>
+        
+        <if test = "tradeCode != null and ''!= tradeCode">
+        	AND trade_code=#{tradeCode,jdbcType=VARCHAR}
+        </if>
+        
+        <if test = "tradeNo != null and ''!= tradeNo">
+        	AND trade_no=#{tradeNo,jdbcType=VARCHAR}
+        </if>
+        
+        <if test = "tradeReqCode != null and ''!= tradeReqCode">
+        	AND trade_req_code=#{tradeReqCode,jdbcType=VARCHAR}
+        </if>
+        
+        <if test = "tradeStepNo != null and ''!= tradeStepNo">
+        	AND trade_step_no=#{tradeStepNo,jdbcType=VARCHAR}
+        </if>
+        <if test = "beginTime != null and endTime != null">
+        	AND gmt_created BETWEEN #{beginTime,jdbcType=TIMESTAMP}
+        	AND #{endTime,jdbcType=TIMESTAMP}
+        </if>
+         
+        <if test = "type == 'FRZ'">
+        	AND (frozen_bal_incr_amt >0 OR frozen_bal_decr_amt >0)
+        </if>
+        
+        <if test = "type == 'AVL'">
+        	AND not ((frozen_bal_incr_amt is not null and frozen_bal_incr_amt >0 )OR (frozen_bal_decr_amt >0 and frozen_bal_decr_amt is not null))
+        </if>
+        
+        <if test = "frozenTradeCode != null and ''!= frozenTradeCode">
+        	AND frozen_trade_code=#{frozenTradeCode,jdbcType=VARCHAR}
+        </if>
+        
+        <if test = "frozenTradeNo != null and ''!= frozenTradeNo">
+        	AND frozen_trade_no=#{frozenTradeNo,jdbcType=VARCHAR}
+        </if>
+        order by id
+        <if test = "sortType == '01'">
+        	desc
+        </if>
+          
+   </select>   
+   
+   <select id = "selectCountSingleInnerCAHis" resultType="java.lang.Integer"
+                parameterType="com.liantuo.deposit.advanceaccount.bus.vo.SingleAccountHisPageQueryInnerVo">
+        select count(id) from credit_account_trade_history    where 1=1
+        
+        	AND credit_account_id=#{creditAccountId,jdbcType=INTEGER}
+        
+        <if test = "sequenceNo != null and ''!= sequenceNo">
+       	    AND sequence_no=#{sequenceNo,jdbcType=VARCHAR}
+        </if>
+        
+        <if test = "tradeCode != null and ''!= tradeCode">
+        	AND trade_code=#{tradeCode,jdbcType=VARCHAR}
+        </if>
+        
+        <if test = "tradeNo != null and ''!= tradeNo">
+        	AND trade_no=#{tradeNo,jdbcType=VARCHAR}
+        </if>
+        
+        <if test = "tradeReqCode != null and ''!= tradeReqCode">
+        	AND trade_req_code=#{tradeReqCode,jdbcType=VARCHAR}
+        </if>
+        
+        <if test = "tradeStepNo != null and ''!= tradeStepNo">
+        	AND trade_step_no=#{tradeStepNo,jdbcType=VARCHAR}
+        </if>
+        <if test = "beginTime != null and endTime != null">
+        	AND gmt_created BETWEEN #{beginTime,jdbcType=TIMESTAMP}
+        	AND #{endTime,jdbcType=TIMESTAMP}
+        </if>
+        
+        <if test = "type == 'FRZ'">
+        	AND (frozen_bal_incr_amt >0 OR frozen_bal_decr_amt >0)
+        </if>
+        
+        <if test = "type == 'AVL'">
+        	AND not ((frozen_bal_incr_amt is not null and frozen_bal_incr_amt >0 )OR (frozen_bal_decr_amt >0 and frozen_bal_decr_amt is not null))
+        </if>
+        
+        <if test = "frozenTradeCode != null and ''!= frozenTradeCode">
+        	AND frozen_trade_code=#{frozenTradeCode,jdbcType=VARCHAR}
+        </if>
+        
+        <if test = "frozenTradeNo != null and ''!= frozenTradeNo">
+        	AND frozen_trade_no=#{frozenTradeNo,jdbcType=VARCHAR}
+        </if>
+        
+   </select>      
+</mapper>

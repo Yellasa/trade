@@ -1,0 +1,57 @@
+package com.liantuo.trade.unittest.jy0006;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+
+import com.liantuo.spring.WebContextTestExecutionListener;
+import com.liantuo.trade.bus.service.SinglePaymentService;
+import com.liantuo.trade.common.util.json.ObjectJsonUtil;
+import com.liantuo.trade.orm.pojo.TradeProfitLossLedger;
+import com.liantuo.trade.orm.pojo.TradeSinglePayment;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {
+      "classpath:config/spring/applicationContext-*.xml"
+})
+@TestExecutionListeners({
+      WebContextTestExecutionListener.class,
+      DependencyInjectionTestExecutionListener.class,
+      DirtiesContextTestExecutionListener.class})
+public class TradeClient616 {
+	
+	@Resource(name="singlePaymentServiceImpl")
+    private SinglePaymentService singlePaymentService;
+	
+	@Test
+	public void test0006001003(){
+//		Assert.isNull(singlePaymentService);
+		TradeSinglePayment item = singlePaymentService.queryByTradeNo("00060011606291516506120000008400");
+		String json = item.getExtendProfitLoss();
+		try {
+			System.out.println(json);
+			List<TradeProfitLossLedger> otherProfitLossLedgerList = ObjectJsonUtil.json2ArrayList(json, TradeProfitLossLedger.class);
+			for (TradeProfitLossLedger subitem : otherProfitLossLedgerList) {
+				System.out.println(subitem.getLedgerNo());
+			}
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+}

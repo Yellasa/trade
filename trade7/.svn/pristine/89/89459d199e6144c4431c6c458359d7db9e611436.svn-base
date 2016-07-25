@@ -1,0 +1,14 @@
+log4j.rootLogger=info,stdout
+
+### direct log messages to stdout ###
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.Target=System.out
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=%t %d{ABSOLUTE} %5p %c{1}:%L - %m%n
+#
+#log4j.logger.com.ibatis=info
+#log4j.logger.com.ibatis.common.jdbc.SimpleDataSource=info
+#log4j.logger.com.ibatis.common.jdbc.ScriptRunner=info
+#log4j.logger.com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate=info
+
+log4j.logger.com.liantuo.trade.orm.mapper=DEBUG

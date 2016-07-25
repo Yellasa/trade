@@ -1,0 +1,138 @@
+package com.liantuo.deposit.advanceaccount.web.inner.controller;
+
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.ebill.framework.res.JsonUtil;
+import com.ebill.framework.validator.ValidatorUtil;
+import com.liantuo.deposit.advanceaccount.bus.service.CreditAccountTradeHistoryService;
+import com.liantuo.deposit.advanceaccount.web.inner.vo.req.SingleAccountHisPageQueryReqVo;
+import com.liantuo.deposit.advanceaccount.web.inner.vo.rsp.SingleAccountHisPageQueryRspVo;
+import com.liantuo.deposit.common.constants.ErrorCode001Constants;
+import com.liantuo.deposit.common.constants.RspConstants;
+import com.liantuo.deposit.common.constants.errorcode.ErrorCode003Constants;
+import com.liantuo.deposit.common.plugin.mybatis.vo.Page;
+import com.liantuo.trade.exception.BusinessUncheckedException;
+
+
+/**
+ * @类名: AccountServiceController
+ * @类说明: 单账户账务历史查询接口(服务端  内部接口)
+ * @版本号 V1.0
+ * @版权 Copyright © 2013-2016 合肥联拓金融信息服务有限公司
+ * @创建人: bjl
+ * @创建时间: 2016年2月25日 下午2:04:13
+ *
+ * 修改日期    修改者     版本      修改原因说明<br>
+ * -----------------------------------------------------------------------------------<br>
+ *                       <br>
+ * -----------------------------------------------------------------------------------<br>
+ */
+@Controller
+@RequestMapping("/accountInnerService")
+public class AccountInnerServiceController{
+	
+	private static final Logger Logger = LoggerFactory.getLogger(AccountInnerServiceController.class);
+	
+	@Resource
+	private CreditAccountTradeHistoryService creditAccountTradeHistoryService;
+	
+	
+	/**
+	 * @方法名: singleAccountHisPageQuery
+	 * @方法说明: 单账户账务历史查询接口(内部接口)
+	 * @param request
+	 * @param response
+	 * @param req
+	 * @返回类型 void
+	 * @创建人: bjl
+	 * @创建时间: 2016年2月25日 下午2:04:49
+	 */
+	@RequestMapping( value="/singleAccountHisPageQuery.in" , method=RequestMethod.POST)
+	public void singleAccountHisPageQuery(HttpServletRequest request,HttpServletResponse response,SingleAccountHisPageQueryReqVo req){
+		SingleAccountHisPageQueryRspVo rspVo = null;
+		String success = RspConstants.SUCCESS_F;
+		String retCode = "";
+		String retInfo = "";
+		
+		try {
+			Logger.info("单账户账务历史查询接口请求参数是"+JsonUtil.object2String(req));
+			String parasErrorInfo = ValidatorUtil.validateResult(req,SingleAccountHisPageQueryReqVo.class);
+			if(parasErrorInfo!=null && !parasErrorInfo.trim().equals("")){
+				Logger.error("参数错误信息" + parasErrorInfo);
+				throw new BusinessUncheckedException(ErrorCode003Constants.INNER_PARAS_CHECK_NOT_PASS,"格式校验未通过:"+ parasErrorInfo);
+			}
+			
+			/**分页属性设置*/
+			pagePropertySetting(req);
+			
+			/**账户状态验证*/
+//			accountStatusValidate(req);
+			
+			/**账务历史总条数和账务历史明细查询*/
+			rspVo= creditAccountTradeHistoryService.innerSingleCAHisPageQuery(req);
+			
+			success = RspConstants.SUCCESS_S;
+			retCode = RspConstants.SUCCESS_S;
+			retInfo = "";
+		}catch(BusinessUncheckedException e){
+			Logger.error(e.getMessage(),e);
+			success = RspConstants.SUCCESS_F;
+			retCode = e.getErrorCode();
+			retInfo = e.getMessage();
+		
+		} catch (Exception e) {
+			Logger.error(e.getMessage(), e);
+			success = RspConstants.SUCCESS_F;
+			retCode = ErrorCode001Constants.SYSTEM_EXCEPTION;
+			retInfo = e.getMessage();
+		}
+		
+		/**组织返回*/
+		try {
+			if(rspVo == null){
+				rspVo = new SingleAccountHisPageQueryRspVo();
+				rspVo.setTotalResult(ErrorCode001Constants.ERROR_NUMBER_OF_RECORD);
+			}
+			rspVo.setResult(success, retCode, retInfo);
+			response.getWriter().print(JsonUtil.object2String(rspVo));
+				
+		} catch (Exception e) {
+			Logger.error(e.getMessage(), e);
+		}
+		
+	}
+	
+//	public boolean accountStatusValidate(SingleAccountHisPageQueryReqVo vo) throws BusinessUncheckedException{
+//		CreditAccount creditAccount = creditAccountService.selectByAccountNo(vo.getAccountNo());
+//		if(creditAccount == null){
+//			Logger.info(vo.getAccountNo()+"账户不存在");
+//			throw new BusinessUncheckedException(ErrorCodeConstants.ACCOUNT_NOT_EXIST, vo.getAccountNo()+"账户不存在");
+//		}
+//		return true;
+//	}
+	
+	private void pagePropertySetting(SingleAccountHisPageQueryReqVo req) {
+		Page page = new Page();
+		req.setPage(page);
+		if(org.apache.commons.lang3.StringUtils.isNotEmpty(req.getCurrentPage())){
+			req.getPage().setCurrentPage(Integer.valueOf(req.getCurrentPage())+1);
+		}else {
+			req.getPage().setCurrentPage(0);
+		}
+		
+		if(org.apache.commons.lang3.StringUtils.isNotEmpty(req.getShowCount()) ){
+			req.getPage().setShowCount(Integer.valueOf(req.getShowCount()));
+		}else {
+			req.getPage().setShowCount(50);
+		}
+	}
+}

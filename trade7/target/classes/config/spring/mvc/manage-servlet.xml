@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+	<!--
+		View resolvers can also be configured with ResourceBundles or XML
+		files. If you need different view resolving based on Locale, you have
+		to use the resource bundle resolver.
+	-->
+	<!--
+		========================= DEFINITIONS OF PUBLIC CONTROLLERS =========================
+	-->
+	
+
+   <!-- @ResponseBody乱码  设置成UTF-8 JSON -->
+ 	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+	  <property name="messageConverters"> 
+		  <list> 
+			   <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter" /> 
+			   <bean class="org.springframework.http.converter.StringHttpMessageConverter"> 
+				   <property name="supportedMediaTypes"> 
+				      <list> 
+				       <value>text/plain;charset=UTF-8</value> 
+				      </list> 
+				   </property> 
+				</bean> 
+			    <bean class="org.springframework.http.converter.ResourceHttpMessageConverter" /> 
+			    <bean class="org.springframework.http.converter.xml.SourceHttpMessageConverter" /> 
+			    <bean class="org.springframework.http.converter.xml.XmlAwareFormHttpMessageConverter" /> 
+			    <bean class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter" /> 
+		  </list> 
+	  </property> 
+    </bean>
+    
+   	<!-- @ResultMapping标签的解析  声明是没有 defaultAnnotationHandlerMapping这个属性的 -->
+	<mvc:annotation-driven />
+	
+	<!-- 资源静态文件目录映射 -->
+	<!-- 当在web.xml 中   DispatcherServlet使用     <url-pattern>/</url-pattern> 映射时，能映射静态资源 -->  
+	<mvc:default-servlet-handler/>
+	<mvc:resources location="/bus/**" mapping="/bus/**"/> 
+	<!--需要在 web.xml 配置 url-pattern / 启动下面这个handler  -->
+	<!--  <mvc:default-servlet-handler/> -->	
+	
+	<!-- Saves a locale change using a cookie -->
+	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver" />
+	
+	<!-- Application Message Bundle 
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="/WEB-INF/messages/messages" />
+		<property name="cacheSeconds" value="0" />
+	</bean>
+	-->
+	
+	<!-- 按照控制类名称解析  testController  默认的解析器   -->
+	<!-- <bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping">
+	   <property name="pathPrefix" value="/admin"/>
+	</bean> -->
+	
+	<!-- Resolves view names to protected .jsp resources within the /WEB-INF/views directory -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	    <!-- <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/> -->
+		<property name="prefix" value="/WEB-INF/templates/views/" />
+		<property name="suffix" value=".vm"/>
+	</bean>
+</beans>

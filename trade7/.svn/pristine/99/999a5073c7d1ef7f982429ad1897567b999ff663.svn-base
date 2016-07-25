@@ -1,0 +1,44 @@
+package com.liantuo.deposit.advanceaccount.orm.mapper;
+
+import java.util.List;
+
+import com.liantuo.deposit.advanceaccount.orm.pojo.Pool;
+import com.liantuo.deposit.advanceaccount.web.inner.vo.queryvo.PoolQueryInnerVo;
+import com.liantuo.deposit.advanceaccount.web.inner.vo.rsp.PoolInnerRspVo;
+import com.liantuo.deposit.advanceaccount.web.vo.queryvo.PoolQueryVo;
+import com.liantuo.deposit.advanceaccount.web.vo.rsp.PoolRspVo;
+
+public interface PoolMapper {
+    /**
+     * 根据主键删除记录
+     */
+    int deleteByPrimaryKey(Integer id);
+
+    /**
+     * 保存记录,不管记录里面的属性是否为空
+     */
+    int insert(Pool record);
+
+    /**
+     * 根据主键查询记录
+     */
+    Pool selectByPrimaryKey(Integer id);
+    /**
+     * 根据资金池查询记录
+     */
+    Pool selectByPoolNo(String poolNo);
+    /**
+     * 根据主键更新记录
+     */
+    int updateByPrimaryKey(Pool record);
+
+	List<PoolRspVo> findPoolsQuery(PoolQueryVo poolQueryVo);
+
+	List<PoolInnerRspVo> findPoolsQueryInner(PoolQueryInnerVo poolQueryVo);
+
+	PoolRspVo findByMerchantNoAndPoolName(PoolQueryVo poolQueryVo);
+
+	int findPoolsQueryAccount(PoolQueryVo poolQueryVo);
+
+	int findPoolsQueryInnerCount(PoolQueryInnerVo poolQueryVo);
+}

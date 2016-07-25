@@ -1,0 +1,176 @@
+package com.liantuo.deposit.advanceaccount.bus.service;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import com.ebill.framework.exception.BusinessException;
+import com.liantuo.deposit.advanceaccount.bus.vo.RealTimeAccountingVo;
+import com.liantuo.deposit.advanceaccount.orm.pojo.CreditAccount;
+import com.liantuo.deposit.advanceaccount.web.inner.vo.queryvo.CreditAccountQueryInnerVo;
+import com.liantuo.deposit.advanceaccount.web.inner.vo.returnvo.CreditAccountInnerVo;
+import com.liantuo.deposit.advanceaccount.web.vo.queryvo.CreditAccountQueryVo;
+import com.liantuo.deposit.advanceaccount.web.vo.req.OpenCreditAccountReqVo;
+import com.liantuo.deposit.advanceaccount.web.vo.returnvo.CreditAccountVo;
+import com.liantuo.trade.exception.AmountConvertException;
+import com.liantuo.trade.exception.BusinessUncheckedException;
+
+public interface CreditAccountService {
+
+    public CreditAccount selectByPrimaryKey(Integer id);
+
+    /**
+     *
+    * @Title: masterSelectByPrimaryKey
+    * @Description: 带事务查询主库
+    * @param @param id
+    * @param @return
+    * @return CreditAccount
+    * @throws
+    * @author shihb
+    * @date 2016-4-27 下午2:02:05
+     */
+    public CreditAccount masterSelectByPrimaryKey(Integer id);
+
+    /**
+     * @方法名: updateAvlBalDecr
+     * @方法说明: 可用余额减少
+     * @param creditAccount
+     * @param amount 可用金额减少金额
+     * @param balLastChangeTime
+     * @返回类型 boolean
+     * @创建人: bjl
+     * @创建时间: 2015年12月16日 上午10:56:59
+     */
+    public boolean updateAvlBalDecr(CreditAccount creditAccount,Long amount,Date balLastChangeTime) throws BusinessUncheckedException;
+
+    /**
+     * @方法名: updateAvlBalIncr
+     * @方法说明: 可用余额增加接口
+     * @param creditAccount
+     * @param amount
+     * @param balLastChangeTime
+     * @throws AmountConvertException
+     * @throws BusinessException
+     * @返回类型 boolean
+     * @创建人: bjl
+     * @创建时间: 2015年12月16日 下午1:07:18
+     */
+    public boolean updateAvlBalIncr(CreditAccount creditAccount,Long amount ,Date balLastChangeTime) throws BusinessUncheckedException;
+
+    /**
+     * @方法名: updateFrozenBalIncr
+     * @方法说明: 冻结金额增加接口
+     * @param creditAccount
+     * @param amount
+     * @param balLastChangeTime
+     * @throws AmountConvertException
+     * @throws BusinessException
+     * @返回类型 boolean
+     * @创建人: bjl
+     * @创建时间: 2015年12月16日 下午1:16:45
+     */
+    public boolean updateFrozenBalIncr(CreditAccount creditAccount,Long amount,Date balLastChangeTime) throws BusinessUncheckedException;
+
+    /**
+     * @方法名: updateFrozenBalDecr
+     * @方法说明: 冻结金额减少接口
+     * @param creditAccount
+     * @param amount
+     * @param balLastChangeTime
+     * @throws AmountConvertException
+     * @throws BusinessException
+     * @返回类型 boolean
+     * @创建人: bjl
+     * @创建时间: 2015年12月16日 下午1:43:03
+     */
+    public boolean updateFrozenBalDecr(CreditAccount creditAccount,Long amount,Date balLastChangeTime) throws BusinessUncheckedException;
+
+    /**
+     * @方法名: selectByAccountNo
+     * @方法说明: 根据accountNo查询CreditAccount
+     * @param accountNo
+     * @return
+     * @返回类型 CreditAccount
+     * @创建人: bjl
+     * @创建时间: 2015年12月15日 下午1:10:23
+     */
+    public CreditAccount selectByAccountNo (String accountNo);
+
+    /**
+     * @方法名: ascAccountNosAndLock
+     * @方法说明: 对接口传过来的CA账号进行升序操作，然后执行悲观锁
+     * @param List<RealTimeAccountingVo> list
+     * @return
+     * @返回类型 HashMap<String,CreditAccount>
+     * @创建人: bjl
+     * @创建时间: 2015年12月17日 上午9:29:09
+     */
+    public HashMap<String, CreditAccount> ascAccountNosAndLock(Integer ids[]);
+
+    /**
+     * @方法名: accountStatusValidate
+     * @方法说明: 账务实时充值接口账户状态验证
+     * @param vo
+     * @return
+     * @返回类型 boolean
+     * @创建人: bjl
+     * @创建时间: 2015年12月17日 下午2:20:48
+     */
+    public boolean accountStatusValidate(RealTimeAccountingVo vo,CreditAccount creditAccount)throws BusinessUncheckedException;
+    /**
+     * @方法名: findAccountsQuery
+     * @方法说明: 账户查询接口
+     * @param vo
+     * @return
+     * @返回类型 List<CreditAccountVo>
+     * @创建人: 刘景备
+     * @创建时间: 2016年03月23日 下午2:20:48
+     */
+    public List<CreditAccountVo> findAccountsQuery(CreditAccountQueryVo creditAccountQueryVo);
+    /**
+     * @方法名: findAccountsQuery
+     * @方法说明: 账户内部查询接口
+     * @param vo
+     * @return
+     * @返回类型 List<CreditAccountInnerVo>
+     * @创建人: 刘景备
+     * @创建时间: 2016年03月23日 下午2:20:48
+     */
+    public List<CreditAccountInnerVo> findAccountsInnerQuery(CreditAccountQueryInnerVo creditAccountQueryVo);
+    int findAccountsInnerQueryCount(CreditAccountQueryInnerVo creditAccountQueryVo);
+    int findAccountsQueryCount(CreditAccountQueryVo creditAccountQueryVo);
+
+    /**
+     *
+    * @Title: updateAccount
+    * @Description: 更新账户信息
+    * @param @param creditAccount
+    * @param @return
+    * @param @throws Exception
+    * @return boolean
+    * @throws
+    * @author shihb
+    * @date 2016-4-27 上午11:33:05
+     */
+    public boolean updateAccount(CreditAccount creditAccount) throws Exception;
+    /**
+     *
+     * @方法名: serviceVerification
+     * @方法说明: 开通预存款接口业务校验
+     * @创建人: liujingbei
+     * @创建时间: 2016年6月6日 上午10:58:46
+     */
+    public void serviceVerification(OpenCreditAccountReqVo vo) throws Exception;
+    public int insert(CreditAccount creditAccount);
+    /**
+     *
+     * @方法名: insertCreditAccount
+     * @方法说明: 创建预存款账户
+     * @throws BusinessException
+     * @返回类型 CreditAccount
+     * @创建人: liujingbei
+     * @创建时间: 2016年6月6日 下午1:53:47
+     */
+    public CreditAccount insertOpenCreditAccount(OpenCreditAccountReqVo vo) throws BusinessException;
+}

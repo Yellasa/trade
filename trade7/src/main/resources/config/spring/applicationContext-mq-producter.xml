@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	        http://www.springframework.org/schema/task  http://www.springframework.org/schema/task/spring-task-3.2.xsd
+	        http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.2.xsd
+			">
+    <description>rabbitmq 连接服务配置</description>
+
+    <bean id="mqPropertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="order" value="2"/>
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="locations">
+            <list>
+                <value>classpath:config/properties/rabbitmq-config.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <task:executor id="taskExecutor" pool-size="4-256" queue-capacity="128"/>
+
+    <rabbit:connection-factory id="connectionFactory"
+                               username="${mq.username}" password="${mq.password}"
+                               addresses="${mq.addresses}" virtual-host="${mq.vhost}" channel-cache-size="25"
+                               executor="taskExecutor" publisher-confirms="true" publisher-returns="true"/>
+
+    <rabbit:admin connection-factory="connectionFactory"/>
+
+    <!-- queue 队列声明 -->
+    <rabbit:queue id="trade.front" durable="true" auto-delete="false" name="trade.front"/>
+
+    <rabbit:queue id="payment.trade" durable="true" auto-delete="false" name="payment.trade"/>
+
+    <rabbit:topic-exchange name="com.liantuo.trade.topic" durable="true" auto-delete="false">
+        <rabbit:bindings>
+            <rabbit:binding queue="trade.front" pattern="com.liantuo.trade.front.*"/>
+            <rabbit:binding queue="payment.trade" pattern="com.liantuo.payment.trade.#"/>
+        </rabbit:bindings>
+    </rabbit:topic-exchange>
+
+    <bean id="jsonConverter" class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter"/>
+
+    <rabbit:template id="amqpTemplate" connection-factory="connectionFactory"
+                     exchange="com.liantuo.trade.topic" message-converter="jsonConverter"/>
+
+    <!-- <bean id="xmlConverter" class="org.springframework.amqp.support.converter.MarshallingMessageConverter"/> -->
+    <bean id="paymentNotifyListener" class="com.liantuo.trade.mq.rabbitmq.notice.PaymentNotifyListener"/>
+
+    <rabbit:listener-container connection-factory="connectionFactory" acknowledge="manual" prefetch="1">
+        <rabbit:listener queues="payment.trade" ref="paymentNotifyListener"/>
+    </rabbit:listener-container>
+
+</beans>

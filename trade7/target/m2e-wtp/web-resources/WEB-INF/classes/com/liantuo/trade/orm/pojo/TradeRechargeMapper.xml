@@ -1,0 +1,2393 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liantuo.trade.orm.mapper.TradeRechargeMapper" >
+  <resultMap id="BaseResultMap" type="com.liantuo.trade.orm.pojo.TradeRecharge" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+    <result column="partner_id" property="partnerId" jdbcType="VARCHAR" />
+    <result column="core_merchant_no" property="coreMerchantNo" jdbcType="VARCHAR" />
+    <result column="fund_pool_no" property="fundPoolNo" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_1" property="merchantExtendField1" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_2" property="merchantExtendField2" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_3" property="merchantExtendField3" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_4" property="merchantExtendField4" jdbcType="VARCHAR" />
+    <result column="merchant_extend_field_5" property="merchantExtendField5" jdbcType="VARCHAR" />
+    <result column="out_trade_no_ext" property="outTradeNoExt" jdbcType="VARCHAR" />
+    <result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR" />
+    <result column="gmt_created" property="gmtCreated" jdbcType="TIMESTAMP" />
+    <result column="gmt_created_fail" property="gmtCreatedFail" jdbcType="TIMESTAMP" />
+    <result column="gmt_latest_modified" property="gmtLatestModified" jdbcType="TIMESTAMP" />
+    <result column="latest_trade_req_type" property="latestTradeReqType" jdbcType="VARCHAR" />
+    <result column="latest_req_no" property="latestReqNo" jdbcType="VARCHAR" />
+    <result column="close_status" property="closeStatus" jdbcType="CHAR" />
+    <result column="status" property="status" jdbcType="CHAR" />
+    <result column="gmt_recharge_fail" property="gmtRechargeFail" jdbcType="TIMESTAMP" />
+    <result column="gmt_recharge_wait" property="gmtRechargeWait" jdbcType="TIMESTAMP" />
+    <result column="gmt_recharge_success" property="gmtRechargeSuccess" jdbcType="TIMESTAMP" />
+    <result column="gmt_recharge_refund" property="gmtRechargeRefund" jdbcType="TIMESTAMP" />
+    <result column="gmt_exception_end" property="gmtExceptionEnd" jdbcType="TIMESTAMP" />
+    <result column="pay_amount" property="payAmount" jdbcType="BIGINT" />
+    <result column="clear_channel" property="clearChannel" jdbcType="VARCHAR" />
+    <result column="transaction_id" property="transactionId" jdbcType="VARCHAR" />
+    <result column="batch_no" property="batchNo" jdbcType="VARCHAR" />
+    <result column="serial_number" property="serialNumber" jdbcType="VARCHAR" />
+    <result column="third_trade_no" property="thirdTradeNo" jdbcType="VARCHAR" />
+    <result column="gmt_success_clear_channel" property="gmtSuccessClearChannel" jdbcType="TIMESTAMP" />
+    <result column="recharge_ledger_no" property="rechargeLedgerNo" jdbcType="VARCHAR" />
+    <result column="recharge_ledger_extend_field_1" property="rechargeLedgerExtendField1" jdbcType="VARCHAR" />
+    <result column="recharge_ledger_extend_field_2" property="rechargeLedgerExtendField2" jdbcType="VARCHAR" />
+    <result column="recharge_ledger_extend_field_3" property="rechargeLedgerExtendField3" jdbcType="VARCHAR" />
+    <result column="recharge_account_no" property="rechargeAccountNo" jdbcType="VARCHAR" />
+    <result column="recharge_merchant_no" property="rechargeMerchantNo" jdbcType="VARCHAR" />
+    <result column="recharge_account_extend_field_1" property="rechargeAccountExtendField1" jdbcType="VARCHAR" />
+    <result column="recharge_account_extend_field_2" property="rechargeAccountExtendField2" jdbcType="VARCHAR" />
+    <result column="recharge_account_extend_field_3" property="rechargeAccountExtendField3" jdbcType="VARCHAR" />
+    <result column="recharge_amount" property="rechargeAmount" jdbcType="BIGINT" />
+    <result column="notify_url" property="notifyUrl" jdbcType="VARCHAR" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="request_group" property="requestGroup" jdbcType="CHAR" />
+    <result column="fee_amount" property="feeAmount" jdbcType="BIGINT" />
+    <result column="fee_way" property="feeWay" jdbcType="CHAR" />
+    <result column="fee_receive_account_no" property="feeReceiveAccountNo" jdbcType="VARCHAR" />
+    <result column="fee_pay_account_extend_field_1" property="feePayAccountExtendField1" jdbcType="VARCHAR" />
+    <result column="fee_pay_account_extend_field_2" property="feePayAccountExtendField2" jdbcType="VARCHAR" />
+    <result column="fee_pay_account_extend_field_3" property="feePayAccountExtendField3" jdbcType="VARCHAR" />
+    <result column="fee_receive_account_extend_field_1" property="feeReceiveAccountExtendField1" jdbcType="VARCHAR" />
+    <result column="fee_receive_account_extend_field_2" property="feeReceiveAccountExtendField2" jdbcType="VARCHAR" />
+    <result column="fee_receive_account_extend_field_3" property="feeReceiveAccountExtendField3" jdbcType="VARCHAR" />
+    <result column="fee_ledger_no" property="feeLedgerNo" jdbcType="VARCHAR" />
+    <result column="fee_ledger_type" property="feeLedgerType" jdbcType="CHAR" />
+    <result column="fee_ledger_extend_field_1" property="feeLedgerExtendField1" jdbcType="VARCHAR" />
+    <result column="fee_ledger_extend_field_2" property="feeLedgerExtendField2" jdbcType="VARCHAR" />
+    <result column="fee_ledger_extend_field_3" property="feeLedgerExtendField3" jdbcType="VARCHAR" />
+    <result column="fee_profit_loss_attr_1" property="feeProfitLossAttr1" jdbcType="VARCHAR" />
+    <result column="fee_profit_loss_attr_2" property="feeProfitLossAttr2" jdbcType="VARCHAR" />
+    <result column="fee_profit_loss_attr_3" property="feeProfitLossAttr3" jdbcType="VARCHAR" />
+    <result column="fee_profit_loss_attr_4" property="feeProfitLossAttr4" jdbcType="VARCHAR" />
+    <result column="fee_profit_loss_attr_5" property="feeProfitLossAttr5" jdbcType="VARCHAR" />
+    <result column="fee_profit_loss_attr_6" property="feeProfitLossAttr6" jdbcType="VARCHAR" />
+    <result column="fee_profit_loss_attr_7" property="feeProfitLossAttr7" jdbcType="VARCHAR" />
+    <result column="fee_profit_loss_attr_8" property="feeProfitLossAttr8" jdbcType="VARCHAR" />
+    <result column="fee_profit_loss_attr_9" property="feeProfitLossAttr9" jdbcType="VARCHAR" />
+    <result column="fee_profit_loss_attr_10" property="feeProfitLossAttr10" jdbcType="VARCHAR" />
+    <result column="supply_amount" property="supplyAmount" jdbcType="BIGINT" />
+    <result column="supply_way" property="supplyWay" jdbcType="CHAR" />
+    <result column="supply_pay_account_no" property="supplyPayAccountNo" jdbcType="VARCHAR" />
+    <result column="supply_pay_account_extend_field_1" property="supplyPayAccountExtendField1" jdbcType="VARCHAR" />
+    <result column="supply_pay_account_extend_field_2" property="supplyPayAccountExtendField2" jdbcType="VARCHAR" />
+    <result column="supply_pay_account_extend_field_3" property="supplyPayAccountExtendField3" jdbcType="VARCHAR" />
+    <result column="supply_receive_account_extend_field_1" property="supplyReceiveAccountExtendField1" jdbcType="VARCHAR" />
+    <result column="supply_receive_account_extend_field_2" property="supplyReceiveAccountExtendField2" jdbcType="VARCHAR" />
+    <result column="supply_receive_account_extend_field_3" property="supplyReceiveAccountExtendField3" jdbcType="VARCHAR" />
+    <result column="supply_recharge_type" property="supplyRechargeType" jdbcType="CHAR" />
+    <result column="supply_ledger_no" property="supplyLedgerNo" jdbcType="VARCHAR" />
+    <result column="supply_ledger_type" property="supplyLedgerType" jdbcType="CHAR" />
+    <result column="supply_ledger_extend_field_1" property="supplyLedgerExtendField1" jdbcType="VARCHAR" />
+    <result column="supply_ledger_extend_field_2" property="supplyLedgerExtendField2" jdbcType="VARCHAR" />
+    <result column="supply_ledger_extend_field_3" property="supplyLedgerExtendField3" jdbcType="VARCHAR" />
+    <result column="supply_profit_loss_attr_1" property="supplyProfitLossAttr1" jdbcType="VARCHAR" />
+    <result column="supply_profit_loss_attr_2" property="supplyProfitLossAttr2" jdbcType="VARCHAR" />
+    <result column="supply_profit_loss_attr_3" property="supplyProfitLossAttr3" jdbcType="VARCHAR" />
+    <result column="supply_profit_loss_attr_4" property="supplyProfitLossAttr4" jdbcType="VARCHAR" />
+    <result column="supply_profit_loss_attr_5" property="supplyProfitLossAttr5" jdbcType="VARCHAR" />
+    <result column="supply_profit_loss_attr_6" property="supplyProfitLossAttr6" jdbcType="VARCHAR" />
+    <result column="supply_profit_loss_attr_7" property="supplyProfitLossAttr7" jdbcType="VARCHAR" />
+    <result column="supply_profit_loss_attr_8" property="supplyProfitLossAttr8" jdbcType="VARCHAR" />
+    <result column="supply_profit_loss_attr_9" property="supplyProfitLossAttr9" jdbcType="VARCHAR" />
+    <result column="supply_profit_loss_attr_10" property="supplyProfitLossAttr10" jdbcType="VARCHAR" />
+    <result column="refund_amount" property="refundAmount" jdbcType="BIGINT" />
+    <result column="refund_clear_channel" property="refundClearChannel" jdbcType="VARCHAR" />
+    <result column="refund_transaction_id" property="refundTransactionId" jdbcType="VARCHAR" />
+    <result column="refund_batch_no" property="refundBatchNo" jdbcType="VARCHAR" />
+    <result column="refund_serial_number" property="refundSerialNumber" jdbcType="VARCHAR" />
+    <result column="refund_third_trade_no" property="refundThirdTradeNo" jdbcType="VARCHAR" />
+    <result column="refund_success_clear_channel" property="refundSuccessClearChannel" jdbcType="TIMESTAMP" />
+    <result column="refund_ledger_extend_field_1" property="refundLedgerExtendField1" jdbcType="VARCHAR" />
+    <result column="refund_ledger_extend_field_2" property="refundLedgerExtendField2" jdbcType="VARCHAR" />
+    <result column="refund_ledger_extend_field_3" property="refundLedgerExtendField3" jdbcType="VARCHAR" />
+    <result column="refund_ledger_no" property="refundLedgerNo" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.liantuo.trade.orm.pojo.TradeRecharge" extends="BaseResultMap" >
+    <result column="pay_url" property="payUrl" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, trade_no, partner_id, core_merchant_no, fund_pool_no, merchant_extend_field_1, 
+    merchant_extend_field_2, merchant_extend_field_3, merchant_extend_field_4, merchant_extend_field_5, 
+    out_trade_no_ext, out_trade_no, gmt_created, gmt_created_fail, gmt_latest_modified, 
+    latest_trade_req_type, latest_req_no, close_status, status, gmt_recharge_fail, gmt_recharge_wait, 
+    gmt_recharge_success, gmt_recharge_refund, gmt_exception_end, pay_amount, clear_channel, 
+    transaction_id, batch_no, serial_number, third_trade_no, gmt_success_clear_channel, 
+    recharge_ledger_no, recharge_ledger_extend_field_1, recharge_ledger_extend_field_2, 
+    recharge_ledger_extend_field_3, recharge_account_no, recharge_merchant_no, recharge_account_extend_field_1, 
+    recharge_account_extend_field_2, recharge_account_extend_field_3, recharge_amount, 
+    notify_url, version, request_group, fee_amount, fee_way, fee_receive_account_no, 
+    fee_pay_account_extend_field_1, fee_pay_account_extend_field_2, fee_pay_account_extend_field_3, 
+    fee_receive_account_extend_field_1, fee_receive_account_extend_field_2, fee_receive_account_extend_field_3, 
+    fee_ledger_no, fee_ledger_type, fee_ledger_extend_field_1, fee_ledger_extend_field_2, 
+    fee_ledger_extend_field_3, fee_profit_loss_attr_1, fee_profit_loss_attr_2, fee_profit_loss_attr_3, 
+    fee_profit_loss_attr_4, fee_profit_loss_attr_5, fee_profit_loss_attr_6, fee_profit_loss_attr_7, 
+    fee_profit_loss_attr_8, fee_profit_loss_attr_9, fee_profit_loss_attr_10, supply_amount, 
+    supply_way, supply_pay_account_no, supply_pay_account_extend_field_1, supply_pay_account_extend_field_2, 
+    supply_pay_account_extend_field_3, supply_receive_account_extend_field_1, supply_receive_account_extend_field_2, 
+    supply_receive_account_extend_field_3, supply_recharge_type, supply_ledger_no, supply_ledger_type, 
+    supply_ledger_extend_field_1, supply_ledger_extend_field_2, supply_ledger_extend_field_3, 
+    supply_profit_loss_attr_1, supply_profit_loss_attr_2, supply_profit_loss_attr_3, 
+    supply_profit_loss_attr_4, supply_profit_loss_attr_5, supply_profit_loss_attr_6, 
+    supply_profit_loss_attr_7, supply_profit_loss_attr_8, supply_profit_loss_attr_9, 
+    supply_profit_loss_attr_10, refund_amount, refund_clear_channel, refund_transaction_id, 
+    refund_batch_no, refund_serial_number, refund_third_trade_no, refund_success_clear_channel, 
+    refund_ledger_extend_field_1, refund_ledger_extend_field_2, refund_ledger_extend_field_3, 
+    refund_ledger_no
+  </sql>
+  <sql id="Blob_Column_List" >
+    pay_url
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.liantuo.trade.orm.pojo.TradeRechargeExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from trade_recharge
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.liantuo.trade.orm.pojo.TradeRechargeExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from trade_recharge
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from trade_recharge
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectCountByExample" parameterType="com.liantuo.trade.orm.pojo.TradeTransferAccountExample"  resultType="java.lang.Integer">
+    select  count(*)  from trade_recharge
+    <if test="_parameter != null" >
+    	<include refid="Example_Where_Clause" />
+  	</if>
+  </select>
+    <select id="pageQueryByExample" resultMap="BaseResultMap" parameterType="com.liantuo.trade.orm.pojo.TradeRechargeExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from trade_recharge
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+  <!--  <insert id="insert" parameterType="com.liantuo.trade.orm.pojo.TradeRecharge" >
+    insert into trade_recharge (id, trade_no, partner_id, 
+      core_merchant_no, fund_pool_no, merchant_extend_field_1, 
+      merchant_extend_field_2, merchant_extend_field_3, 
+      merchant_extend_field_4, merchant_extend_field_5, 
+      out_trade_no_ext, out_trade_no, gmt_created, 
+      gmt_created_fail, gmt_latest_modified, 
+      latest_trade_req_type, latest_req_no, close_status, 
+      status, gmt_recharge_fail, gmt_recharge_wait, 
+      gmt_recharge_success, gmt_recharge_refund, 
+      gmt_exception_end, pay_amount, clear_channel, 
+      transaction_id, batch_no, serial_number, 
+      third_trade_no, gmt_success_clear_channel, 
+      recharge_ledger_no, recharge_ledger_extend_field_1, 
+      recharge_ledger_extend_field_2, recharge_ledger_extend_field_3, 
+      recharge_account_no, recharge_merchant_no, 
+      recharge_account_extend_field_1, recharge_account_extend_field_2, 
+      recharge_account_extend_field_3, recharge_amount, 
+      notify_url, version, request_group, 
+      fee_amount, fee_way, fee_receive_account_no, 
+      fee_pay_account_extend_field_1, fee_pay_account_extend_field_2, 
+      fee_pay_account_extend_field_3, fee_receive_account_extend_field_1, 
+      fee_receive_account_extend_field_2, fee_receive_account_extend_field_3, 
+      fee_ledger_no, fee_ledger_type, fee_ledger_extend_field_1, 
+      fee_ledger_extend_field_2, fee_ledger_extend_field_3, 
+      fee_profit_loss_attr_1, fee_profit_loss_attr_2, 
+      fee_profit_loss_attr_3, fee_profit_loss_attr_4, 
+      fee_profit_loss_attr_5, fee_profit_loss_attr_6, 
+      fee_profit_loss_attr_7, fee_profit_loss_attr_8, 
+      fee_profit_loss_attr_9, fee_profit_loss_attr_10, 
+      supply_amount, supply_way, supply_pay_account_no, 
+      supply_pay_account_extend_field_1, supply_pay_account_extend_field_2, 
+      supply_pay_account_extend_field_3, supply_receive_account_extend_field_1, 
+      supply_receive_account_extend_field_2, supply_receive_account_extend_field_3, 
+      supply_recharge_type, supply_ledger_no, supply_ledger_type, 
+      supply_ledger_extend_field_1, supply_ledger_extend_field_2, 
+      supply_ledger_extend_field_3, supply_profit_loss_attr_1, 
+      supply_profit_loss_attr_2, supply_profit_loss_attr_3, 
+      supply_profit_loss_attr_4, supply_profit_loss_attr_5, 
+      supply_profit_loss_attr_6, supply_profit_loss_attr_7, 
+      supply_profit_loss_attr_8, supply_profit_loss_attr_9, 
+      supply_profit_loss_attr_10, refund_amount, refund_clear_channel, 
+      refund_transaction_id, refund_batch_no, refund_serial_number, 
+      refund_third_trade_no, refund_success_clear_channel, 
+      refund_ledger_extend_field_1, refund_ledger_extend_field_2, 
+      refund_ledger_extend_field_3, refund_ledger_no, 
+      pay_url)
+    values (#{id,jdbcType=BIGINT}, #{tradeNo,jdbcType=VARCHAR}, #{partnerId,jdbcType=VARCHAR}, 
+      #{coreMerchantNo,jdbcType=VARCHAR}, #{fundPoolNo,jdbcType=VARCHAR}, #{merchantExtendField1,jdbcType=VARCHAR}, 
+      #{merchantExtendField2,jdbcType=VARCHAR}, #{merchantExtendField3,jdbcType=VARCHAR}, 
+      #{merchantExtendField4,jdbcType=VARCHAR}, #{merchantExtendField5,jdbcType=VARCHAR}, 
+      #{outTradeNoExt,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, #{gmtCreated,jdbcType=TIMESTAMP}, 
+      #{gmtCreatedFail,jdbcType=TIMESTAMP}, #{gmtLatestModified,jdbcType=TIMESTAMP}, 
+      #{latestTradeReqType,jdbcType=VARCHAR}, #{latestReqNo,jdbcType=VARCHAR}, #{closeStatus,jdbcType=CHAR}, 
+      #{status,jdbcType=CHAR}, #{gmtRechargeFail,jdbcType=TIMESTAMP}, #{gmtRechargeWait,jdbcType=TIMESTAMP}, 
+      #{gmtRechargeSuccess,jdbcType=TIMESTAMP}, #{gmtRechargeRefund,jdbcType=TIMESTAMP}, 
+      #{gmtExceptionEnd,jdbcType=TIMESTAMP}, #{payAmount,jdbcType=BIGINT}, #{clearChannel,jdbcType=VARCHAR}, 
+      #{transactionId,jdbcType=VARCHAR}, #{batchNo,jdbcType=VARCHAR}, #{serialNumber,jdbcType=VARCHAR}, 
+      #{thirdTradeNo,jdbcType=VARCHAR}, #{gmtSuccessClearChannel,jdbcType=TIMESTAMP}, 
+      #{rechargeLedgerNo,jdbcType=VARCHAR}, #{rechargeLedgerExtendField1,jdbcType=VARCHAR}, 
+      #{rechargeLedgerExtendField2,jdbcType=VARCHAR}, #{rechargeLedgerExtendField3,jdbcType=VARCHAR}, 
+      #{rechargeAccountNo,jdbcType=VARCHAR}, #{rechargeMerchantNo,jdbcType=VARCHAR}, 
+      #{rechargeAccountExtendField1,jdbcType=VARCHAR}, #{rechargeAccountExtendField2,jdbcType=VARCHAR}, 
+      #{rechargeAccountExtendField3,jdbcType=VARCHAR}, #{rechargeAmount,jdbcType=BIGINT}, 
+      #{notifyUrl,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, #{requestGroup,jdbcType=CHAR}, 
+      #{feeAmount,jdbcType=BIGINT}, #{feeWay,jdbcType=CHAR}, #{feeReceiveAccountNo,jdbcType=VARCHAR}, 
+      #{feePayAccountExtendField1,jdbcType=VARCHAR}, #{feePayAccountExtendField2,jdbcType=VARCHAR}, 
+      #{feePayAccountExtendField3,jdbcType=VARCHAR}, #{feeReceiveAccountExtendField1,jdbcType=VARCHAR}, 
+      #{feeReceiveAccountExtendField2,jdbcType=VARCHAR}, #{feeReceiveAccountExtendField3,jdbcType=VARCHAR}, 
+      #{feeLedgerNo,jdbcType=VARCHAR}, #{feeLedgerType,jdbcType=CHAR}, #{feeLedgerExtendField1,jdbcType=VARCHAR}, 
+      #{feeLedgerExtendField2,jdbcType=VARCHAR}, #{feeLedgerExtendField3,jdbcType=VARCHAR}, 
+      #{feeProfitLossAttr1,jdbcType=VARCHAR}, #{feeProfitLossAttr2,jdbcType=VARCHAR}, 
+      #{feeProfitLossAttr3,jdbcType=VARCHAR}, #{feeProfitLossAttr4,jdbcType=VARCHAR}, 
+      #{feeProfitLossAttr5,jdbcType=VARCHAR}, #{feeProfitLossAttr6,jdbcType=VARCHAR}, 
+      #{feeProfitLossAttr7,jdbcType=VARCHAR}, #{feeProfitLossAttr8,jdbcType=VARCHAR}, 
+      #{feeProfitLossAttr9,jdbcType=VARCHAR}, #{feeProfitLossAttr10,jdbcType=VARCHAR}, 
+      #{supplyAmount,jdbcType=BIGINT}, #{supplyWay,jdbcType=CHAR}, #{supplyPayAccountNo,jdbcType=VARCHAR}, 
+      #{supplyPayAccountExtendField1,jdbcType=VARCHAR}, #{supplyPayAccountExtendField2,jdbcType=VARCHAR}, 
+      #{supplyPayAccountExtendField3,jdbcType=VARCHAR}, #{supplyReceiveAccountExtendField1,jdbcType=VARCHAR}, 
+      #{supplyReceiveAccountExtendField2,jdbcType=VARCHAR}, #{supplyReceiveAccountExtendField3,jdbcType=VARCHAR}, 
+      #{supplyRechargeType,jdbcType=CHAR}, #{supplyLedgerNo,jdbcType=VARCHAR}, #{supplyLedgerType,jdbcType=CHAR}, 
+      #{supplyLedgerExtendField1,jdbcType=VARCHAR}, #{supplyLedgerExtendField2,jdbcType=VARCHAR}, 
+      #{supplyLedgerExtendField3,jdbcType=VARCHAR}, #{supplyProfitLossAttr1,jdbcType=VARCHAR}, 
+      #{supplyProfitLossAttr2,jdbcType=VARCHAR}, #{supplyProfitLossAttr3,jdbcType=VARCHAR}, 
+      #{supplyProfitLossAttr4,jdbcType=VARCHAR}, #{supplyProfitLossAttr5,jdbcType=VARCHAR}, 
+      #{supplyProfitLossAttr6,jdbcType=VARCHAR}, #{supplyProfitLossAttr7,jdbcType=VARCHAR}, 
+      #{supplyProfitLossAttr8,jdbcType=VARCHAR}, #{supplyProfitLossAttr9,jdbcType=VARCHAR}, 
+      #{supplyProfitLossAttr10,jdbcType=VARCHAR}, #{refundAmount,jdbcType=BIGINT}, #{refundClearChannel,jdbcType=VARCHAR}, 
+      #{refundTransactionId,jdbcType=VARCHAR}, #{refundBatchNo,jdbcType=VARCHAR}, #{refundSerialNumber,jdbcType=VARCHAR}, 
+      #{refundThirdTradeNo,jdbcType=VARCHAR}, #{refundSuccessClearChannel,jdbcType=TIMESTAMP}, 
+      #{refundLedgerExtendField1,jdbcType=VARCHAR}, #{refundLedgerExtendField2,jdbcType=VARCHAR}, 
+      #{refundLedgerExtendField3,jdbcType=VARCHAR}, #{refundLedgerNo,jdbcType=VARCHAR}, 
+      #{payUrl,jdbcType=LONGVARCHAR})
+  </insert>-->
+  <insert id="insertSelective" parameterType="com.liantuo.trade.orm.pojo.TradeRecharge" >
+    <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+		SELECT LAST_INSERT_ID() AS id
+	</selectKey>
+    insert into trade_recharge
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="tradeNo != null" >
+        trade_no,
+      </if>
+      <if test="partnerId != null" >
+        partner_id,
+      </if>
+      <if test="coreMerchantNo != null" >
+        core_merchant_no,
+      </if>
+      <if test="fundPoolNo != null" >
+        fund_pool_no,
+      </if>
+      <if test="merchantExtendField1 != null" >
+        merchant_extend_field_1,
+      </if>
+      <if test="merchantExtendField2 != null" >
+        merchant_extend_field_2,
+      </if>
+      <if test="merchantExtendField3 != null" >
+        merchant_extend_field_3,
+      </if>
+      <if test="merchantExtendField4 != null" >
+        merchant_extend_field_4,
+      </if>
+      <if test="merchantExtendField5 != null" >
+        merchant_extend_field_5,
+      </if>
+      <if test="outTradeNoExt != null" >
+        out_trade_no_ext,
+      </if>
+      <if test="outTradeNo != null" >
+        out_trade_no,
+      </if>
+      <if test="gmtCreated != null" >
+        gmt_created,
+      </if>
+      <if test="gmtCreatedFail != null" >
+        gmt_created_fail,
+      </if>
+      <if test="gmtLatestModified != null" >
+        gmt_latest_modified,
+      </if>
+      <if test="latestTradeReqType != null" >
+        latest_trade_req_type,
+      </if>
+      <if test="latestReqNo != null" >
+        latest_req_no,
+      </if>
+      <if test="closeStatus != null" >
+        close_status,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="gmtRechargeFail != null" >
+        gmt_recharge_fail,
+      </if>
+      <if test="gmtRechargeWait != null" >
+        gmt_recharge_wait,
+      </if>
+      <if test="gmtRechargeSuccess != null" >
+        gmt_recharge_success,
+      </if>
+      <if test="gmtRechargeRefund != null" >
+        gmt_recharge_refund,
+      </if>
+      <if test="gmtExceptionEnd != null" >
+        gmt_exception_end,
+      </if>
+      <if test="payAmount != null" >
+        pay_amount,
+      </if>
+      <if test="clearChannel != null" >
+        clear_channel,
+      </if>
+      <if test="transactionId != null" >
+        transaction_id,
+      </if>
+      <if test="batchNo != null" >
+        batch_no,
+      </if>
+      <if test="serialNumber != null" >
+        serial_number,
+      </if>
+      <if test="thirdTradeNo != null" >
+        third_trade_no,
+      </if>
+      <if test="gmtSuccessClearChannel != null" >
+        gmt_success_clear_channel,
+      </if>
+      <if test="rechargeLedgerNo != null" >
+        recharge_ledger_no,
+      </if>
+      <if test="rechargeLedgerExtendField1 != null" >
+        recharge_ledger_extend_field_1,
+      </if>
+      <if test="rechargeLedgerExtendField2 != null" >
+        recharge_ledger_extend_field_2,
+      </if>
+      <if test="rechargeLedgerExtendField3 != null" >
+        recharge_ledger_extend_field_3,
+      </if>
+      <if test="rechargeAccountNo != null" >
+        recharge_account_no,
+      </if>
+      <if test="rechargeMerchantNo != null" >
+        recharge_merchant_no,
+      </if>
+      <if test="rechargeAccountExtendField1 != null" >
+        recharge_account_extend_field_1,
+      </if>
+      <if test="rechargeAccountExtendField2 != null" >
+        recharge_account_extend_field_2,
+      </if>
+      <if test="rechargeAccountExtendField3 != null" >
+        recharge_account_extend_field_3,
+      </if>
+      <if test="rechargeAmount != null" >
+        recharge_amount,
+      </if>
+      <if test="notifyUrl != null" >
+        notify_url,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="requestGroup != null" >
+        request_group,
+      </if>
+      <if test="feeAmount != null" >
+        fee_amount,
+      </if>
+      <if test="feeWay != null" >
+        fee_way,
+      </if>
+      <if test="feeReceiveAccountNo != null" >
+        fee_receive_account_no,
+      </if>
+      <if test="feePayAccountExtendField1 != null" >
+        fee_pay_account_extend_field_1,
+      </if>
+      <if test="feePayAccountExtendField2 != null" >
+        fee_pay_account_extend_field_2,
+      </if>
+      <if test="feePayAccountExtendField3 != null" >
+        fee_pay_account_extend_field_3,
+      </if>
+      <if test="feeReceiveAccountExtendField1 != null" >
+        fee_receive_account_extend_field_1,
+      </if>
+      <if test="feeReceiveAccountExtendField2 != null" >
+        fee_receive_account_extend_field_2,
+      </if>
+      <if test="feeReceiveAccountExtendField3 != null" >
+        fee_receive_account_extend_field_3,
+      </if>
+      <if test="feeLedgerNo != null" >
+        fee_ledger_no,
+      </if>
+      <if test="feeLedgerType != null" >
+        fee_ledger_type,
+      </if>
+      <if test="feeLedgerExtendField1 != null" >
+        fee_ledger_extend_field_1,
+      </if>
+      <if test="feeLedgerExtendField2 != null" >
+        fee_ledger_extend_field_2,
+      </if>
+      <if test="feeLedgerExtendField3 != null" >
+        fee_ledger_extend_field_3,
+      </if>
+      <if test="feeProfitLossAttr1 != null" >
+        fee_profit_loss_attr_1,
+      </if>
+      <if test="feeProfitLossAttr2 != null" >
+        fee_profit_loss_attr_2,
+      </if>
+      <if test="feeProfitLossAttr3 != null" >
+        fee_profit_loss_attr_3,
+      </if>
+      <if test="feeProfitLossAttr4 != null" >
+        fee_profit_loss_attr_4,
+      </if>
+      <if test="feeProfitLossAttr5 != null" >
+        fee_profit_loss_attr_5,
+      </if>
+      <if test="feeProfitLossAttr6 != null" >
+        fee_profit_loss_attr_6,
+      </if>
+      <if test="feeProfitLossAttr7 != null" >
+        fee_profit_loss_attr_7,
+      </if>
+      <if test="feeProfitLossAttr8 != null" >
+        fee_profit_loss_attr_8,
+      </if>
+      <if test="feeProfitLossAttr9 != null" >
+        fee_profit_loss_attr_9,
+      </if>
+      <if test="feeProfitLossAttr10 != null" >
+        fee_profit_loss_attr_10,
+      </if>
+      <if test="supplyAmount != null" >
+        supply_amount,
+      </if>
+      <if test="supplyWay != null" >
+        supply_way,
+      </if>
+      <if test="supplyPayAccountNo != null" >
+        supply_pay_account_no,
+      </if>
+      <if test="supplyPayAccountExtendField1 != null" >
+        supply_pay_account_extend_field_1,
+      </if>
+      <if test="supplyPayAccountExtendField2 != null" >
+        supply_pay_account_extend_field_2,
+      </if>
+      <if test="supplyPayAccountExtendField3 != null" >
+        supply_pay_account_extend_field_3,
+      </if>
+      <if test="supplyReceiveAccountExtendField1 != null" >
+        supply_receive_account_extend_field_1,
+      </if>
+      <if test="supplyReceiveAccountExtendField2 != null" >
+        supply_receive_account_extend_field_2,
+      </if>
+      <if test="supplyReceiveAccountExtendField3 != null" >
+        supply_receive_account_extend_field_3,
+      </if>
+      <if test="supplyRechargeType != null" >
+        supply_recharge_type,
+      </if>
+      <if test="supplyLedgerNo != null" >
+        supply_ledger_no,
+      </if>
+      <if test="supplyLedgerType != null" >
+        supply_ledger_type,
+      </if>
+      <if test="supplyLedgerExtendField1 != null" >
+        supply_ledger_extend_field_1,
+      </if>
+      <if test="supplyLedgerExtendField2 != null" >
+        supply_ledger_extend_field_2,
+      </if>
+      <if test="supplyLedgerExtendField3 != null" >
+        supply_ledger_extend_field_3,
+      </if>
+      <if test="supplyProfitLossAttr1 != null" >
+        supply_profit_loss_attr_1,
+      </if>
+      <if test="supplyProfitLossAttr2 != null" >
+        supply_profit_loss_attr_2,
+      </if>
+      <if test="supplyProfitLossAttr3 != null" >
+        supply_profit_loss_attr_3,
+      </if>
+      <if test="supplyProfitLossAttr4 != null" >
+        supply_profit_loss_attr_4,
+      </if>
+      <if test="supplyProfitLossAttr5 != null" >
+        supply_profit_loss_attr_5,
+      </if>
+      <if test="supplyProfitLossAttr6 != null" >
+        supply_profit_loss_attr_6,
+      </if>
+      <if test="supplyProfitLossAttr7 != null" >
+        supply_profit_loss_attr_7,
+      </if>
+      <if test="supplyProfitLossAttr8 != null" >
+        supply_profit_loss_attr_8,
+      </if>
+      <if test="supplyProfitLossAttr9 != null" >
+        supply_profit_loss_attr_9,
+      </if>
+      <if test="supplyProfitLossAttr10 != null" >
+        supply_profit_loss_attr_10,
+      </if>
+      <if test="refundAmount != null" >
+        refund_amount,
+      </if>
+      <if test="refundClearChannel != null" >
+        refund_clear_channel,
+      </if>
+      <if test="refundTransactionId != null" >
+        refund_transaction_id,
+      </if>
+      <if test="refundBatchNo != null" >
+        refund_batch_no,
+      </if>
+      <if test="refundSerialNumber != null" >
+        refund_serial_number,
+      </if>
+      <if test="refundThirdTradeNo != null" >
+        refund_third_trade_no,
+      </if>
+      <if test="refundSuccessClearChannel != null" >
+        refund_success_clear_channel,
+      </if>
+      <if test="refundLedgerExtendField1 != null" >
+        refund_ledger_extend_field_1,
+      </if>
+      <if test="refundLedgerExtendField2 != null" >
+        refund_ledger_extend_field_2,
+      </if>
+      <if test="refundLedgerExtendField3 != null" >
+        refund_ledger_extend_field_3,
+      </if>
+      <if test="refundLedgerNo != null" >
+        refund_ledger_no,
+      </if>
+      <if test="payUrl != null" >
+        pay_url,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="tradeNo != null" >
+        #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="partnerId != null" >
+        #{partnerId,jdbcType=VARCHAR},
+      </if>
+      <if test="coreMerchantNo != null" >
+        #{coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fundPoolNo != null" >
+        #{fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField1 != null" >
+        #{merchantExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField2 != null" >
+        #{merchantExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField3 != null" >
+        #{merchantExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField4 != null" >
+        #{merchantExtendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField5 != null" >
+        #{merchantExtendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNoExt != null" >
+        #{outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null" >
+        #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreated != null" >
+        #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtCreatedFail != null" >
+        #{gmtCreatedFail,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtLatestModified != null" >
+        #{gmtLatestModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="latestTradeReqType != null" >
+        #{latestTradeReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="latestReqNo != null" >
+        #{latestReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="closeStatus != null" >
+        #{closeStatus,jdbcType=CHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=CHAR},
+      </if>
+      <if test="gmtRechargeFail != null" >
+        #{gmtRechargeFail,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtRechargeWait != null" >
+        #{gmtRechargeWait,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtRechargeSuccess != null" >
+        #{gmtRechargeSuccess,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtRechargeRefund != null" >
+        #{gmtRechargeRefund,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtExceptionEnd != null" >
+        #{gmtExceptionEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payAmount != null" >
+        #{payAmount,jdbcType=BIGINT},
+      </if>
+      <if test="clearChannel != null" >
+        #{clearChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="transactionId != null" >
+        #{transactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="batchNo != null" >
+        #{batchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="serialNumber != null" >
+        #{serialNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="thirdTradeNo != null" >
+        #{thirdTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtSuccessClearChannel != null" >
+        #{gmtSuccessClearChannel,jdbcType=TIMESTAMP},
+      </if>
+      <if test="rechargeLedgerNo != null" >
+        #{rechargeLedgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeLedgerExtendField1 != null" >
+        #{rechargeLedgerExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeLedgerExtendField2 != null" >
+        #{rechargeLedgerExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeLedgerExtendField3 != null" >
+        #{rechargeLedgerExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeAccountNo != null" >
+        #{rechargeAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeMerchantNo != null" >
+        #{rechargeMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeAccountExtendField1 != null" >
+        #{rechargeAccountExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeAccountExtendField2 != null" >
+        #{rechargeAccountExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeAccountExtendField3 != null" >
+        #{rechargeAccountExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeAmount != null" >
+        #{rechargeAmount,jdbcType=BIGINT},
+      </if>
+      <if test="notifyUrl != null" >
+        #{notifyUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+      <if test="requestGroup != null" >
+        #{requestGroup,jdbcType=CHAR},
+      </if>
+      <if test="feeAmount != null" >
+        #{feeAmount,jdbcType=BIGINT},
+      </if>
+      <if test="feeWay != null" >
+        #{feeWay,jdbcType=CHAR},
+      </if>
+      <if test="feeReceiveAccountNo != null" >
+        #{feeReceiveAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="feePayAccountExtendField1 != null" >
+        #{feePayAccountExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="feePayAccountExtendField2 != null" >
+        #{feePayAccountExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="feePayAccountExtendField3 != null" >
+        #{feePayAccountExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="feeReceiveAccountExtendField1 != null" >
+        #{feeReceiveAccountExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="feeReceiveAccountExtendField2 != null" >
+        #{feeReceiveAccountExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="feeReceiveAccountExtendField3 != null" >
+        #{feeReceiveAccountExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="feeLedgerNo != null" >
+        #{feeLedgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="feeLedgerType != null" >
+        #{feeLedgerType,jdbcType=CHAR},
+      </if>
+      <if test="feeLedgerExtendField1 != null" >
+        #{feeLedgerExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="feeLedgerExtendField2 != null" >
+        #{feeLedgerExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="feeLedgerExtendField3 != null" >
+        #{feeLedgerExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr1 != null" >
+        #{feeProfitLossAttr1,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr2 != null" >
+        #{feeProfitLossAttr2,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr3 != null" >
+        #{feeProfitLossAttr3,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr4 != null" >
+        #{feeProfitLossAttr4,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr5 != null" >
+        #{feeProfitLossAttr5,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr6 != null" >
+        #{feeProfitLossAttr6,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr7 != null" >
+        #{feeProfitLossAttr7,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr8 != null" >
+        #{feeProfitLossAttr8,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr9 != null" >
+        #{feeProfitLossAttr9,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr10 != null" >
+        #{feeProfitLossAttr10,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyAmount != null" >
+        #{supplyAmount,jdbcType=BIGINT},
+      </if>
+      <if test="supplyWay != null" >
+        #{supplyWay,jdbcType=CHAR},
+      </if>
+      <if test="supplyPayAccountNo != null" >
+        #{supplyPayAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyPayAccountExtendField1 != null" >
+        #{supplyPayAccountExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyPayAccountExtendField2 != null" >
+        #{supplyPayAccountExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyPayAccountExtendField3 != null" >
+        #{supplyPayAccountExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyReceiveAccountExtendField1 != null" >
+        #{supplyReceiveAccountExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyReceiveAccountExtendField2 != null" >
+        #{supplyReceiveAccountExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyReceiveAccountExtendField3 != null" >
+        #{supplyReceiveAccountExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyRechargeType != null" >
+        #{supplyRechargeType,jdbcType=CHAR},
+      </if>
+      <if test="supplyLedgerNo != null" >
+        #{supplyLedgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyLedgerType != null" >
+        #{supplyLedgerType,jdbcType=CHAR},
+      </if>
+      <if test="supplyLedgerExtendField1 != null" >
+        #{supplyLedgerExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyLedgerExtendField2 != null" >
+        #{supplyLedgerExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyLedgerExtendField3 != null" >
+        #{supplyLedgerExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr1 != null" >
+        #{supplyProfitLossAttr1,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr2 != null" >
+        #{supplyProfitLossAttr2,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr3 != null" >
+        #{supplyProfitLossAttr3,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr4 != null" >
+        #{supplyProfitLossAttr4,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr5 != null" >
+        #{supplyProfitLossAttr5,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr6 != null" >
+        #{supplyProfitLossAttr6,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr7 != null" >
+        #{supplyProfitLossAttr7,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr8 != null" >
+        #{supplyProfitLossAttr8,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr9 != null" >
+        #{supplyProfitLossAttr9,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr10 != null" >
+        #{supplyProfitLossAttr10,jdbcType=VARCHAR},
+      </if>
+      <if test="refundAmount != null" >
+        #{refundAmount,jdbcType=BIGINT},
+      </if>
+      <if test="refundClearChannel != null" >
+        #{refundClearChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="refundTransactionId != null" >
+        #{refundTransactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="refundBatchNo != null" >
+        #{refundBatchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="refundSerialNumber != null" >
+        #{refundSerialNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="refundThirdTradeNo != null" >
+        #{refundThirdTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="refundSuccessClearChannel != null" >
+        #{refundSuccessClearChannel,jdbcType=TIMESTAMP},
+      </if>
+      <if test="refundLedgerExtendField1 != null" >
+        #{refundLedgerExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="refundLedgerExtendField2 != null" >
+        #{refundLedgerExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="refundLedgerExtendField3 != null" >
+        #{refundLedgerExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="refundLedgerNo != null" >
+        #{refundLedgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="payUrl != null" >
+        #{payUrl,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <!--  <update id="updateByExampleSelective" parameterType="map" >
+    update trade_recharge
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.tradeNo != null" >
+        trade_no = #{record.tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.partnerId != null" >
+        partner_id = #{record.partnerId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.coreMerchantNo != null" >
+        core_merchant_no = #{record.coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fundPoolNo != null" >
+        fund_pool_no = #{record.fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField1 != null" >
+        merchant_extend_field_1 = #{record.merchantExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField2 != null" >
+        merchant_extend_field_2 = #{record.merchantExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField3 != null" >
+        merchant_extend_field_3 = #{record.merchantExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField4 != null" >
+        merchant_extend_field_4 = #{record.merchantExtendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantExtendField5 != null" >
+        merchant_extend_field_5 = #{record.merchantExtendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="record.outTradeNoExt != null" >
+        out_trade_no_ext = #{record.outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+      <if test="record.outTradeNo != null" >
+        out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gmtCreated != null" >
+        gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.gmtCreatedFail != null" >
+        gmt_created_fail = #{record.gmtCreatedFail,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.gmtLatestModified != null" >
+        gmt_latest_modified = #{record.gmtLatestModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.latestTradeReqType != null" >
+        latest_trade_req_type = #{record.latestTradeReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.latestReqNo != null" >
+        latest_req_no = #{record.latestReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.closeStatus != null" >
+        close_status = #{record.closeStatus,jdbcType=CHAR},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=CHAR},
+      </if>
+      <if test="record.gmtRechargeFail != null" >
+        gmt_recharge_fail = #{record.gmtRechargeFail,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.gmtRechargeWait != null" >
+        gmt_recharge_wait = #{record.gmtRechargeWait,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.gmtRechargeSuccess != null" >
+        gmt_recharge_success = #{record.gmtRechargeSuccess,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.gmtRechargeRefund != null" >
+        gmt_recharge_refund = #{record.gmtRechargeRefund,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.gmtExceptionEnd != null" >
+        gmt_exception_end = #{record.gmtExceptionEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.payAmount != null" >
+        pay_amount = #{record.payAmount,jdbcType=BIGINT},
+      </if>
+      <if test="record.clearChannel != null" >
+        clear_channel = #{record.clearChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.transactionId != null" >
+        transaction_id = #{record.transactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.batchNo != null" >
+        batch_no = #{record.batchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.serialNumber != null" >
+        serial_number = #{record.serialNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.thirdTradeNo != null" >
+        third_trade_no = #{record.thirdTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gmtSuccessClearChannel != null" >
+        gmt_success_clear_channel = #{record.gmtSuccessClearChannel,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.rechargeLedgerNo != null" >
+        recharge_ledger_no = #{record.rechargeLedgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rechargeLedgerExtendField1 != null" >
+        recharge_ledger_extend_field_1 = #{record.rechargeLedgerExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rechargeLedgerExtendField2 != null" >
+        recharge_ledger_extend_field_2 = #{record.rechargeLedgerExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rechargeLedgerExtendField3 != null" >
+        recharge_ledger_extend_field_3 = #{record.rechargeLedgerExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rechargeAccountNo != null" >
+        recharge_account_no = #{record.rechargeAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rechargeMerchantNo != null" >
+        recharge_merchant_no = #{record.rechargeMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rechargeAccountExtendField1 != null" >
+        recharge_account_extend_field_1 = #{record.rechargeAccountExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rechargeAccountExtendField2 != null" >
+        recharge_account_extend_field_2 = #{record.rechargeAccountExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rechargeAccountExtendField3 != null" >
+        recharge_account_extend_field_3 = #{record.rechargeAccountExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rechargeAmount != null" >
+        recharge_amount = #{record.rechargeAmount,jdbcType=BIGINT},
+      </if>
+      <if test="record.notifyUrl != null" >
+        notify_url = #{record.notifyUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.version != null" >
+        version = #{record.version,jdbcType=INTEGER},
+      </if>
+      <if test="record.requestGroup != null" >
+        request_group = #{record.requestGroup,jdbcType=CHAR},
+      </if>
+      <if test="record.feeAmount != null" >
+        fee_amount = #{record.feeAmount,jdbcType=BIGINT},
+      </if>
+      <if test="record.feeWay != null" >
+        fee_way = #{record.feeWay,jdbcType=CHAR},
+      </if>
+      <if test="record.feeReceiveAccountNo != null" >
+        fee_receive_account_no = #{record.feeReceiveAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feePayAccountExtendField1 != null" >
+        fee_pay_account_extend_field_1 = #{record.feePayAccountExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feePayAccountExtendField2 != null" >
+        fee_pay_account_extend_field_2 = #{record.feePayAccountExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feePayAccountExtendField3 != null" >
+        fee_pay_account_extend_field_3 = #{record.feePayAccountExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feeReceiveAccountExtendField1 != null" >
+        fee_receive_account_extend_field_1 = #{record.feeReceiveAccountExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feeReceiveAccountExtendField2 != null" >
+        fee_receive_account_extend_field_2 = #{record.feeReceiveAccountExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feeReceiveAccountExtendField3 != null" >
+        fee_receive_account_extend_field_3 = #{record.feeReceiveAccountExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feeLedgerNo != null" >
+        fee_ledger_no = #{record.feeLedgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feeLedgerType != null" >
+        fee_ledger_type = #{record.feeLedgerType,jdbcType=CHAR},
+      </if>
+      <if test="record.feeLedgerExtendField1 != null" >
+        fee_ledger_extend_field_1 = #{record.feeLedgerExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feeLedgerExtendField2 != null" >
+        fee_ledger_extend_field_2 = #{record.feeLedgerExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feeLedgerExtendField3 != null" >
+        fee_ledger_extend_field_3 = #{record.feeLedgerExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feeProfitLossAttr1 != null" >
+        fee_profit_loss_attr_1 = #{record.feeProfitLossAttr1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feeProfitLossAttr2 != null" >
+        fee_profit_loss_attr_2 = #{record.feeProfitLossAttr2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feeProfitLossAttr3 != null" >
+        fee_profit_loss_attr_3 = #{record.feeProfitLossAttr3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feeProfitLossAttr4 != null" >
+        fee_profit_loss_attr_4 = #{record.feeProfitLossAttr4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feeProfitLossAttr5 != null" >
+        fee_profit_loss_attr_5 = #{record.feeProfitLossAttr5,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feeProfitLossAttr6 != null" >
+        fee_profit_loss_attr_6 = #{record.feeProfitLossAttr6,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feeProfitLossAttr7 != null" >
+        fee_profit_loss_attr_7 = #{record.feeProfitLossAttr7,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feeProfitLossAttr8 != null" >
+        fee_profit_loss_attr_8 = #{record.feeProfitLossAttr8,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feeProfitLossAttr9 != null" >
+        fee_profit_loss_attr_9 = #{record.feeProfitLossAttr9,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feeProfitLossAttr10 != null" >
+        fee_profit_loss_attr_10 = #{record.feeProfitLossAttr10,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyAmount != null" >
+        supply_amount = #{record.supplyAmount,jdbcType=BIGINT},
+      </if>
+      <if test="record.supplyWay != null" >
+        supply_way = #{record.supplyWay,jdbcType=CHAR},
+      </if>
+      <if test="record.supplyPayAccountNo != null" >
+        supply_pay_account_no = #{record.supplyPayAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyPayAccountExtendField1 != null" >
+        supply_pay_account_extend_field_1 = #{record.supplyPayAccountExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyPayAccountExtendField2 != null" >
+        supply_pay_account_extend_field_2 = #{record.supplyPayAccountExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyPayAccountExtendField3 != null" >
+        supply_pay_account_extend_field_3 = #{record.supplyPayAccountExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyReceiveAccountExtendField1 != null" >
+        supply_receive_account_extend_field_1 = #{record.supplyReceiveAccountExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyReceiveAccountExtendField2 != null" >
+        supply_receive_account_extend_field_2 = #{record.supplyReceiveAccountExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyReceiveAccountExtendField3 != null" >
+        supply_receive_account_extend_field_3 = #{record.supplyReceiveAccountExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyRechargeType != null" >
+        supply_recharge_type = #{record.supplyRechargeType,jdbcType=CHAR},
+      </if>
+      <if test="record.supplyLedgerNo != null" >
+        supply_ledger_no = #{record.supplyLedgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyLedgerType != null" >
+        supply_ledger_type = #{record.supplyLedgerType,jdbcType=CHAR},
+      </if>
+      <if test="record.supplyLedgerExtendField1 != null" >
+        supply_ledger_extend_field_1 = #{record.supplyLedgerExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyLedgerExtendField2 != null" >
+        supply_ledger_extend_field_2 = #{record.supplyLedgerExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyLedgerExtendField3 != null" >
+        supply_ledger_extend_field_3 = #{record.supplyLedgerExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyProfitLossAttr1 != null" >
+        supply_profit_loss_attr_1 = #{record.supplyProfitLossAttr1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyProfitLossAttr2 != null" >
+        supply_profit_loss_attr_2 = #{record.supplyProfitLossAttr2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyProfitLossAttr3 != null" >
+        supply_profit_loss_attr_3 = #{record.supplyProfitLossAttr3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyProfitLossAttr4 != null" >
+        supply_profit_loss_attr_4 = #{record.supplyProfitLossAttr4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyProfitLossAttr5 != null" >
+        supply_profit_loss_attr_5 = #{record.supplyProfitLossAttr5,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyProfitLossAttr6 != null" >
+        supply_profit_loss_attr_6 = #{record.supplyProfitLossAttr6,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyProfitLossAttr7 != null" >
+        supply_profit_loss_attr_7 = #{record.supplyProfitLossAttr7,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyProfitLossAttr8 != null" >
+        supply_profit_loss_attr_8 = #{record.supplyProfitLossAttr8,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyProfitLossAttr9 != null" >
+        supply_profit_loss_attr_9 = #{record.supplyProfitLossAttr9,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyProfitLossAttr10 != null" >
+        supply_profit_loss_attr_10 = #{record.supplyProfitLossAttr10,jdbcType=VARCHAR},
+      </if>
+      <if test="record.refundAmount != null" >
+        refund_amount = #{record.refundAmount,jdbcType=BIGINT},
+      </if>
+      <if test="record.refundClearChannel != null" >
+        refund_clear_channel = #{record.refundClearChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.refundTransactionId != null" >
+        refund_transaction_id = #{record.refundTransactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.refundBatchNo != null" >
+        refund_batch_no = #{record.refundBatchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.refundSerialNumber != null" >
+        refund_serial_number = #{record.refundSerialNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.refundThirdTradeNo != null" >
+        refund_third_trade_no = #{record.refundThirdTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.refundSuccessClearChannel != null" >
+        refund_success_clear_channel = #{record.refundSuccessClearChannel,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.refundLedgerExtendField1 != null" >
+        refund_ledger_extend_field_1 = #{record.refundLedgerExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.refundLedgerExtendField2 != null" >
+        refund_ledger_extend_field_2 = #{record.refundLedgerExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.refundLedgerExtendField3 != null" >
+        refund_ledger_extend_field_3 = #{record.refundLedgerExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.refundLedgerNo != null" >
+        refund_ledger_no = #{record.refundLedgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.payUrl != null" >
+        pay_url = #{record.payUrl,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update trade_recharge
+    set id = #{record.id,jdbcType=BIGINT},
+      trade_no = #{record.tradeNo,jdbcType=VARCHAR},
+      partner_id = #{record.partnerId,jdbcType=VARCHAR},
+      core_merchant_no = #{record.coreMerchantNo,jdbcType=VARCHAR},
+      fund_pool_no = #{record.fundPoolNo,jdbcType=VARCHAR},
+      merchant_extend_field_1 = #{record.merchantExtendField1,jdbcType=VARCHAR},
+      merchant_extend_field_2 = #{record.merchantExtendField2,jdbcType=VARCHAR},
+      merchant_extend_field_3 = #{record.merchantExtendField3,jdbcType=VARCHAR},
+      merchant_extend_field_4 = #{record.merchantExtendField4,jdbcType=VARCHAR},
+      merchant_extend_field_5 = #{record.merchantExtendField5,jdbcType=VARCHAR},
+      out_trade_no_ext = #{record.outTradeNoExt,jdbcType=VARCHAR},
+      out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
+      gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP},
+      gmt_created_fail = #{record.gmtCreatedFail,jdbcType=TIMESTAMP},
+      gmt_latest_modified = #{record.gmtLatestModified,jdbcType=TIMESTAMP},
+      latest_trade_req_type = #{record.latestTradeReqType,jdbcType=VARCHAR},
+      latest_req_no = #{record.latestReqNo,jdbcType=VARCHAR},
+      close_status = #{record.closeStatus,jdbcType=CHAR},
+      status = #{record.status,jdbcType=CHAR},
+      gmt_recharge_fail = #{record.gmtRechargeFail,jdbcType=TIMESTAMP},
+      gmt_recharge_wait = #{record.gmtRechargeWait,jdbcType=TIMESTAMP},
+      gmt_recharge_success = #{record.gmtRechargeSuccess,jdbcType=TIMESTAMP},
+      gmt_recharge_refund = #{record.gmtRechargeRefund,jdbcType=TIMESTAMP},
+      gmt_exception_end = #{record.gmtExceptionEnd,jdbcType=TIMESTAMP},
+      pay_amount = #{record.payAmount,jdbcType=BIGINT},
+      clear_channel = #{record.clearChannel,jdbcType=VARCHAR},
+      transaction_id = #{record.transactionId,jdbcType=VARCHAR},
+      batch_no = #{record.batchNo,jdbcType=VARCHAR},
+      serial_number = #{record.serialNumber,jdbcType=VARCHAR},
+      third_trade_no = #{record.thirdTradeNo,jdbcType=VARCHAR},
+      gmt_success_clear_channel = #{record.gmtSuccessClearChannel,jdbcType=TIMESTAMP},
+      recharge_ledger_no = #{record.rechargeLedgerNo,jdbcType=VARCHAR},
+      recharge_ledger_extend_field_1 = #{record.rechargeLedgerExtendField1,jdbcType=VARCHAR},
+      recharge_ledger_extend_field_2 = #{record.rechargeLedgerExtendField2,jdbcType=VARCHAR},
+      recharge_ledger_extend_field_3 = #{record.rechargeLedgerExtendField3,jdbcType=VARCHAR},
+      recharge_account_no = #{record.rechargeAccountNo,jdbcType=VARCHAR},
+      recharge_merchant_no = #{record.rechargeMerchantNo,jdbcType=VARCHAR},
+      recharge_account_extend_field_1 = #{record.rechargeAccountExtendField1,jdbcType=VARCHAR},
+      recharge_account_extend_field_2 = #{record.rechargeAccountExtendField2,jdbcType=VARCHAR},
+      recharge_account_extend_field_3 = #{record.rechargeAccountExtendField3,jdbcType=VARCHAR},
+      recharge_amount = #{record.rechargeAmount,jdbcType=BIGINT},
+      notify_url = #{record.notifyUrl,jdbcType=VARCHAR},
+      version = #{record.version,jdbcType=INTEGER},
+      request_group = #{record.requestGroup,jdbcType=CHAR},
+      fee_amount = #{record.feeAmount,jdbcType=BIGINT},
+      fee_way = #{record.feeWay,jdbcType=CHAR},
+      fee_receive_account_no = #{record.feeReceiveAccountNo,jdbcType=VARCHAR},
+      fee_pay_account_extend_field_1 = #{record.feePayAccountExtendField1,jdbcType=VARCHAR},
+      fee_pay_account_extend_field_2 = #{record.feePayAccountExtendField2,jdbcType=VARCHAR},
+      fee_pay_account_extend_field_3 = #{record.feePayAccountExtendField3,jdbcType=VARCHAR},
+      fee_receive_account_extend_field_1 = #{record.feeReceiveAccountExtendField1,jdbcType=VARCHAR},
+      fee_receive_account_extend_field_2 = #{record.feeReceiveAccountExtendField2,jdbcType=VARCHAR},
+      fee_receive_account_extend_field_3 = #{record.feeReceiveAccountExtendField3,jdbcType=VARCHAR},
+      fee_ledger_no = #{record.feeLedgerNo,jdbcType=VARCHAR},
+      fee_ledger_type = #{record.feeLedgerType,jdbcType=CHAR},
+      fee_ledger_extend_field_1 = #{record.feeLedgerExtendField1,jdbcType=VARCHAR},
+      fee_ledger_extend_field_2 = #{record.feeLedgerExtendField2,jdbcType=VARCHAR},
+      fee_ledger_extend_field_3 = #{record.feeLedgerExtendField3,jdbcType=VARCHAR},
+      fee_profit_loss_attr_1 = #{record.feeProfitLossAttr1,jdbcType=VARCHAR},
+      fee_profit_loss_attr_2 = #{record.feeProfitLossAttr2,jdbcType=VARCHAR},
+      fee_profit_loss_attr_3 = #{record.feeProfitLossAttr3,jdbcType=VARCHAR},
+      fee_profit_loss_attr_4 = #{record.feeProfitLossAttr4,jdbcType=VARCHAR},
+      fee_profit_loss_attr_5 = #{record.feeProfitLossAttr5,jdbcType=VARCHAR},
+      fee_profit_loss_attr_6 = #{record.feeProfitLossAttr6,jdbcType=VARCHAR},
+      fee_profit_loss_attr_7 = #{record.feeProfitLossAttr7,jdbcType=VARCHAR},
+      fee_profit_loss_attr_8 = #{record.feeProfitLossAttr8,jdbcType=VARCHAR},
+      fee_profit_loss_attr_9 = #{record.feeProfitLossAttr9,jdbcType=VARCHAR},
+      fee_profit_loss_attr_10 = #{record.feeProfitLossAttr10,jdbcType=VARCHAR},
+      supply_amount = #{record.supplyAmount,jdbcType=BIGINT},
+      supply_way = #{record.supplyWay,jdbcType=CHAR},
+      supply_pay_account_no = #{record.supplyPayAccountNo,jdbcType=VARCHAR},
+      supply_pay_account_extend_field_1 = #{record.supplyPayAccountExtendField1,jdbcType=VARCHAR},
+      supply_pay_account_extend_field_2 = #{record.supplyPayAccountExtendField2,jdbcType=VARCHAR},
+      supply_pay_account_extend_field_3 = #{record.supplyPayAccountExtendField3,jdbcType=VARCHAR},
+      supply_receive_account_extend_field_1 = #{record.supplyReceiveAccountExtendField1,jdbcType=VARCHAR},
+      supply_receive_account_extend_field_2 = #{record.supplyReceiveAccountExtendField2,jdbcType=VARCHAR},
+      supply_receive_account_extend_field_3 = #{record.supplyReceiveAccountExtendField3,jdbcType=VARCHAR},
+      supply_recharge_type = #{record.supplyRechargeType,jdbcType=CHAR},
+      supply_ledger_no = #{record.supplyLedgerNo,jdbcType=VARCHAR},
+      supply_ledger_type = #{record.supplyLedgerType,jdbcType=CHAR},
+      supply_ledger_extend_field_1 = #{record.supplyLedgerExtendField1,jdbcType=VARCHAR},
+      supply_ledger_extend_field_2 = #{record.supplyLedgerExtendField2,jdbcType=VARCHAR},
+      supply_ledger_extend_field_3 = #{record.supplyLedgerExtendField3,jdbcType=VARCHAR},
+      supply_profit_loss_attr_1 = #{record.supplyProfitLossAttr1,jdbcType=VARCHAR},
+      supply_profit_loss_attr_2 = #{record.supplyProfitLossAttr2,jdbcType=VARCHAR},
+      supply_profit_loss_attr_3 = #{record.supplyProfitLossAttr3,jdbcType=VARCHAR},
+      supply_profit_loss_attr_4 = #{record.supplyProfitLossAttr4,jdbcType=VARCHAR},
+      supply_profit_loss_attr_5 = #{record.supplyProfitLossAttr5,jdbcType=VARCHAR},
+      supply_profit_loss_attr_6 = #{record.supplyProfitLossAttr6,jdbcType=VARCHAR},
+      supply_profit_loss_attr_7 = #{record.supplyProfitLossAttr7,jdbcType=VARCHAR},
+      supply_profit_loss_attr_8 = #{record.supplyProfitLossAttr8,jdbcType=VARCHAR},
+      supply_profit_loss_attr_9 = #{record.supplyProfitLossAttr9,jdbcType=VARCHAR},
+      supply_profit_loss_attr_10 = #{record.supplyProfitLossAttr10,jdbcType=VARCHAR},
+      refund_amount = #{record.refundAmount,jdbcType=BIGINT},
+      refund_clear_channel = #{record.refundClearChannel,jdbcType=VARCHAR},
+      refund_transaction_id = #{record.refundTransactionId,jdbcType=VARCHAR},
+      refund_batch_no = #{record.refundBatchNo,jdbcType=VARCHAR},
+      refund_serial_number = #{record.refundSerialNumber,jdbcType=VARCHAR},
+      refund_third_trade_no = #{record.refundThirdTradeNo,jdbcType=VARCHAR},
+      refund_success_clear_channel = #{record.refundSuccessClearChannel,jdbcType=TIMESTAMP},
+      refund_ledger_extend_field_1 = #{record.refundLedgerExtendField1,jdbcType=VARCHAR},
+      refund_ledger_extend_field_2 = #{record.refundLedgerExtendField2,jdbcType=VARCHAR},
+      refund_ledger_extend_field_3 = #{record.refundLedgerExtendField3,jdbcType=VARCHAR},
+      refund_ledger_no = #{record.refundLedgerNo,jdbcType=VARCHAR},
+      pay_url = #{record.payUrl,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update trade_recharge
+    set id = #{record.id,jdbcType=BIGINT},
+      trade_no = #{record.tradeNo,jdbcType=VARCHAR},
+      partner_id = #{record.partnerId,jdbcType=VARCHAR},
+      core_merchant_no = #{record.coreMerchantNo,jdbcType=VARCHAR},
+      fund_pool_no = #{record.fundPoolNo,jdbcType=VARCHAR},
+      merchant_extend_field_1 = #{record.merchantExtendField1,jdbcType=VARCHAR},
+      merchant_extend_field_2 = #{record.merchantExtendField2,jdbcType=VARCHAR},
+      merchant_extend_field_3 = #{record.merchantExtendField3,jdbcType=VARCHAR},
+      merchant_extend_field_4 = #{record.merchantExtendField4,jdbcType=VARCHAR},
+      merchant_extend_field_5 = #{record.merchantExtendField5,jdbcType=VARCHAR},
+      out_trade_no_ext = #{record.outTradeNoExt,jdbcType=VARCHAR},
+      out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
+      gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP},
+      gmt_created_fail = #{record.gmtCreatedFail,jdbcType=TIMESTAMP},
+      gmt_latest_modified = #{record.gmtLatestModified,jdbcType=TIMESTAMP},
+      latest_trade_req_type = #{record.latestTradeReqType,jdbcType=VARCHAR},
+      latest_req_no = #{record.latestReqNo,jdbcType=VARCHAR},
+      close_status = #{record.closeStatus,jdbcType=CHAR},
+      status = #{record.status,jdbcType=CHAR},
+      gmt_recharge_fail = #{record.gmtRechargeFail,jdbcType=TIMESTAMP},
+      gmt_recharge_wait = #{record.gmtRechargeWait,jdbcType=TIMESTAMP},
+      gmt_recharge_success = #{record.gmtRechargeSuccess,jdbcType=TIMESTAMP},
+      gmt_recharge_refund = #{record.gmtRechargeRefund,jdbcType=TIMESTAMP},
+      gmt_exception_end = #{record.gmtExceptionEnd,jdbcType=TIMESTAMP},
+      pay_amount = #{record.payAmount,jdbcType=BIGINT},
+      clear_channel = #{record.clearChannel,jdbcType=VARCHAR},
+      transaction_id = #{record.transactionId,jdbcType=VARCHAR},
+      batch_no = #{record.batchNo,jdbcType=VARCHAR},
+      serial_number = #{record.serialNumber,jdbcType=VARCHAR},
+      third_trade_no = #{record.thirdTradeNo,jdbcType=VARCHAR},
+      gmt_success_clear_channel = #{record.gmtSuccessClearChannel,jdbcType=TIMESTAMP},
+      recharge_ledger_no = #{record.rechargeLedgerNo,jdbcType=VARCHAR},
+      recharge_ledger_extend_field_1 = #{record.rechargeLedgerExtendField1,jdbcType=VARCHAR},
+      recharge_ledger_extend_field_2 = #{record.rechargeLedgerExtendField2,jdbcType=VARCHAR},
+      recharge_ledger_extend_field_3 = #{record.rechargeLedgerExtendField3,jdbcType=VARCHAR},
+      recharge_account_no = #{record.rechargeAccountNo,jdbcType=VARCHAR},
+      recharge_merchant_no = #{record.rechargeMerchantNo,jdbcType=VARCHAR},
+      recharge_account_extend_field_1 = #{record.rechargeAccountExtendField1,jdbcType=VARCHAR},
+      recharge_account_extend_field_2 = #{record.rechargeAccountExtendField2,jdbcType=VARCHAR},
+      recharge_account_extend_field_3 = #{record.rechargeAccountExtendField3,jdbcType=VARCHAR},
+      recharge_amount = #{record.rechargeAmount,jdbcType=BIGINT},
+      notify_url = #{record.notifyUrl,jdbcType=VARCHAR},
+      version = #{record.version,jdbcType=INTEGER},
+      request_group = #{record.requestGroup,jdbcType=CHAR},
+      fee_amount = #{record.feeAmount,jdbcType=BIGINT},
+      fee_way = #{record.feeWay,jdbcType=CHAR},
+      fee_receive_account_no = #{record.feeReceiveAccountNo,jdbcType=VARCHAR},
+      fee_pay_account_extend_field_1 = #{record.feePayAccountExtendField1,jdbcType=VARCHAR},
+      fee_pay_account_extend_field_2 = #{record.feePayAccountExtendField2,jdbcType=VARCHAR},
+      fee_pay_account_extend_field_3 = #{record.feePayAccountExtendField3,jdbcType=VARCHAR},
+      fee_receive_account_extend_field_1 = #{record.feeReceiveAccountExtendField1,jdbcType=VARCHAR},
+      fee_receive_account_extend_field_2 = #{record.feeReceiveAccountExtendField2,jdbcType=VARCHAR},
+      fee_receive_account_extend_field_3 = #{record.feeReceiveAccountExtendField3,jdbcType=VARCHAR},
+      fee_ledger_no = #{record.feeLedgerNo,jdbcType=VARCHAR},
+      fee_ledger_type = #{record.feeLedgerType,jdbcType=CHAR},
+      fee_ledger_extend_field_1 = #{record.feeLedgerExtendField1,jdbcType=VARCHAR},
+      fee_ledger_extend_field_2 = #{record.feeLedgerExtendField2,jdbcType=VARCHAR},
+      fee_ledger_extend_field_3 = #{record.feeLedgerExtendField3,jdbcType=VARCHAR},
+      fee_profit_loss_attr_1 = #{record.feeProfitLossAttr1,jdbcType=VARCHAR},
+      fee_profit_loss_attr_2 = #{record.feeProfitLossAttr2,jdbcType=VARCHAR},
+      fee_profit_loss_attr_3 = #{record.feeProfitLossAttr3,jdbcType=VARCHAR},
+      fee_profit_loss_attr_4 = #{record.feeProfitLossAttr4,jdbcType=VARCHAR},
+      fee_profit_loss_attr_5 = #{record.feeProfitLossAttr5,jdbcType=VARCHAR},
+      fee_profit_loss_attr_6 = #{record.feeProfitLossAttr6,jdbcType=VARCHAR},
+      fee_profit_loss_attr_7 = #{record.feeProfitLossAttr7,jdbcType=VARCHAR},
+      fee_profit_loss_attr_8 = #{record.feeProfitLossAttr8,jdbcType=VARCHAR},
+      fee_profit_loss_attr_9 = #{record.feeProfitLossAttr9,jdbcType=VARCHAR},
+      fee_profit_loss_attr_10 = #{record.feeProfitLossAttr10,jdbcType=VARCHAR},
+      supply_amount = #{record.supplyAmount,jdbcType=BIGINT},
+      supply_way = #{record.supplyWay,jdbcType=CHAR},
+      supply_pay_account_no = #{record.supplyPayAccountNo,jdbcType=VARCHAR},
+      supply_pay_account_extend_field_1 = #{record.supplyPayAccountExtendField1,jdbcType=VARCHAR},
+      supply_pay_account_extend_field_2 = #{record.supplyPayAccountExtendField2,jdbcType=VARCHAR},
+      supply_pay_account_extend_field_3 = #{record.supplyPayAccountExtendField3,jdbcType=VARCHAR},
+      supply_receive_account_extend_field_1 = #{record.supplyReceiveAccountExtendField1,jdbcType=VARCHAR},
+      supply_receive_account_extend_field_2 = #{record.supplyReceiveAccountExtendField2,jdbcType=VARCHAR},
+      supply_receive_account_extend_field_3 = #{record.supplyReceiveAccountExtendField3,jdbcType=VARCHAR},
+      supply_recharge_type = #{record.supplyRechargeType,jdbcType=CHAR},
+      supply_ledger_no = #{record.supplyLedgerNo,jdbcType=VARCHAR},
+      supply_ledger_type = #{record.supplyLedgerType,jdbcType=CHAR},
+      supply_ledger_extend_field_1 = #{record.supplyLedgerExtendField1,jdbcType=VARCHAR},
+      supply_ledger_extend_field_2 = #{record.supplyLedgerExtendField2,jdbcType=VARCHAR},
+      supply_ledger_extend_field_3 = #{record.supplyLedgerExtendField3,jdbcType=VARCHAR},
+      supply_profit_loss_attr_1 = #{record.supplyProfitLossAttr1,jdbcType=VARCHAR},
+      supply_profit_loss_attr_2 = #{record.supplyProfitLossAttr2,jdbcType=VARCHAR},
+      supply_profit_loss_attr_3 = #{record.supplyProfitLossAttr3,jdbcType=VARCHAR},
+      supply_profit_loss_attr_4 = #{record.supplyProfitLossAttr4,jdbcType=VARCHAR},
+      supply_profit_loss_attr_5 = #{record.supplyProfitLossAttr5,jdbcType=VARCHAR},
+      supply_profit_loss_attr_6 = #{record.supplyProfitLossAttr6,jdbcType=VARCHAR},
+      supply_profit_loss_attr_7 = #{record.supplyProfitLossAttr7,jdbcType=VARCHAR},
+      supply_profit_loss_attr_8 = #{record.supplyProfitLossAttr8,jdbcType=VARCHAR},
+      supply_profit_loss_attr_9 = #{record.supplyProfitLossAttr9,jdbcType=VARCHAR},
+      supply_profit_loss_attr_10 = #{record.supplyProfitLossAttr10,jdbcType=VARCHAR},
+      refund_amount = #{record.refundAmount,jdbcType=BIGINT},
+      refund_clear_channel = #{record.refundClearChannel,jdbcType=VARCHAR},
+      refund_transaction_id = #{record.refundTransactionId,jdbcType=VARCHAR},
+      refund_batch_no = #{record.refundBatchNo,jdbcType=VARCHAR},
+      refund_serial_number = #{record.refundSerialNumber,jdbcType=VARCHAR},
+      refund_third_trade_no = #{record.refundThirdTradeNo,jdbcType=VARCHAR},
+      refund_success_clear_channel = #{record.refundSuccessClearChannel,jdbcType=TIMESTAMP},
+      refund_ledger_extend_field_1 = #{record.refundLedgerExtendField1,jdbcType=VARCHAR},
+      refund_ledger_extend_field_2 = #{record.refundLedgerExtendField2,jdbcType=VARCHAR},
+      refund_ledger_extend_field_3 = #{record.refundLedgerExtendField3,jdbcType=VARCHAR},
+      refund_ledger_no = #{record.refundLedgerNo,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.liantuo.trade.orm.pojo.TradeRecharge" >
+    update trade_recharge
+    <set >
+      <if test="tradeNo != null" >
+        trade_no = #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="partnerId != null" >
+        partner_id = #{partnerId,jdbcType=VARCHAR},
+      </if>
+      <if test="coreMerchantNo != null" >
+        core_merchant_no = #{coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fundPoolNo != null" >
+        fund_pool_no = #{fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField1 != null" >
+        merchant_extend_field_1 = #{merchantExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField2 != null" >
+        merchant_extend_field_2 = #{merchantExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField3 != null" >
+        merchant_extend_field_3 = #{merchantExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField4 != null" >
+        merchant_extend_field_4 = #{merchantExtendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField5 != null" >
+        merchant_extend_field_5 = #{merchantExtendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNoExt != null" >
+        out_trade_no_ext = #{outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null" >
+        out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreated != null" >
+        gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtCreatedFail != null" >
+        gmt_created_fail = #{gmtCreatedFail,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtLatestModified != null" >
+        gmt_latest_modified = #{gmtLatestModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="latestTradeReqType != null" >
+        latest_trade_req_type = #{latestTradeReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="latestReqNo != null" >
+        latest_req_no = #{latestReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="closeStatus != null" >
+        close_status = #{closeStatus,jdbcType=CHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=CHAR},
+      </if>
+      <if test="gmtRechargeFail != null" >
+        gmt_recharge_fail = #{gmtRechargeFail,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtRechargeWait != null" >
+        gmt_recharge_wait = #{gmtRechargeWait,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtRechargeSuccess != null" >
+        gmt_recharge_success = #{gmtRechargeSuccess,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtRechargeRefund != null" >
+        gmt_recharge_refund = #{gmtRechargeRefund,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtExceptionEnd != null" >
+        gmt_exception_end = #{gmtExceptionEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payAmount != null" >
+        pay_amount = #{payAmount,jdbcType=BIGINT},
+      </if>
+      <if test="clearChannel != null" >
+        clear_channel = #{clearChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="transactionId != null" >
+        transaction_id = #{transactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="batchNo != null" >
+        batch_no = #{batchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="serialNumber != null" >
+        serial_number = #{serialNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="thirdTradeNo != null" >
+        third_trade_no = #{thirdTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtSuccessClearChannel != null" >
+        gmt_success_clear_channel = #{gmtSuccessClearChannel,jdbcType=TIMESTAMP},
+      </if>
+      <if test="rechargeLedgerNo != null" >
+        recharge_ledger_no = #{rechargeLedgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeLedgerExtendField1 != null" >
+        recharge_ledger_extend_field_1 = #{rechargeLedgerExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeLedgerExtendField2 != null" >
+        recharge_ledger_extend_field_2 = #{rechargeLedgerExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeLedgerExtendField3 != null" >
+        recharge_ledger_extend_field_3 = #{rechargeLedgerExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeAccountNo != null" >
+        recharge_account_no = #{rechargeAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeMerchantNo != null" >
+        recharge_merchant_no = #{rechargeMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeAccountExtendField1 != null" >
+        recharge_account_extend_field_1 = #{rechargeAccountExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeAccountExtendField2 != null" >
+        recharge_account_extend_field_2 = #{rechargeAccountExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeAccountExtendField3 != null" >
+        recharge_account_extend_field_3 = #{rechargeAccountExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeAmount != null" >
+        recharge_amount = #{rechargeAmount,jdbcType=BIGINT},
+      </if>
+      <if test="notifyUrl != null" >
+        notify_url = #{notifyUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="requestGroup != null" >
+        request_group = #{requestGroup,jdbcType=CHAR},
+      </if>
+      <if test="feeAmount != null" >
+        fee_amount = #{feeAmount,jdbcType=BIGINT},
+      </if>
+      <if test="feeWay != null" >
+        fee_way = #{feeWay,jdbcType=CHAR},
+      </if>
+      <if test="feeReceiveAccountNo != null" >
+        fee_receive_account_no = #{feeReceiveAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="feePayAccountExtendField1 != null" >
+        fee_pay_account_extend_field_1 = #{feePayAccountExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="feePayAccountExtendField2 != null" >
+        fee_pay_account_extend_field_2 = #{feePayAccountExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="feePayAccountExtendField3 != null" >
+        fee_pay_account_extend_field_3 = #{feePayAccountExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="feeReceiveAccountExtendField1 != null" >
+        fee_receive_account_extend_field_1 = #{feeReceiveAccountExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="feeReceiveAccountExtendField2 != null" >
+        fee_receive_account_extend_field_2 = #{feeReceiveAccountExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="feeReceiveAccountExtendField3 != null" >
+        fee_receive_account_extend_field_3 = #{feeReceiveAccountExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="feeLedgerNo != null" >
+        fee_ledger_no = #{feeLedgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="feeLedgerType != null" >
+        fee_ledger_type = #{feeLedgerType,jdbcType=CHAR},
+      </if>
+      <if test="feeLedgerExtendField1 != null" >
+        fee_ledger_extend_field_1 = #{feeLedgerExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="feeLedgerExtendField2 != null" >
+        fee_ledger_extend_field_2 = #{feeLedgerExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="feeLedgerExtendField3 != null" >
+        fee_ledger_extend_field_3 = #{feeLedgerExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr1 != null" >
+        fee_profit_loss_attr_1 = #{feeProfitLossAttr1,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr2 != null" >
+        fee_profit_loss_attr_2 = #{feeProfitLossAttr2,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr3 != null" >
+        fee_profit_loss_attr_3 = #{feeProfitLossAttr3,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr4 != null" >
+        fee_profit_loss_attr_4 = #{feeProfitLossAttr4,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr5 != null" >
+        fee_profit_loss_attr_5 = #{feeProfitLossAttr5,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr6 != null" >
+        fee_profit_loss_attr_6 = #{feeProfitLossAttr6,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr7 != null" >
+        fee_profit_loss_attr_7 = #{feeProfitLossAttr7,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr8 != null" >
+        fee_profit_loss_attr_8 = #{feeProfitLossAttr8,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr9 != null" >
+        fee_profit_loss_attr_9 = #{feeProfitLossAttr9,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr10 != null" >
+        fee_profit_loss_attr_10 = #{feeProfitLossAttr10,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyAmount != null" >
+        supply_amount = #{supplyAmount,jdbcType=BIGINT},
+      </if>
+      <if test="supplyWay != null" >
+        supply_way = #{supplyWay,jdbcType=CHAR},
+      </if>
+      <if test="supplyPayAccountNo != null" >
+        supply_pay_account_no = #{supplyPayAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyPayAccountExtendField1 != null" >
+        supply_pay_account_extend_field_1 = #{supplyPayAccountExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyPayAccountExtendField2 != null" >
+        supply_pay_account_extend_field_2 = #{supplyPayAccountExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyPayAccountExtendField3 != null" >
+        supply_pay_account_extend_field_3 = #{supplyPayAccountExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyReceiveAccountExtendField1 != null" >
+        supply_receive_account_extend_field_1 = #{supplyReceiveAccountExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyReceiveAccountExtendField2 != null" >
+        supply_receive_account_extend_field_2 = #{supplyReceiveAccountExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyReceiveAccountExtendField3 != null" >
+        supply_receive_account_extend_field_3 = #{supplyReceiveAccountExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyRechargeType != null" >
+        supply_recharge_type = #{supplyRechargeType,jdbcType=CHAR},
+      </if>
+      <if test="supplyLedgerNo != null" >
+        supply_ledger_no = #{supplyLedgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyLedgerType != null" >
+        supply_ledger_type = #{supplyLedgerType,jdbcType=CHAR},
+      </if>
+      <if test="supplyLedgerExtendField1 != null" >
+        supply_ledger_extend_field_1 = #{supplyLedgerExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyLedgerExtendField2 != null" >
+        supply_ledger_extend_field_2 = #{supplyLedgerExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyLedgerExtendField3 != null" >
+        supply_ledger_extend_field_3 = #{supplyLedgerExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr1 != null" >
+        supply_profit_loss_attr_1 = #{supplyProfitLossAttr1,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr2 != null" >
+        supply_profit_loss_attr_2 = #{supplyProfitLossAttr2,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr3 != null" >
+        supply_profit_loss_attr_3 = #{supplyProfitLossAttr3,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr4 != null" >
+        supply_profit_loss_attr_4 = #{supplyProfitLossAttr4,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr5 != null" >
+        supply_profit_loss_attr_5 = #{supplyProfitLossAttr5,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr6 != null" >
+        supply_profit_loss_attr_6 = #{supplyProfitLossAttr6,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr7 != null" >
+        supply_profit_loss_attr_7 = #{supplyProfitLossAttr7,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr8 != null" >
+        supply_profit_loss_attr_8 = #{supplyProfitLossAttr8,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr9 != null" >
+        supply_profit_loss_attr_9 = #{supplyProfitLossAttr9,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr10 != null" >
+        supply_profit_loss_attr_10 = #{supplyProfitLossAttr10,jdbcType=VARCHAR},
+      </if>
+      <if test="refundAmount != null" >
+        refund_amount = #{refundAmount,jdbcType=BIGINT},
+      </if>
+      <if test="refundClearChannel != null" >
+        refund_clear_channel = #{refundClearChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="refundTransactionId != null" >
+        refund_transaction_id = #{refundTransactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="refundBatchNo != null" >
+        refund_batch_no = #{refundBatchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="refundSerialNumber != null" >
+        refund_serial_number = #{refundSerialNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="refundThirdTradeNo != null" >
+        refund_third_trade_no = #{refundThirdTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="refundSuccessClearChannel != null" >
+        refund_success_clear_channel = #{refundSuccessClearChannel,jdbcType=TIMESTAMP},
+      </if>
+      <if test="refundLedgerExtendField1 != null" >
+        refund_ledger_extend_field_1 = #{refundLedgerExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="refundLedgerExtendField2 != null" >
+        refund_ledger_extend_field_2 = #{refundLedgerExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="refundLedgerExtendField3 != null" >
+        refund_ledger_extend_field_3 = #{refundLedgerExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="refundLedgerNo != null" >
+        refund_ledger_no = #{refundLedgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="payUrl != null" >
+        pay_url = #{payUrl,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.liantuo.trade.orm.pojo.TradeRecharge" >
+    update trade_recharge
+    set trade_no = #{tradeNo,jdbcType=VARCHAR},
+      partner_id = #{partnerId,jdbcType=VARCHAR},
+      core_merchant_no = #{coreMerchantNo,jdbcType=VARCHAR},
+      fund_pool_no = #{fundPoolNo,jdbcType=VARCHAR},
+      merchant_extend_field_1 = #{merchantExtendField1,jdbcType=VARCHAR},
+      merchant_extend_field_2 = #{merchantExtendField2,jdbcType=VARCHAR},
+      merchant_extend_field_3 = #{merchantExtendField3,jdbcType=VARCHAR},
+      merchant_extend_field_4 = #{merchantExtendField4,jdbcType=VARCHAR},
+      merchant_extend_field_5 = #{merchantExtendField5,jdbcType=VARCHAR},
+      out_trade_no_ext = #{outTradeNoExt,jdbcType=VARCHAR},
+      out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      gmt_created_fail = #{gmtCreatedFail,jdbcType=TIMESTAMP},
+      gmt_latest_modified = #{gmtLatestModified,jdbcType=TIMESTAMP},
+      latest_trade_req_type = #{latestTradeReqType,jdbcType=VARCHAR},
+      latest_req_no = #{latestReqNo,jdbcType=VARCHAR},
+      close_status = #{closeStatus,jdbcType=CHAR},
+      status = #{status,jdbcType=CHAR},
+      gmt_recharge_fail = #{gmtRechargeFail,jdbcType=TIMESTAMP},
+      gmt_recharge_wait = #{gmtRechargeWait,jdbcType=TIMESTAMP},
+      gmt_recharge_success = #{gmtRechargeSuccess,jdbcType=TIMESTAMP},
+      gmt_recharge_refund = #{gmtRechargeRefund,jdbcType=TIMESTAMP},
+      gmt_exception_end = #{gmtExceptionEnd,jdbcType=TIMESTAMP},
+      pay_amount = #{payAmount,jdbcType=BIGINT},
+      clear_channel = #{clearChannel,jdbcType=VARCHAR},
+      transaction_id = #{transactionId,jdbcType=VARCHAR},
+      batch_no = #{batchNo,jdbcType=VARCHAR},
+      serial_number = #{serialNumber,jdbcType=VARCHAR},
+      third_trade_no = #{thirdTradeNo,jdbcType=VARCHAR},
+      gmt_success_clear_channel = #{gmtSuccessClearChannel,jdbcType=TIMESTAMP},
+      recharge_ledger_no = #{rechargeLedgerNo,jdbcType=VARCHAR},
+      recharge_ledger_extend_field_1 = #{rechargeLedgerExtendField1,jdbcType=VARCHAR},
+      recharge_ledger_extend_field_2 = #{rechargeLedgerExtendField2,jdbcType=VARCHAR},
+      recharge_ledger_extend_field_3 = #{rechargeLedgerExtendField3,jdbcType=VARCHAR},
+      recharge_account_no = #{rechargeAccountNo,jdbcType=VARCHAR},
+      recharge_merchant_no = #{rechargeMerchantNo,jdbcType=VARCHAR},
+      recharge_account_extend_field_1 = #{rechargeAccountExtendField1,jdbcType=VARCHAR},
+      recharge_account_extend_field_2 = #{rechargeAccountExtendField2,jdbcType=VARCHAR},
+      recharge_account_extend_field_3 = #{rechargeAccountExtendField3,jdbcType=VARCHAR},
+      recharge_amount = #{rechargeAmount,jdbcType=BIGINT},
+      notify_url = #{notifyUrl,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER},
+      request_group = #{requestGroup,jdbcType=CHAR},
+      fee_amount = #{feeAmount,jdbcType=BIGINT},
+      fee_way = #{feeWay,jdbcType=CHAR},
+      fee_receive_account_no = #{feeReceiveAccountNo,jdbcType=VARCHAR},
+      fee_pay_account_extend_field_1 = #{feePayAccountExtendField1,jdbcType=VARCHAR},
+      fee_pay_account_extend_field_2 = #{feePayAccountExtendField2,jdbcType=VARCHAR},
+      fee_pay_account_extend_field_3 = #{feePayAccountExtendField3,jdbcType=VARCHAR},
+      fee_receive_account_extend_field_1 = #{feeReceiveAccountExtendField1,jdbcType=VARCHAR},
+      fee_receive_account_extend_field_2 = #{feeReceiveAccountExtendField2,jdbcType=VARCHAR},
+      fee_receive_account_extend_field_3 = #{feeReceiveAccountExtendField3,jdbcType=VARCHAR},
+      fee_ledger_no = #{feeLedgerNo,jdbcType=VARCHAR},
+      fee_ledger_type = #{feeLedgerType,jdbcType=CHAR},
+      fee_ledger_extend_field_1 = #{feeLedgerExtendField1,jdbcType=VARCHAR},
+      fee_ledger_extend_field_2 = #{feeLedgerExtendField2,jdbcType=VARCHAR},
+      fee_ledger_extend_field_3 = #{feeLedgerExtendField3,jdbcType=VARCHAR},
+      fee_profit_loss_attr_1 = #{feeProfitLossAttr1,jdbcType=VARCHAR},
+      fee_profit_loss_attr_2 = #{feeProfitLossAttr2,jdbcType=VARCHAR},
+      fee_profit_loss_attr_3 = #{feeProfitLossAttr3,jdbcType=VARCHAR},
+      fee_profit_loss_attr_4 = #{feeProfitLossAttr4,jdbcType=VARCHAR},
+      fee_profit_loss_attr_5 = #{feeProfitLossAttr5,jdbcType=VARCHAR},
+      fee_profit_loss_attr_6 = #{feeProfitLossAttr6,jdbcType=VARCHAR},
+      fee_profit_loss_attr_7 = #{feeProfitLossAttr7,jdbcType=VARCHAR},
+      fee_profit_loss_attr_8 = #{feeProfitLossAttr8,jdbcType=VARCHAR},
+      fee_profit_loss_attr_9 = #{feeProfitLossAttr9,jdbcType=VARCHAR},
+      fee_profit_loss_attr_10 = #{feeProfitLossAttr10,jdbcType=VARCHAR},
+      supply_amount = #{supplyAmount,jdbcType=BIGINT},
+      supply_way = #{supplyWay,jdbcType=CHAR},
+      supply_pay_account_no = #{supplyPayAccountNo,jdbcType=VARCHAR},
+      supply_pay_account_extend_field_1 = #{supplyPayAccountExtendField1,jdbcType=VARCHAR},
+      supply_pay_account_extend_field_2 = #{supplyPayAccountExtendField2,jdbcType=VARCHAR},
+      supply_pay_account_extend_field_3 = #{supplyPayAccountExtendField3,jdbcType=VARCHAR},
+      supply_receive_account_extend_field_1 = #{supplyReceiveAccountExtendField1,jdbcType=VARCHAR},
+      supply_receive_account_extend_field_2 = #{supplyReceiveAccountExtendField2,jdbcType=VARCHAR},
+      supply_receive_account_extend_field_3 = #{supplyReceiveAccountExtendField3,jdbcType=VARCHAR},
+      supply_recharge_type = #{supplyRechargeType,jdbcType=CHAR},
+      supply_ledger_no = #{supplyLedgerNo,jdbcType=VARCHAR},
+      supply_ledger_type = #{supplyLedgerType,jdbcType=CHAR},
+      supply_ledger_extend_field_1 = #{supplyLedgerExtendField1,jdbcType=VARCHAR},
+      supply_ledger_extend_field_2 = #{supplyLedgerExtendField2,jdbcType=VARCHAR},
+      supply_ledger_extend_field_3 = #{supplyLedgerExtendField3,jdbcType=VARCHAR},
+      supply_profit_loss_attr_1 = #{supplyProfitLossAttr1,jdbcType=VARCHAR},
+      supply_profit_loss_attr_2 = #{supplyProfitLossAttr2,jdbcType=VARCHAR},
+      supply_profit_loss_attr_3 = #{supplyProfitLossAttr3,jdbcType=VARCHAR},
+      supply_profit_loss_attr_4 = #{supplyProfitLossAttr4,jdbcType=VARCHAR},
+      supply_profit_loss_attr_5 = #{supplyProfitLossAttr5,jdbcType=VARCHAR},
+      supply_profit_loss_attr_6 = #{supplyProfitLossAttr6,jdbcType=VARCHAR},
+      supply_profit_loss_attr_7 = #{supplyProfitLossAttr7,jdbcType=VARCHAR},
+      supply_profit_loss_attr_8 = #{supplyProfitLossAttr8,jdbcType=VARCHAR},
+      supply_profit_loss_attr_9 = #{supplyProfitLossAttr9,jdbcType=VARCHAR},
+      supply_profit_loss_attr_10 = #{supplyProfitLossAttr10,jdbcType=VARCHAR},
+      refund_amount = #{refundAmount,jdbcType=BIGINT},
+      refund_clear_channel = #{refundClearChannel,jdbcType=VARCHAR},
+      refund_transaction_id = #{refundTransactionId,jdbcType=VARCHAR},
+      refund_batch_no = #{refundBatchNo,jdbcType=VARCHAR},
+      refund_serial_number = #{refundSerialNumber,jdbcType=VARCHAR},
+      refund_third_trade_no = #{refundThirdTradeNo,jdbcType=VARCHAR},
+      refund_success_clear_channel = #{refundSuccessClearChannel,jdbcType=TIMESTAMP},
+      refund_ledger_extend_field_1 = #{refundLedgerExtendField1,jdbcType=VARCHAR},
+      refund_ledger_extend_field_2 = #{refundLedgerExtendField2,jdbcType=VARCHAR},
+      refund_ledger_extend_field_3 = #{refundLedgerExtendField3,jdbcType=VARCHAR},
+      refund_ledger_no = #{refundLedgerNo,jdbcType=VARCHAR},
+      pay_url = #{payUrl,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.liantuo.trade.orm.pojo.TradeRecharge" >
+    update trade_recharge
+    set trade_no = #{tradeNo,jdbcType=VARCHAR},
+      partner_id = #{partnerId,jdbcType=VARCHAR},
+      core_merchant_no = #{coreMerchantNo,jdbcType=VARCHAR},
+      fund_pool_no = #{fundPoolNo,jdbcType=VARCHAR},
+      merchant_extend_field_1 = #{merchantExtendField1,jdbcType=VARCHAR},
+      merchant_extend_field_2 = #{merchantExtendField2,jdbcType=VARCHAR},
+      merchant_extend_field_3 = #{merchantExtendField3,jdbcType=VARCHAR},
+      merchant_extend_field_4 = #{merchantExtendField4,jdbcType=VARCHAR},
+      merchant_extend_field_5 = #{merchantExtendField5,jdbcType=VARCHAR},
+      out_trade_no_ext = #{outTradeNoExt,jdbcType=VARCHAR},
+      out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      gmt_created_fail = #{gmtCreatedFail,jdbcType=TIMESTAMP},
+      gmt_latest_modified = #{gmtLatestModified,jdbcType=TIMESTAMP},
+      latest_trade_req_type = #{latestTradeReqType,jdbcType=VARCHAR},
+      latest_req_no = #{latestReqNo,jdbcType=VARCHAR},
+      close_status = #{closeStatus,jdbcType=CHAR},
+      status = #{status,jdbcType=CHAR},
+      gmt_recharge_fail = #{gmtRechargeFail,jdbcType=TIMESTAMP},
+      gmt_recharge_wait = #{gmtRechargeWait,jdbcType=TIMESTAMP},
+      gmt_recharge_success = #{gmtRechargeSuccess,jdbcType=TIMESTAMP},
+      gmt_recharge_refund = #{gmtRechargeRefund,jdbcType=TIMESTAMP},
+      gmt_exception_end = #{gmtExceptionEnd,jdbcType=TIMESTAMP},
+      pay_amount = #{payAmount,jdbcType=BIGINT},
+      clear_channel = #{clearChannel,jdbcType=VARCHAR},
+      transaction_id = #{transactionId,jdbcType=VARCHAR},
+      batch_no = #{batchNo,jdbcType=VARCHAR},
+      serial_number = #{serialNumber,jdbcType=VARCHAR},
+      third_trade_no = #{thirdTradeNo,jdbcType=VARCHAR},
+      gmt_success_clear_channel = #{gmtSuccessClearChannel,jdbcType=TIMESTAMP},
+      recharge_ledger_no = #{rechargeLedgerNo,jdbcType=VARCHAR},
+      recharge_ledger_extend_field_1 = #{rechargeLedgerExtendField1,jdbcType=VARCHAR},
+      recharge_ledger_extend_field_2 = #{rechargeLedgerExtendField2,jdbcType=VARCHAR},
+      recharge_ledger_extend_field_3 = #{rechargeLedgerExtendField3,jdbcType=VARCHAR},
+      recharge_account_no = #{rechargeAccountNo,jdbcType=VARCHAR},
+      recharge_merchant_no = #{rechargeMerchantNo,jdbcType=VARCHAR},
+      recharge_account_extend_field_1 = #{rechargeAccountExtendField1,jdbcType=VARCHAR},
+      recharge_account_extend_field_2 = #{rechargeAccountExtendField2,jdbcType=VARCHAR},
+      recharge_account_extend_field_3 = #{rechargeAccountExtendField3,jdbcType=VARCHAR},
+      recharge_amount = #{rechargeAmount,jdbcType=BIGINT},
+      notify_url = #{notifyUrl,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER},
+      request_group = #{requestGroup,jdbcType=CHAR},
+      fee_amount = #{feeAmount,jdbcType=BIGINT},
+      fee_way = #{feeWay,jdbcType=CHAR},
+      fee_receive_account_no = #{feeReceiveAccountNo,jdbcType=VARCHAR},
+      fee_pay_account_extend_field_1 = #{feePayAccountExtendField1,jdbcType=VARCHAR},
+      fee_pay_account_extend_field_2 = #{feePayAccountExtendField2,jdbcType=VARCHAR},
+      fee_pay_account_extend_field_3 = #{feePayAccountExtendField3,jdbcType=VARCHAR},
+      fee_receive_account_extend_field_1 = #{feeReceiveAccountExtendField1,jdbcType=VARCHAR},
+      fee_receive_account_extend_field_2 = #{feeReceiveAccountExtendField2,jdbcType=VARCHAR},
+      fee_receive_account_extend_field_3 = #{feeReceiveAccountExtendField3,jdbcType=VARCHAR},
+      fee_ledger_no = #{feeLedgerNo,jdbcType=VARCHAR},
+      fee_ledger_type = #{feeLedgerType,jdbcType=CHAR},
+      fee_ledger_extend_field_1 = #{feeLedgerExtendField1,jdbcType=VARCHAR},
+      fee_ledger_extend_field_2 = #{feeLedgerExtendField2,jdbcType=VARCHAR},
+      fee_ledger_extend_field_3 = #{feeLedgerExtendField3,jdbcType=VARCHAR},
+      fee_profit_loss_attr_1 = #{feeProfitLossAttr1,jdbcType=VARCHAR},
+      fee_profit_loss_attr_2 = #{feeProfitLossAttr2,jdbcType=VARCHAR},
+      fee_profit_loss_attr_3 = #{feeProfitLossAttr3,jdbcType=VARCHAR},
+      fee_profit_loss_attr_4 = #{feeProfitLossAttr4,jdbcType=VARCHAR},
+      fee_profit_loss_attr_5 = #{feeProfitLossAttr5,jdbcType=VARCHAR},
+      fee_profit_loss_attr_6 = #{feeProfitLossAttr6,jdbcType=VARCHAR},
+      fee_profit_loss_attr_7 = #{feeProfitLossAttr7,jdbcType=VARCHAR},
+      fee_profit_loss_attr_8 = #{feeProfitLossAttr8,jdbcType=VARCHAR},
+      fee_profit_loss_attr_9 = #{feeProfitLossAttr9,jdbcType=VARCHAR},
+      fee_profit_loss_attr_10 = #{feeProfitLossAttr10,jdbcType=VARCHAR},
+      supply_amount = #{supplyAmount,jdbcType=BIGINT},
+      supply_way = #{supplyWay,jdbcType=CHAR},
+      supply_pay_account_no = #{supplyPayAccountNo,jdbcType=VARCHAR},
+      supply_pay_account_extend_field_1 = #{supplyPayAccountExtendField1,jdbcType=VARCHAR},
+      supply_pay_account_extend_field_2 = #{supplyPayAccountExtendField2,jdbcType=VARCHAR},
+      supply_pay_account_extend_field_3 = #{supplyPayAccountExtendField3,jdbcType=VARCHAR},
+      supply_receive_account_extend_field_1 = #{supplyReceiveAccountExtendField1,jdbcType=VARCHAR},
+      supply_receive_account_extend_field_2 = #{supplyReceiveAccountExtendField2,jdbcType=VARCHAR},
+      supply_receive_account_extend_field_3 = #{supplyReceiveAccountExtendField3,jdbcType=VARCHAR},
+      supply_recharge_type = #{supplyRechargeType,jdbcType=CHAR},
+      supply_ledger_no = #{supplyLedgerNo,jdbcType=VARCHAR},
+      supply_ledger_type = #{supplyLedgerType,jdbcType=CHAR},
+      supply_ledger_extend_field_1 = #{supplyLedgerExtendField1,jdbcType=VARCHAR},
+      supply_ledger_extend_field_2 = #{supplyLedgerExtendField2,jdbcType=VARCHAR},
+      supply_ledger_extend_field_3 = #{supplyLedgerExtendField3,jdbcType=VARCHAR},
+      supply_profit_loss_attr_1 = #{supplyProfitLossAttr1,jdbcType=VARCHAR},
+      supply_profit_loss_attr_2 = #{supplyProfitLossAttr2,jdbcType=VARCHAR},
+      supply_profit_loss_attr_3 = #{supplyProfitLossAttr3,jdbcType=VARCHAR},
+      supply_profit_loss_attr_4 = #{supplyProfitLossAttr4,jdbcType=VARCHAR},
+      supply_profit_loss_attr_5 = #{supplyProfitLossAttr5,jdbcType=VARCHAR},
+      supply_profit_loss_attr_6 = #{supplyProfitLossAttr6,jdbcType=VARCHAR},
+      supply_profit_loss_attr_7 = #{supplyProfitLossAttr7,jdbcType=VARCHAR},
+      supply_profit_loss_attr_8 = #{supplyProfitLossAttr8,jdbcType=VARCHAR},
+      supply_profit_loss_attr_9 = #{supplyProfitLossAttr9,jdbcType=VARCHAR},
+      supply_profit_loss_attr_10 = #{supplyProfitLossAttr10,jdbcType=VARCHAR},
+      refund_amount = #{refundAmount,jdbcType=BIGINT},
+      refund_clear_channel = #{refundClearChannel,jdbcType=VARCHAR},
+      refund_transaction_id = #{refundTransactionId,jdbcType=VARCHAR},
+      refund_batch_no = #{refundBatchNo,jdbcType=VARCHAR},
+      refund_serial_number = #{refundSerialNumber,jdbcType=VARCHAR},
+      refund_third_trade_no = #{refundThirdTradeNo,jdbcType=VARCHAR},
+      refund_success_clear_channel = #{refundSuccessClearChannel,jdbcType=TIMESTAMP},
+      refund_ledger_extend_field_1 = #{refundLedgerExtendField1,jdbcType=VARCHAR},
+      refund_ledger_extend_field_2 = #{refundLedgerExtendField2,jdbcType=VARCHAR},
+      refund_ledger_extend_field_3 = #{refundLedgerExtendField3,jdbcType=VARCHAR},
+      refund_ledger_no = #{refundLedgerNo,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>-->
+  
+  <update id="updateByKeyVersionSelective" parameterType="com.liantuo.trade.orm.pojo.TradeRecharge" >
+    update trade_recharge
+    <set >
+      <if test="tradeNo != null" >
+        trade_no = #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="partnerId != null" >
+        partner_id = #{partnerId,jdbcType=VARCHAR},
+      </if>
+      <if test="coreMerchantNo != null" >
+        core_merchant_no = #{coreMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fundPoolNo != null" >
+        fund_pool_no = #{fundPoolNo,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField1 != null" >
+        merchant_extend_field_1 = #{merchantExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField2 != null" >
+        merchant_extend_field_2 = #{merchantExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField3 != null" >
+        merchant_extend_field_3 = #{merchantExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField4 != null" >
+        merchant_extend_field_4 = #{merchantExtendField4,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantExtendField5 != null" >
+        merchant_extend_field_5 = #{merchantExtendField5,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNoExt != null" >
+        out_trade_no_ext = #{outTradeNoExt,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null" >
+        out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreated != null" >
+        gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtCreatedFail != null" >
+        gmt_created_fail = #{gmtCreatedFail,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtLatestModified != null" >
+        gmt_latest_modified = #{gmtLatestModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="latestTradeReqType != null" >
+        latest_trade_req_type = #{latestTradeReqType,jdbcType=VARCHAR},
+      </if>
+      <if test="latestReqNo != null" >
+        latest_req_no = #{latestReqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="closeStatus != null" >
+        close_status = #{closeStatus,jdbcType=CHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=CHAR},
+      </if>
+      <if test="gmtRechargeFail != null" >
+        gmt_recharge_fail = #{gmtRechargeFail,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtRechargeWait != null" >
+        gmt_recharge_wait = #{gmtRechargeWait,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtRechargeSuccess != null" >
+        gmt_recharge_success = #{gmtRechargeSuccess,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtRechargeRefund != null" >
+        gmt_recharge_refund = #{gmtRechargeRefund,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtExceptionEnd != null" >
+        gmt_exception_end = #{gmtExceptionEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payAmount != null" >
+        pay_amount = #{payAmount,jdbcType=BIGINT},
+      </if>
+      <if test="clearChannel != null" >
+        clear_channel = #{clearChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="transactionId != null" >
+        transaction_id = #{transactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="batchNo != null" >
+        batch_no = #{batchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="serialNumber != null" >
+        serial_number = #{serialNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="thirdTradeNo != null" >
+        third_trade_no = #{thirdTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtSuccessClearChannel != null" >
+        gmt_success_clear_channel = #{gmtSuccessClearChannel,jdbcType=TIMESTAMP},
+      </if>
+      <if test="rechargeLedgerNo != null" >
+        recharge_ledger_no = #{rechargeLedgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeLedgerExtendField1 != null" >
+        recharge_ledger_extend_field_1 = #{rechargeLedgerExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeLedgerExtendField2 != null" >
+        recharge_ledger_extend_field_2 = #{rechargeLedgerExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeLedgerExtendField3 != null" >
+        recharge_ledger_extend_field_3 = #{rechargeLedgerExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeAccountNo != null" >
+        recharge_account_no = #{rechargeAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeMerchantNo != null" >
+        recharge_merchant_no = #{rechargeMerchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeAccountExtendField1 != null" >
+        recharge_account_extend_field_1 = #{rechargeAccountExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeAccountExtendField2 != null" >
+        recharge_account_extend_field_2 = #{rechargeAccountExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeAccountExtendField3 != null" >
+        recharge_account_extend_field_3 = #{rechargeAccountExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeAmount != null" >
+        recharge_amount = #{rechargeAmount,jdbcType=BIGINT},
+      </if>
+      <if test="notifyUrl != null" >
+        notify_url = #{notifyUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="requestGroup != null" >
+        request_group = #{requestGroup,jdbcType=CHAR},
+      </if>
+      <if test="feeAmount != null" >
+        fee_amount = #{feeAmount,jdbcType=BIGINT},
+      </if>
+      <if test="feeWay != null" >
+        fee_way = #{feeWay,jdbcType=CHAR},
+      </if>
+      <if test="feeReceiveAccountNo != null" >
+        fee_receive_account_no = #{feeReceiveAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="feePayAccountExtendField1 != null" >
+        fee_pay_account_extend_field_1 = #{feePayAccountExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="feePayAccountExtendField2 != null" >
+        fee_pay_account_extend_field_2 = #{feePayAccountExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="feePayAccountExtendField3 != null" >
+        fee_pay_account_extend_field_3 = #{feePayAccountExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="feeReceiveAccountExtendField1 != null" >
+        fee_receive_account_extend_field_1 = #{feeReceiveAccountExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="feeReceiveAccountExtendField2 != null" >
+        fee_receive_account_extend_field_2 = #{feeReceiveAccountExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="feeReceiveAccountExtendField3 != null" >
+        fee_receive_account_extend_field_3 = #{feeReceiveAccountExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="feeLedgerNo != null" >
+        fee_ledger_no = #{feeLedgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="feeLedgerType != null" >
+        fee_ledger_type = #{feeLedgerType,jdbcType=CHAR},
+      </if>
+      <if test="feeLedgerExtendField1 != null" >
+        fee_ledger_extend_field_1 = #{feeLedgerExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="feeLedgerExtendField2 != null" >
+        fee_ledger_extend_field_2 = #{feeLedgerExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="feeLedgerExtendField3 != null" >
+        fee_ledger_extend_field_3 = #{feeLedgerExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr1 != null" >
+        fee_profit_loss_attr_1 = #{feeProfitLossAttr1,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr2 != null" >
+        fee_profit_loss_attr_2 = #{feeProfitLossAttr2,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr3 != null" >
+        fee_profit_loss_attr_3 = #{feeProfitLossAttr3,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr4 != null" >
+        fee_profit_loss_attr_4 = #{feeProfitLossAttr4,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr5 != null" >
+        fee_profit_loss_attr_5 = #{feeProfitLossAttr5,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr6 != null" >
+        fee_profit_loss_attr_6 = #{feeProfitLossAttr6,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr7 != null" >
+        fee_profit_loss_attr_7 = #{feeProfitLossAttr7,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr8 != null" >
+        fee_profit_loss_attr_8 = #{feeProfitLossAttr8,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr9 != null" >
+        fee_profit_loss_attr_9 = #{feeProfitLossAttr9,jdbcType=VARCHAR},
+      </if>
+      <if test="feeProfitLossAttr10 != null" >
+        fee_profit_loss_attr_10 = #{feeProfitLossAttr10,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyAmount != null" >
+        supply_amount = #{supplyAmount,jdbcType=BIGINT},
+      </if>
+      <if test="supplyWay != null" >
+        supply_way = #{supplyWay,jdbcType=CHAR},
+      </if>
+      <if test="supplyPayAccountNo != null" >
+        supply_pay_account_no = #{supplyPayAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyPayAccountExtendField1 != null" >
+        supply_pay_account_extend_field_1 = #{supplyPayAccountExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyPayAccountExtendField2 != null" >
+        supply_pay_account_extend_field_2 = #{supplyPayAccountExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyPayAccountExtendField3 != null" >
+        supply_pay_account_extend_field_3 = #{supplyPayAccountExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyReceiveAccountExtendField1 != null" >
+        supply_receive_account_extend_field_1 = #{supplyReceiveAccountExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyReceiveAccountExtendField2 != null" >
+        supply_receive_account_extend_field_2 = #{supplyReceiveAccountExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyReceiveAccountExtendField3 != null" >
+        supply_receive_account_extend_field_3 = #{supplyReceiveAccountExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyRechargeType != null" >
+        supply_recharge_type = #{supplyRechargeType,jdbcType=CHAR},
+      </if>
+      <if test="supplyLedgerNo != null" >
+        supply_ledger_no = #{supplyLedgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyLedgerType != null" >
+        supply_ledger_type = #{supplyLedgerType,jdbcType=CHAR},
+      </if>
+      <if test="supplyLedgerExtendField1 != null" >
+        supply_ledger_extend_field_1 = #{supplyLedgerExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyLedgerExtendField2 != null" >
+        supply_ledger_extend_field_2 = #{supplyLedgerExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyLedgerExtendField3 != null" >
+        supply_ledger_extend_field_3 = #{supplyLedgerExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr1 != null" >
+        supply_profit_loss_attr_1 = #{supplyProfitLossAttr1,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr2 != null" >
+        supply_profit_loss_attr_2 = #{supplyProfitLossAttr2,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr3 != null" >
+        supply_profit_loss_attr_3 = #{supplyProfitLossAttr3,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr4 != null" >
+        supply_profit_loss_attr_4 = #{supplyProfitLossAttr4,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr5 != null" >
+        supply_profit_loss_attr_5 = #{supplyProfitLossAttr5,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr6 != null" >
+        supply_profit_loss_attr_6 = #{supplyProfitLossAttr6,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr7 != null" >
+        supply_profit_loss_attr_7 = #{supplyProfitLossAttr7,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr8 != null" >
+        supply_profit_loss_attr_8 = #{supplyProfitLossAttr8,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr9 != null" >
+        supply_profit_loss_attr_9 = #{supplyProfitLossAttr9,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyProfitLossAttr10 != null" >
+        supply_profit_loss_attr_10 = #{supplyProfitLossAttr10,jdbcType=VARCHAR},
+      </if>
+      <if test="refundAmount != null" >
+        refund_amount = #{refundAmount,jdbcType=BIGINT},
+      </if>
+      <if test="refundClearChannel != null" >
+        refund_clear_channel = #{refundClearChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="refundTransactionId != null" >
+        refund_transaction_id = #{refundTransactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="refundBatchNo != null" >
+        refund_batch_no = #{refundBatchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="refundSerialNumber != null" >
+        refund_serial_number = #{refundSerialNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="refundThirdTradeNo != null" >
+        refund_third_trade_no = #{refundThirdTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="refundSuccessClearChannel != null" >
+        refund_success_clear_channel = #{refundSuccessClearChannel,jdbcType=TIMESTAMP},
+      </if>
+      <if test="refundLedgerExtendField1 != null" >
+        refund_ledger_extend_field_1 = #{refundLedgerExtendField1,jdbcType=VARCHAR},
+      </if>
+      <if test="refundLedgerExtendField2 != null" >
+        refund_ledger_extend_field_2 = #{refundLedgerExtendField2,jdbcType=VARCHAR},
+      </if>
+      <if test="refundLedgerExtendField3 != null" >
+        refund_ledger_extend_field_3 = #{refundLedgerExtendField3,jdbcType=VARCHAR},
+      </if>
+      <if test="refundLedgerNo != null" >
+        refund_ledger_no = #{refundLedgerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="payUrl != null" >
+        pay_url = #{payUrl,jdbcType=LONGVARCHAR},
+      </if>
+      version = version+1,
+    </set>
+    where id = #{id,jdbcType=BIGINT} and version = #{version,jdbcType=INTEGER}
+  </update>
+</mapper>
